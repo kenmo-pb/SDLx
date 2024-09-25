@@ -394,6 +394,8 @@ EndMacro
 
 #SDLx_WINDOW_DEFAULT = 0
 
+#SDLx_WINDOW_NOT_FULLSCREEN = 0
+
 #SDLx_RENDERER_SUCCESS = 0
 #SDLx_RENDERERINDEX_DEFAULT = -1
 
@@ -524,6 +526,7 @@ PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.i, y.i, w.i, h.i, flags.l) ; returns *SDL_Window
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
+PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, flags.l) ; returns 0 on success
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
@@ -533,6 +536,7 @@ PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a,
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.i, h.i) ; returns 0 on success
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
@@ -541,7 +545,7 @@ PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
-PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER)
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER) ; returns pointer to Uint8 array
 
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask

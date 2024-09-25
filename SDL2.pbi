@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-25 15:52:16 UTC
+; Generated 2024-09-25 16:33:12 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -392,6 +392,8 @@ EndMacro
 
 #SDLx_WINDOW_DEFAULT = 0
 
+#SDLx_WINDOW_NOT_FULLSCREEN = 0
+
 #SDLx_RENDERER_SUCCESS = 0
 #SDLx_RENDERERINDEX_DEFAULT = -1
 
@@ -522,6 +524,7 @@ PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.i, y.i, w.i, h.i, flags.l) ; returns *SDL_Window
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
+PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, flags.l) ; returns 0 on success
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
@@ -531,6 +534,7 @@ PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a,
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.i, h.i) ; returns 0 on success
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
@@ -539,7 +543,7 @@ PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
-PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER)
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER) ; returns pointer to Uint8 array
 
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask
@@ -570,6 +574,7 @@ Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
 Global SDL_HideWindow.Proto_SDL_HideWindow
+Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
@@ -577,6 +582,7 @@ Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_RenderClear.Proto_SDL_RenderClear
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
+Global SDL_RenderSetLogicalSize.Proto_SDL_RenderSetLogicalSize
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -676,6 +682,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_SetWindowFullscreen = GetFunction(__SDLxLib, "SDL_SetWindowFullscreen")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_SetWindowFullscreen = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreen'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_ShowWindow = GetFunction(__SDLxLib, "SDL_ShowWindow")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_ShowWindow = #Null)
@@ -722,6 +735,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_RenderPresent = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderPresent'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_RenderSetLogicalSize = GetFunction(__SDLxLib, "SDL_RenderSetLogicalSize")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RenderSetLogicalSize = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderSetLogicalSize'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
