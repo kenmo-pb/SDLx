@@ -498,7 +498,30 @@ Structure SDL_version Align #PB_Structure_AlignC
   patch.a
 EndStructure
 
+Structure SDL_Surface Align #PB_Structure_AlignC
+  flags.l
+  *format
+  w.l
+  h.l
+  pitch.l
+  *pixels
+  *userdata
+  locked.l
+  *list_blitmap
+  clip_rect.SDL_Rect
+  *map
+  refcount.l
+EndStructure
+
 Structure SDL_Renderer
+  ;
+EndStructure
+
+Structure SDL_RWops
+  ;
+EndStructure
+
+Structure SDL_Texture
   ;
 EndStructure
 
@@ -531,12 +554,19 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.i, flags.l) ; returns *SDL_Renderer
+PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns *SDL_Texture
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
+PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
+PrototypeC.i Proto_SDL_RenderCopy(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.i, h.i) ; returns 0 on success
+
+;- - Surface Creation and Simple Drawing
+PrototypeC   Proto_SDL_FreeSurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_LoadBMP_RW(*src.SDL_RWops, freesrc.i) ; returns *SDL_Surface
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
@@ -550,6 +580,9 @@ PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER) ; returns pointer to U
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask
 PrototypeC.i Proto_SDL_ShowCursor(toggle.i)
+
+;- - File I/O Abstraction
+PrototypeC.i Proto_SDL_RWFromFile(file.p-utf8, mode.p-utf8) ; returns *SDL_RWops
 
 
 
@@ -591,6 +624,10 @@ Procedure.i SDL_QuitRequested()
   SDL_PumpEvents()
   ProcedureReturn (Bool(SDL_PeepEvents(#Null, 0, #SDL_PEEKEVENT, #SDL_QUIT, #SDL_QUIT) > 0))
 EndProcedure
+
+Macro SDL_LoadBMP(file)
+  SDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
+EndMacro
 
 CompilerIf (#SDLx_DynamicLink)
 

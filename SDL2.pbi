@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-25 16:33:12 UTC
+; Generated 2024-09-25 18:28:44 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -496,7 +496,30 @@ Structure SDL_version Align #PB_Structure_AlignC
   patch.a
 EndStructure
 
+Structure SDL_Surface Align #PB_Structure_AlignC
+  flags.l
+  *format
+  w.l
+  h.l
+  pitch.l
+  *pixels
+  *userdata
+  locked.l
+  *list_blitmap
+  clip_rect.SDL_Rect
+  *map
+  refcount.l
+EndStructure
+
 Structure SDL_Renderer
+  ;
+EndStructure
+
+Structure SDL_RWops
+  ;
+EndStructure
+
+Structure SDL_Texture
   ;
 EndStructure
 
@@ -529,12 +552,19 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.i, flags.l) ; returns *SDL_Renderer
+PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns *SDL_Texture
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
+PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
+PrototypeC.i Proto_SDL_RenderCopy(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect) ; returns 0 on success
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.i, h.i) ; returns 0 on success
+
+;- - Surface Creation and Simple Drawing
+PrototypeC   Proto_SDL_FreeSurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_LoadBMP_RW(*src.SDL_RWops, freesrc.i) ; returns *SDL_Surface
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
@@ -548,6 +578,9 @@ PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER) ; returns pointer to U
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask
 PrototypeC.i Proto_SDL_ShowCursor(toggle.i)
+
+;- - File I/O Abstraction
+PrototypeC.i Proto_SDL_RWFromFile(file.p-utf8, mode.p-utf8) ; returns *SDL_RWops
 
 
 
@@ -577,12 +610,17 @@ Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
+Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
+Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_RenderClear.Proto_SDL_RenderClear
+Global SDL_RenderCopy.Proto_SDL_RenderCopy
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderSetLogicalSize.Proto_SDL_RenderSetLogicalSize
+Global SDL_FreeSurface.Proto_SDL_FreeSurface
+Global SDL_LoadBMP_RW.Proto_SDL_LoadBMP_RW
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -590,6 +628,7 @@ Global SDL_PushEvent.Proto_SDL_PushEvent
 Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+Global SDL_RWFromFile.Proto_SDL_RWFromFile
 
 
 
@@ -605,6 +644,10 @@ Procedure.i SDL_QuitRequested()
   SDL_PumpEvents()
   ProcedureReturn (Bool(SDL_PeepEvents(#Null, 0, #SDL_PEEKEVENT, #SDL_QUIT, #SDL_QUIT) > 0))
 EndProcedure
+
+Macro SDL_LoadBMP(file)
+  SDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
+EndMacro
 
 CompilerIf (#SDLx_DynamicLink)
 
@@ -703,10 +746,24 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_CreateTextureFromSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTextureFromSurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_DestroyRenderer = GetFunction(__SDLxLib, "SDL_DestroyRenderer")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_DestroyRenderer = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyRenderer'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_DestroyTexture = GetFunction(__SDLxLib, "SDL_DestroyTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_DestroyTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyTexture'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -721,6 +778,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_RenderClear = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderClear'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_RenderCopy = GetFunction(__SDLxLib, "SDL_RenderCopy")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RenderCopy = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderCopy'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -742,6 +806,20 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_RenderSetLogicalSize = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderSetLogicalSize'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_FreeSurface = GetFunction(__SDLxLib, "SDL_FreeSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_FreeSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_FreeSurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_LoadBMP_RW = GetFunction(__SDLxLib, "SDL_LoadBMP_RW")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_LoadBMP_RW = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_LoadBMP_RW'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -791,6 +869,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_ShowCursor = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowCursor'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_RWFromFile = GetFunction(__SDLxLib, "SDL_RWFromFile")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RWFromFile = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RWFromFile'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
