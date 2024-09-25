@@ -24,6 +24,8 @@ Global NewList SDLFunction.SDLFunctionStruct()
 
 
 For MajorVersion = 2 To 3
+  ClearList(SDLFunction())
+  DeleteLevel.i = 0
   
   SDLName.s = "SDL" + Str(MajorVersion)
   TemplateFileName.s = SDLName + "_Template.pbi"
@@ -53,6 +55,13 @@ For MajorVersion = 2 To 3
               
               Case "GEN_TIMESTAMP"
                 LineOut = "; Generated " + FormatDate("%yyyy-%mm-%dd %hh:%ii:%ss UTC", DateUTC())
+              
+              Case "DELETESTART"
+                DeleteLevel + 1
+                SkipLine = #True
+              Case "DELETEEND"
+                DeleteLevel - 1
+                SkipLine = #True
               
               Case "DECLARE_DYNAMIC_PROTOTYPES"
                 Debug "Found " + Str(ListSize(SDLFunction())) + " SDL functions..."
@@ -94,6 +103,10 @@ For MajorVersion = 2 To 3
                 EndIf
                 
             EndSelect
+            
+          ElseIf (DeleteLevel > 0)
+            SkipLine = #True
+            
           Else
             
             If (Left(Line, 10) = "PrototypeC")
@@ -127,5 +140,9 @@ For MajorVersion = 2 To 3
   Debug ""
   
 Next
+If (#True)
+  Delay(3 * 1000)
+  CloseDebugOutput()
+EndIf
 
 ;-

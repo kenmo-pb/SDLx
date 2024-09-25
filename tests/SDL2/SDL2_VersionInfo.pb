@@ -7,16 +7,18 @@
 #SDLx_DebugErrors = #True
 XIncludeFile "../../SDL2.pbi"
 
-Debug "Loading " + #SDLx_LibName + " library via SDLx includefiles..."
-
-Debug "Compiled for SDL " + SDLx_CompiledVersionString()
+Debug "Loading " + #SDLx_LibName + " via '" + #SDLx_IncludeFilename + "'..."
+Debug "(IncludeFile based on SDL version " + SDLx_CompiledVersionString() + ")"
+Debug ""
 
 If (SDL_Init(0) = #SDLx_INIT_SUCCESS)
   
   If (#SDLx_StaticLink)
-    Debug "Statically linked SDL " + SDLx_GetVersionString()
+    Debug "Initialized OK!"
+    Debug "Statically linked SDL version " + SDLx_GetVersionString()
   Else
-    Debug "Dynamically linked SDL " + SDLx_GetVersionString()
+    Debug "Loaded and initialized OK!"
+    Debug "Dynamically linked SDL version " + SDLx_GetVersionString()
   EndIf
   
   SDL_Quit()

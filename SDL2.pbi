@@ -5,13 +5,31 @@
 
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
+;
+; Generated 2024-09-25 04:15:25 UTC
 
-; Generated 2024-09-24 02:18:46 UTC
+; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
+; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
+; All Functions:   https://wiki.libsdl.org/SDL2/CategoryAPIFunction
+; Complete API:    https://wiki.libsdl.org/SDL2/CategoryAPI
 
-; For SDL2 API reference, see https://wiki.libsdl.org/SDL2/APIByCategory
 
 CompilerIf (Not Defined(__SDLx_Included, #PB_Constant))
 #__SDLx_Included = #True
+
+CompilerIf (#PB_Compiler_Version < 510)
+  CompilerError #PB_Compiler_Filename + " requires PureBasic 5.10 or newer!"
+CompilerEndIf
+
+CompilerIf (Defined(SDL_MAJOR_VERSION, #PB_Constant))
+  CompilerIf (#SDL_MAJOR_VERSION <> 2)
+    CompilerIf (#PB_Compiler_OS = #PB_OS_Linux)
+      CompilerError #PB_Compiler_Filename + " conflicts with pre-existing SDL definitions! Try moving 'sdl.res' out of PureBasic 'residents' subfolder and restarting the compiler."
+    CompilerElse
+      CompilerError #PB_Compiler_Filename + " conflicts with pre-existing SDL definitions!"
+    CompilerEndIf
+  CompilerEndIf
+CompilerEndIf
 
 CompilerIf (#PB_Compiler_IsMainFile)
   EnableExplicit
@@ -45,6 +63,8 @@ CompilerEndIf
 
 #SDLx_LibName = "SDL2"
 
+#SDLx_IncludeFilename = #PB_Compiler_Filename
+
 CompilerSelect (#PB_Compiler_OS)
   CompilerCase #PB_OS_Linux
     CompilerIf (Not Defined(SDLx_DynamicLibraryName, #PB_Constant))
@@ -77,25 +97,18 @@ CompilerEndIf
 
 ;- - Querying SDL Version
 
-; PB Linux 6.12 seems to define these constants for SDL 1.2.6 !
-#SDLx_MAJOR_VERSION = 2
-#SDLx_MINOR_VERSION = 31
-#SDLx_PATCHLEVEL    = 0
-
-CompilerIf (Not Defined(SDL_MAJOR_VERSION, #PB_Constant))
-  #SDL_MAJOR_VERSION = #SDLx_MAJOR_VERSION
-  #SDL_MINOR_VERSION = #SDLx_MINOR_VERSION
-  #SDL_PATCHLEVEL    = #SDLx_PATCHLEVEL
-CompilerEndIf
+#SDL_MAJOR_VERSION = 2
+#SDL_MINOR_VERSION = 31
+#SDL_PATCHLEVEL    = 0
 
 Macro SDL_VERSIONNUM(X, Y, Z)
   ((X)*1000 + (Y)*100 + (Z))
 EndMacro
 Macro SDL_COMPILEDVERSION()
-  SDL_VERSIONNUM(#SDLx_MAJOR_VERSION, #SDLx_MINOR_VERSION, #SDLx_PATCHLEVEL)
+  SDL_VERSIONNUM(#SDL_MAJOR_VERSION, #SDL_MINOR_VERSION, #SDL_PATCHLEVEL)
 EndMacro
 Macro SDL_VERSIONATLEAST(X, Y, Z)
-  (Bool((#SDLx_MAJOR_VERSION >= (X)) And ((#SDLx_MAJOR_VERSION > (X)) Or (#SDLx_MINOR_VERSION >= (Y))) And ((#SDLx_MAJOR_VERSION > (X)) Or (#SDLx_MINOR_VERSION > (Y)) Or (#SDLx_PATCHLEVEL >= (Z)))))
+  (Bool((#SDL_MAJOR_VERSION >= (X)) And ((#SDL_MAJOR_VERSION > (X)) Or (#SDL_MINOR_VERSION >= (Y))) And ((#SDL_MAJOR_VERSION > (X)) Or (#SDL_MINOR_VERSION > (Y)) Or (#SDL_PATCHLEVEL >= (Z)))))
 EndMacro
 
 ;- - Initialization and Shutdown
@@ -170,6 +183,66 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+;- - Event Handling
+
+Enumeration ; SDL_EventType
+  #SDL_FIRSTEVENT = 0
+  
+  #SDL_QUIT = $100
+  #SDL_APP_TERMINATING
+  #SDL_APP_LOWMEMORY
+  #SDL_APP_WILLENTERBACKGROUND
+  #SDL_APP_DIDENTERBACKGROUND
+  #SDL_APP_WILLENTERFOREGROUND
+  #SDL_APP_DIDENTERFOREGROUND
+  #SDL_APP_LOCALECHANGED
+  
+  #SDL_DISPLAYEVENT = $150
+  
+  #SDL_WINDOWEVENT = $200
+  #SDL_SYSWMEVENT
+  
+  #SDL_KEYDOWN = $300
+  #SDL_KEYUP
+  #SDL_TEXTEDITING
+  #SDL_TEXTINPUT
+  #SDL_KEYMAPCHANGED
+  #SDL_TEXTEDITING_EXT
+  
+  #SDL_MOUSEMOTION = $400
+  #SDL_MOUSEBUTTONDOWN
+  #SDL_MOUSEBUTTONUP
+  #SDL_MOUSEWHEEL
+  
+  ; ...
+  
+EndEnumeration
+
+;- - Keyboard Support
+
+Enumeration ; KMOD_* SDL_Keymod
+  #KMOD_NONE   = $0000
+  #KMOD_LSHIFT = $0001
+  #KMOD_RSHIFT = $0002
+  #KMOD_LCTRL  = $0040
+  #KMOD_RCTRL  = $0080
+  #KMOD_LALT   = $0100
+  #KMOD_RALT   = $0200
+  #KMOD_LGUI   = $0400
+  #KMOD_RGUI   = $0800
+  #KMOD_NUM    = $1000
+  #KMOD_CAPS   = $2000
+  #KMOD_MODE   = $4000
+  #KMOD_SCROLL = $8000
+  
+  #KMOD_CTRL  = #KMOD_LCTRL  | #KMOD_RCTRL
+  #KMOD_SHIFT = #KMOD_LSHIFT | #KMOD_RSHIFT
+  #KMOD_ALT   = #KMOD_LALT   | #KMOD_RALT
+  #KMOD_GUI   = #KMOD_LGUI   | #KMOD_RGUI
+  
+  #KMOD_RESERVED = #KMOD_SCROLL
+EndEnumeration
+
 
 
 
@@ -188,38 +261,77 @@ EndEnumeration
 ;-
 ;- SDL2 Structures
 
-CompilerIf (Not Defined(SDL_Rect, #PB_Structure))
-Structure SDL_Rect
+Structure SDL_Keysym Align #PB_Structure_AlignC
+  scancode.l ; SDL_Scancode (enum)
+  sym.l ; SDL_Keycode (Sint32)
+  mod.u
+  unused.l
+EndStructure
+
+Structure SDL_KeyboardEvent Align #PB_Structure_AlignC
+  type.l
+  timestamp.l
+  windowID.l
+  state.a
+  repeat_.a
+  padding2.a
+  padding3.a
+  keysym.SDL_Keysym
+EndStructure
+
+Structure SDL_QuitEvent Align #PB_Structure_AlignC
+  type.l
+  timestamp.l
+EndStructure
+
+Structure SDL_CommonEvent Align #PB_Structure_AlignC
+  type.l
+  timestamp.l
+EndStructure
+
+Structure SDL_Event Align #PB_Structure_AlignC
+  StructureUnion
+    type.l
+    
+    common.SDL_CommonEvent
+    ;display.SDL_DisplayEvent
+    ;window.SDL_WindowEvent
+    key.SDL_KeyboardEvent
+    ;edit.SDL_TextEditingEvent
+    ;editExt.SDL_TextEditingExtEvent
+    ;text.SDL_TextInputEvent
+    ;motion.SDL_MouseMotionEvent
+    ;button.SDL_MouseButtonEvent
+    ;wheel.SDL_MouseWheelEvent
+    ; ...
+    quit.SDL_QuitEvent
+    ;user.SDL_UserEvent
+    ;syswm.SDL_SysWMEvent
+    ;tfinger.SDL_TouchFingerEvent
+    ;mgesture.SDL_MultiGestureEvent
+    ;dgesture.SDL_DollarGestureEvent
+    ;drop.SDL_DropEvent
+    
+    padding.a[56] ; PB pointers never larger than 8 bytes
+  EndStructureUnion
+EndStructure
+
+Structure SDL_Rect Align #PB_Structure_AlignC
   x.l
   y.l
   w.l
   h.l
 EndStructure
-CompilerEndIf
 
-CompilerIf (#True) ; PB Linux 6.12 seems to define SDL_Rect with 16-bit .w words (SDL1), so define a 32-bit replacement
-Structure SDLx_Rect
-  x.l
-  y.l
-  w.l
-  h.l
-EndStructure
-Macro SDL_Rect
-  SDLx_Rect
-EndMacro
-CompilerEndIf
-
-Structure SDL_Renderer
-  ;
-EndStructure
-
-CompilerIf (Not Defined(SDL_version, #PB_Structure))
-Structure SDL_version
+Structure SDL_version Align #PB_Structure_AlignC
   major.a
   minor.a
   patch.a
 EndStructure
-CompilerEndIf
+
+Structure SDL_Renderer
+  ;
+EndStructure
 
 Structure SDL_Window
   ;
@@ -257,6 +369,10 @@ PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on succes
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 
+;- - Event Handling
+
+PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event)
+
 
 
 
@@ -287,6 +403,8 @@ Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_RenderClear.Proto_SDL_RenderClear
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
+Global SDL_PollEvent.Proto_SDL_PollEvent
+
 
 
 CompilerEndIf
@@ -418,6 +536,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_PollEvent = GetFunction(__SDLxLib, "SDL_PollEvent")
+        CompilerIf (#SDLx_AssertAllFunctionLoads or #SDLx_RequireAllFunctionLoads)
+          If (SDL_PollEvent = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_PollEvent'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         
         
         If (Not LoadFailed)
@@ -426,16 +551,16 @@ Procedure.i SDL_Init(flags.l)
             If (Result = #SDLx_INIT_SUCCESS)
               Protected LinkedVer.SDL_version
               SDL_GetVersion(@LinkedVer)
-              If (LinkedVer\major = #SDLx_MAJOR_VERSION)
-                If (LinkedVer\minor < #SDLx_MINOR_VERSION)
+              If (LinkedVer\major = #SDL_MAJOR_VERSION)
+                If (LinkedVer\minor < #SDL_MINOR_VERSION - 1)
                   Protected Message.s = "Warning: Dynamically linked SDL ("
                   Message + Str(LinkedVer\major) + "." + Str(LinkedVer\minor) + "." + Str(LinkedVer\patch)
                   Message + ") is older than SDLx compiled version ("
-                  Message + Str(#SDLx_MAJOR_VERSION) + "." + Str(#SDLx_MINOR_VERSION) + "." + Str(#SDLx_PATCHLEVEL) + ")"
+                  Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_PATCHLEVEL) + ")"
                   __SDLx_Debug(Message)
                 EndIf
               Else
-                __SDLx_Debug("Dynamically linked SDL version (" + Str(LinkedVer\major) + ") does not match compiled SDLx version (" + Str(#SDLx_MAJOR_VERSION) + ")!")
+                __SDLx_Debug("Dynamically linked SDL version (" + Str(LinkedVer\major) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
                 SDL_Quit()
                 Result = -1
               EndIf
@@ -465,7 +590,7 @@ Procedure SDLx_SetRenderDrawColorValue(*renderer.SDL_Renderer, RGBAValue.i)
 EndProcedure
 
 Procedure.s SDLx_CompiledVersionString()
-  ProcedureReturn (Str(#SDLx_MAJOR_VERSION) + "." + Str(#SDLx_MINOR_VERSION) + "." + Str(#SDLx_PATCHLEVEL))
+  ProcedureReturn (Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_PATCHLEVEL))
 EndProcedure
 
 Procedure.s SDLx_GetVersionString()

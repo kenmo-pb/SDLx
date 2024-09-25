@@ -7,8 +7,8 @@
 ;#SDLx_DebugErrors = #True
 XIncludeFile "../../SDL2.pbi"
 
-#WinW = 640
-#WinH = 480
+#WinW = 800
+#WinH = 600
 #RectSize = #WinH/10
 #BorderSize = 2
 
@@ -38,9 +38,33 @@ If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
           SDL_RenderFillRect(*renderer, @rect)
         Next x
       Next y
-      
       SDL_RenderPresent(*renderer)
-      Delay(1.5 * 1000)
+      
+      
+      ; Loop until window closed, or Escape, or Ctrl+Q, or Ctrl+W...
+      event.SDL_Event
+      ExitFlag = #False
+      While (Not ExitFlag)
+        While (SDL_PollEvent(@event))
+          
+          If (event\type = #SDL_QUIT)
+            ExitFlag = #True
+          
+          ElseIf (event\type = #SDL_KEYDOWN)
+            Select (event\key\keysym\scancode)
+              ; TODO: Use Scancode constants here...
+              Case 20, 26 ; Q, W
+                If (event\key\keysym\mod & #KMOD_CTRL)
+                  ExitFlag = #True
+                EndIf
+              Case 41 ; Esc
+                ExitFlag = #True
+            EndSelect
+          
+          EndIf
+        Wend
+        Delay(10)
+      Wend
       
       SDL_DestroyRenderer(*renderer)
     EndIf
