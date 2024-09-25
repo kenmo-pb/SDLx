@@ -232,7 +232,7 @@ CompilerEndIf
 ;- Main File Warning
 
 CompilerIf (#PB_Compiler_IsMainFile)
-  MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'tests' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
+  MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'examples' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
 CompilerEndIf
 
 CompilerEndIf

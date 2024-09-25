@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-25 14:34:22 UTC
+; Generated 2024-09-25 14:38:11 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -774,7 +774,7 @@ CompilerEndIf
 ;- Template / Main File Warning
 
 CompilerIf (#PB_Compiler_IsMainFile)
-  MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'tests' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
+  MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'examples' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
 CompilerEndIf
 
 CompilerEndIf
