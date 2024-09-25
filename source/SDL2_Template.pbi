@@ -64,6 +64,15 @@ CompilerElse
   EndMacro
 CompilerEndIf
 
+CompilerIf (#True)
+  Macro __SDLx_StructInt
+    l ; use 32-bit PB Long for SDL struct "int" members
+  EndMacro
+  Macro SDLx_Int
+    l ; use 32-bit PB Long for SDL "int" args
+  EndMacro
+CompilerEndIf
+
 
 ;-
 ;- SDL2 Library Files
@@ -384,6 +393,30 @@ EndMacro
 #SDL_BUTTON_X1MASK = SDL_BUTTON(#SDL_BUTTON_X1)
 #SDL_BUTTON_X2MASK = SDL_BUTTON(#SDL_BUTTON_X2)
 
+;- - Message Boxes
+
+Enumeration ; SDL_MESSAGEBOX_* SDL_MessageBoxFlags
+  #SDL_MESSAGEBOX_ERROR                 = $00000010
+  #SDL_MESSAGEBOX_WARNING               = $00000020
+  #SDL_MESSAGEBOX_INFORMATION           = $00000040
+  #SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT = $00000080
+  #SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT = $00000100
+EndEnumeration
+
+Enumeration ; SDL_MessageBoxButtonFlags
+  #SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = $00000001
+  #SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = $00000002
+EndEnumeration
+
+Enumeration ; SDL_MessageBoxColorType
+  #SDL_MESSAGEBOX_COLOR_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_TEXT
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BORDER
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED
+  #SDL_MESSAGEBOX_COLOR_MAX
+EndEnumeration
+
 
 
 
@@ -513,6 +546,32 @@ Structure SDL_Surface Align #PB_Structure_AlignC
   refcount.l
 EndStructure
 
+Structure SDL_MessageBoxButtonData Align #PB_Structure_AlignC
+  flags.l
+  buttonid.__SDLx_StructInt
+  *text
+EndStructure
+
+Structure SDL_MessageBoxColor Align #PB_Structure_AlignC
+  r.a
+  g.a
+  b.a
+EndStructure
+
+Structure SDL_MessageBoxColorScheme Align #PB_Structure_AlignC
+  colors.SDL_MessageBoxColor[#SDL_MESSAGEBOX_COLOR_MAX]
+EndStructure
+
+Structure SDL_MessageBoxData Align #PB_Structure_AlignC
+  flags.l
+  *window.SDL_Window
+  *title
+  *message
+  numbuttons.__SDLx_StructInt
+  *buttons.SDL_MessageBoxButtonData
+  *colorScheme.SDL_MessageBoxColorScheme
+EndStructure
+
 Structure SDL_Renderer
   ;
 EndStructure
@@ -583,6 +642,10 @@ PrototypeC.i Proto_SDL_ShowCursor(toggle.i)
 
 ;- - File I/O Abstraction
 PrototypeC.i Proto_SDL_RWFromFile(file.p-utf8, mode.p-utf8) ; returns *SDL_RWops
+
+;- - Message Boxes
+PrototypeC.i Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns 0 on success
+PrototypeC.i Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns 0 on success
 
 
 
