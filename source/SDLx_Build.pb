@@ -64,8 +64,8 @@ For MajorVersion = 2 To 3
                 SkipLine = #True
               
               Case "DECLARE_DYNAMIC_PROTOTYPES"
-                Debug "Found " + Str(ListSize(SDLFunction())) + " SDL functions..."
-                Debug "Found " + Str(NumStructs) + " SDL structures..."
+                Debug "  Found " + Str(ListSize(SDLFunction())) + " SDL functions..."
+                Debug "  Found " + Str(NumStructs) + " SDL structures..."
                 LineOut = ""
                 ForEach SDLFunction()
                   Select (SDLFunction()\Name)
@@ -126,13 +126,13 @@ For MajorVersion = 2 To 3
         Wend
         
         CloseFile(1)
-        Debug "Done"
+        Debug "  Done"
       Else
-        Debug "Could not create file '" + OutputFileFull + "'"
+        Debug "  Could not create file '" + OutputFileFull + "'"
       EndIf
       CloseFile(0)
     Else
-      Debug "Could not read file '" + TemplateFileName + "'"
+      Debug "  Could not read file '" + TemplateFileName + "'"
     EndIf
   Else
     Debug "Skipping " + SDLName + " ('" + TemplateFileName + "' not found)"
