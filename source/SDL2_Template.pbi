@@ -72,13 +72,16 @@ CompilerSelect (#PB_Compiler_OS)
     CompilerIf (Not Defined(SDLx_DynamicLibraryName, #PB_Constant))
       #SDLx_DynamicLibraryName = "libSDL2.so"
     CompilerEndIf
+    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
+      ;#SDLx_StaticLibraryName = ""
+    CompilerEndIf
 CompilerEndSelect
 
-CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Constant)))
-  CompilerError "#SDLx_StaticLibraryName must be defined to statically link " + #SDLx_LibName + "!"
-CompilerEndIf
 CompilerIf (#SDLx_DynamicLink And (Not Defined(SDLx_DynamicLibraryName, #PB_Constant)))
   CompilerError "#SDLx_DynamicLibraryName must be defined to dynamically link " + #SDLx_LibName + "!"
+CompilerEndIf
+CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Constant)))
+  CompilerError "#SDLx_StaticLibraryName must be defined to statically link " + #SDLx_LibName + "!"
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
@@ -218,9 +221,113 @@ Enumeration ; SDL_EventType
   
   ; ...
   
+  #SDL_LASTEVENT = $FFFF
 EndEnumeration
 
+Enumeration ; SDL_eventaction
+  #SDL_ADDEVENT
+  #SDL_PEEKEVENT
+  #SDL_GETEVENT
+EndEnumeration
+
+#SDL_RELEASED = 0
+#SDL_PRESSED  = 1
+
 ;- - Keyboard Support
+
+Enumeration ; SDL_SCANCODE_* SDL_Scancode
+  #SDL_SCANCODE_UNKNOWN = 0
+  
+  #SDL_SCANCODE_A = 4
+  #SDL_SCANCODE_B = 5
+  #SDL_SCANCODE_C = 6
+  #SDL_SCANCODE_D = 7
+  #SDL_SCANCODE_E = 8
+  #SDL_SCANCODE_F = 9
+  #SDL_SCANCODE_G = 10
+  #SDL_SCANCODE_H = 11
+  #SDL_SCANCODE_I = 12
+  #SDL_SCANCODE_J = 13
+  #SDL_SCANCODE_K = 14
+  #SDL_SCANCODE_L = 15
+  #SDL_SCANCODE_M = 16
+  #SDL_SCANCODE_N = 17
+  #SDL_SCANCODE_O = 18
+  #SDL_SCANCODE_P = 19
+  #SDL_SCANCODE_Q = 20
+  #SDL_SCANCODE_R = 21
+  #SDL_SCANCODE_S = 22
+  #SDL_SCANCODE_T = 23
+  #SDL_SCANCODE_U = 24
+  #SDL_SCANCODE_V = 25
+  #SDL_SCANCODE_W = 26
+  #SDL_SCANCODE_X = 27
+  #SDL_SCANCODE_Y = 28
+  #SDL_SCANCODE_Z = 29
+  
+  #SDL_SCANCODE_1 = 30
+  #SDL_SCANCODE_2 = 31
+  #SDL_SCANCODE_3 = 32
+  #SDL_SCANCODE_4 = 33
+  #SDL_SCANCODE_5 = 34
+  #SDL_SCANCODE_6 = 35
+  #SDL_SCANCODE_7 = 36
+  #SDL_SCANCODE_8 = 37
+  #SDL_SCANCODE_9 = 38
+  #SDL_SCANCODE_0 = 39
+  
+  #SDL_SCANCODE_RETURN    = 40
+  #SDL_SCANCODE_ESCAPE    = 41
+  #SDL_SCANCODE_BACKSPACE = 42
+  #SDL_SCANCODE_TAB       = 43
+  #SDL_SCANCODE_SPACE     = 44
+  
+  #SDL_SCANCODE_MINUS        = 45
+  #SDL_SCANCODE_EQUALS       = 46
+  #SDL_SCANCODE_LEFTBRACKET  = 47
+  #SDL_SCANCODE_RIGHTBRACKET = 48
+  #SDL_SCANCODE_BACKSLASH    = 49
+  #SDL_SCANCODE_NONUSHASH    = 50
+  #SDL_SCANCODE_SEMICOLON    = 51
+  #SDL_SCANCODE_APOSTROPHE   = 52
+  #SDL_SCANCODE_GRAVE        = 53
+  #SDL_SCANCODE_COMMA        = 54
+  #SDL_SCANCODE_PERIOD       = 55
+  #SDL_SCANCODE_SLASH        = 56
+  
+  #SDL_SCANCODE_CAPSLOCK = 57
+  
+  #SDL_SCANCODE_F1 = 58
+  #SDL_SCANCODE_F2 = 59
+  #SDL_SCANCODE_F3 = 60
+  #SDL_SCANCODE_F4 = 61
+  #SDL_SCANCODE_F5 = 62
+  #SDL_SCANCODE_F6 = 63
+  #SDL_SCANCODE_F7 = 64
+  #SDL_SCANCODE_F8 = 65
+  #SDL_SCANCODE_F9 = 66
+  #SDL_SCANCODE_F10 = 67
+  #SDL_SCANCODE_F11 = 68
+  #SDL_SCANCODE_F12 = 69
+  
+  #SDL_SCANCODE_PRINTSCREEN = 70
+  #SDL_SCANCODE_SCROLLLOCK  = 71
+  #SDL_SCANCODE_PAUSE       = 72
+  #SDL_SCANCODE_INSERT      = 73
+  
+  #SDL_SCANCODE_HOME     = 74
+  #SDL_SCANCODE_PAGEUP   = 75
+  #SDL_SCANCODE_DELETE   = 76
+  #SDL_SCANCODE_END      = 77
+  #SDL_SCANCODE_PAGEDOWN = 78
+  #SDL_SCANCODE_RIGHT    = 79
+  #SDL_SCANCODE_LEFT     = 80
+  #SDL_SCANCODE_DOWN     = 81
+  #SDL_SCANCODE_UP       = 82
+  
+  ; ...
+  
+EndEnumeration
 
 Enumeration ; KMOD_* SDL_Keymod
   #KMOD_NONE   = $0000
@@ -356,14 +463,12 @@ PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 
 ;- - Display and Window Management
-
-PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.i, y.i, w.i, h.i, flags.i) ; returns *SDL_Window
+PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.i, y.i, w.i, h.i, flags.l) ; returns *SDL_Window
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
-
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.i, flags.l) ; returns *SDL_Renderer
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
@@ -372,8 +477,13 @@ PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; 
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 
 ;- - Event Handling
+PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
+PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event) ; returns 1 on success
+PrototypeC   Proto_SDL_PumpEvents()
+PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
-PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event)
+;- - Keyboard Support
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER)
 
 
 
@@ -396,6 +506,8 @@ Global __SDLx_Quit.Proto_SDL_Quit
 
 ;% DELETESTART
 Global SDL_GetVersion.Proto_SDL_GetVersion
+Global SDL_PeepEvents.Proto_SDL_PeepEvents
+Global SDL_PumpEvents.Proto_SDL_PumpEvents
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 ;% DELETEEND
 
@@ -405,6 +517,12 @@ CompilerEndIf
 
 ;-
 ;- PB Wrapper Procedures
+
+Procedure.i SDL_QuitRequested()
+  ; This is actually a C macro in SDL_quit.h, but it calls multiple functions so it is better as a procedure in PB
+  SDL_PumpEvents()
+  ProcedureReturn (Bool(SDL_PeepEvents(#Null, 0, #SDL_PEEKEVENT, #SDL_QUIT, #SDL_QUIT) > 0))
+EndProcedure
 
 CompilerIf (#SDLx_DynamicLink)
 
@@ -476,6 +594,17 @@ EndProcedure
 CompilerEndIf
 
 ;-
+;- Helper Structures
+
+CompilerIf (#True)
+
+Structure SDLx_KeyboardStateArray
+  ks.a[0]
+EndStructure
+
+CompilerEndIf
+
+;-
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
@@ -507,8 +636,12 @@ CompilerEndIf
 
 
 ;-
-;- Main File Warning
+;- Template / Main File Warning
 
+;% DELETESTART
+MessageRequester(#PB_Compiler_Filename, "This template file is not intended to be used as-is." + #LF$ + #LF$ + "Please run 'SDLx_Build.pb' to generate the full IncludeFile.", #PB_MessageRequester_Warning)
+End
+;% DELETEEND
 CompilerIf (#PB_Compiler_IsMainFile)
   MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'tests' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
 CompilerEndIf

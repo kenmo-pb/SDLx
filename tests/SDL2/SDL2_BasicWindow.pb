@@ -14,7 +14,7 @@ XIncludeFile "../../SDL2.pbi"
 
 If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
   
-  ; Open a basic window
+  ; Open a basic window...
   *window = SDL_CreateWindow(#PB_Compiler_Filename, #SDL_WINDOWPOS_CENTERED, #SDL_WINDOWPOS_CENTERED, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
   If (*window)
     *renderer = SDL_CreateRenderer(*window, #SDLx_RENDERERINDEX_DEFAULT, #SDL_RENDERER_ACCELERATED)
@@ -38,31 +38,10 @@ If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
           SDL_RenderFillRect(*renderer, @rect)
         Next x
       Next y
+      
+      ; Wait until Quit Requested (typically window close button, or Alt+F4, etc.)
       SDL_RenderPresent(*renderer)
-      
-      
-      ; Loop until window closed, or Escape, or Ctrl+Q, or Ctrl+W...
-      event.SDL_Event
-      ExitFlag = #False
-      While (Not ExitFlag)
-        While (SDL_PollEvent(@event))
-          
-          If (event\type = #SDL_QUIT)
-            ExitFlag = #True
-          
-          ElseIf (event\type = #SDL_KEYDOWN)
-            Select (event\key\keysym\scancode)
-              ; TODO: Use Scancode constants here...
-              Case 20, 26 ; Q, W
-                If (event\key\keysym\mod & #KMOD_CTRL)
-                  ExitFlag = #True
-                EndIf
-              Case 41 ; Esc
-                ExitFlag = #True
-            EndSelect
-          
-          EndIf
-        Wend
+      While (Not SDL_QuitRequested())
         Delay(10)
       Wend
       
