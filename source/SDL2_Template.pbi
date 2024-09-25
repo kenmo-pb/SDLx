@@ -49,7 +49,12 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
 CompilerEndIf
-CompilerIf (#SDLx_DebugErrors)
+CompilerIf (#PB_Compiler_Debugger)
+  #__SDLx_DebugErrors = #SDLx_DebugErrors
+CompilerElse
+  #__SDLx_DebugErrors = #False
+CompilerEndIf
+CompilerIf (#__SDLx_DebugErrors)
   Macro __SDLx_Debug(_Message)
     Debug _Message
   EndMacro
@@ -133,6 +138,11 @@ Enumeration ; SDL_INIT_* for SDL_Init()
     ; This is the definition in SDL2.h, but PB Linux 6.12 seems to have it predefined as conflicting $FFFF
     #SDL_INIT_EVERYTHING = #SDL_INIT_TIMER | #SDL_INIT_AUDIO | #SDL_INIT_VIDEO | #SDL_INIT_EVENTS | #SDL_INIT_JOYSTICK | #SDL_INIT_HAPTIC | #SDL_INIT_GAMECONTROLLER | #SDL_INIT_SENSOR
   CompilerEndIf
+EndEnumeration
+
+Enumeration ; SDL_bool
+  #SDL_FALSE = 0
+  #SDL_TRUE  = 1
 EndEnumeration
 
 ;- - Display and Window Management
@@ -232,6 +242,11 @@ EndEnumeration
 
 #SDL_RELEASED = 0
 #SDL_PRESSED  = 1
+
+#SDL_QUERY   = -1
+#SDL_IGNORE  = 0
+#SDL_DISABLE = 0
+#SDL_ENABLE  = 1
 
 ;- - Keyboard Support
 
@@ -352,6 +367,23 @@ Enumeration ; KMOD_* SDL_Keymod
   #KMOD_RESERVED = #KMOD_SCROLL
 EndEnumeration
 
+;- - Mouse Support
+
+#SDL_BUTTON_LEFT   = 1
+#SDL_BUTTON_MIDDLE = 2
+#SDL_BUTTON_RIGHT  = 3
+#SDL_BUTTON_X1     = 4
+#SDL_BUTTON_X2     = 5
+
+Macro SDL_BUTTON(X)
+  (1 << ((X)-1))
+EndMacro
+#SDL_BUTTON_LMASK  = SDL_BUTTON(#SDL_BUTTON_LEFT)
+#SDL_BUTTON_MMASK  = SDL_BUTTON(#SDL_BUTTON_MIDDLE)
+#SDL_BUTTON_RMASK  = SDL_BUTTON(#SDL_BUTTON_RIGHT)
+#SDL_BUTTON_X1MASK = SDL_BUTTON(#SDL_BUTTON_X1)
+#SDL_BUTTON_X2MASK = SDL_BUTTON(#SDL_BUTTON_X2)
+
 
 
 
@@ -388,6 +420,32 @@ Structure SDL_KeyboardEvent Align #PB_Structure_AlignC
   keysym.SDL_Keysym
 EndStructure
 
+Structure SDL_MouseMotionEvent Align #PB_Structure_AlignC
+  type.l
+  timestamp.l
+  windowID.l
+  which.l
+  state.l
+  x.l
+  y.l
+  xrel.l
+  yrel.l
+EndStructure
+
+Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
+  type.l
+  timestamp.l
+  windowID.l
+  which.l
+  x.l
+  y.l
+  direction.l
+  preciseX.f
+  preciseY.f
+  mouseX.l
+  mouseY.l
+EndStructure
+
 Structure SDL_QuitEvent Align #PB_Structure_AlignC
   type.l
   timestamp.l
@@ -409,9 +467,9 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;edit.SDL_TextEditingEvent
     ;editExt.SDL_TextEditingExtEvent
     ;text.SDL_TextInputEvent
-    ;motion.SDL_MouseMotionEvent
+    motion.SDL_MouseMotionEvent
     ;button.SDL_MouseButtonEvent
-    ;wheel.SDL_MouseWheelEvent
+    wheel.SDL_MouseWheelEvent
     ; ...
     quit.SDL_QuitEvent
     ;user.SDL_UserEvent
@@ -484,6 +542,10 @@ PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
 PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER)
+
+;- - Mouse Support
+PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask
+PrototypeC.i Proto_SDL_ShowCursor(toggle.i)
 
 
 

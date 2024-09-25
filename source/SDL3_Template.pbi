@@ -50,7 +50,12 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
 CompilerEndIf
-CompilerIf (#SDLx_DebugErrors)
+CompilerIf (#PB_Compiler_Debugger)
+  #__SDLx_DebugErrors = #SDLx_DebugErrors
+CompilerElse
+  #__SDLx_DebugErrors = #False
+CompilerEndIf
+CompilerIf (#__SDLx_DebugErrors)
   Macro __SDLx_Debug(_Message)
     Debug _Message
   EndMacro
@@ -70,16 +75,19 @@ CompilerEndIf
 
 CompilerSelect (#PB_Compiler_OS)
   CompilerCase #PB_OS_Linux
-    CompilerIf (Not Defined(SDLx_DynamicLibraryName, #PB_Constant))
-      #SDLx_DynamicLibraryName = "libSDL3.so"
+    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
+      #SDLx_DynamicLibraryDefaultName = "libSDL3.so"
+    CompilerEndIf
+    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
+      ;#SDLx_StaticLibraryName = ""
     CompilerEndIf
 CompilerEndSelect
 
+CompilerIf (#SDLx_DynamicLink And (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant)))
+  CompilerError "#SDLx_DynamicLibraryDefaultName must be defined to dynamically link " + #SDLx_LibName + "!"
+CompilerEndIf
 CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Constant)))
   CompilerError "#SDLx_StaticLibraryName must be defined to statically link " + #SDLx_LibName + "!"
-CompilerEndIf
-CompilerIf (#SDLx_DynamicLink And (Not Defined(SDLx_DynamicLibraryName, #PB_Constant)))
-  CompilerError "#SDLx_DynamicLibraryName must be defined to dynamically link " + #SDLx_LibName + "!"
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
@@ -147,6 +155,8 @@ PrototypeC   Proto_SDL_Quit()
 
 CompilerIf (#SDLx_DynamicLink)
 
+Global __SDLx_DynamicLibPath.s
+
 Global __SDLxLib.i = #Null
 Global __SDLx_Init.Proto_SDL_Init
 Global __SDLx_Quit.Proto_SDL_Quit
@@ -176,9 +186,12 @@ Procedure.i SDL_Init(flags.l)
   Protected Success.i = #False
   
   If (__SDLxLib = #Null)
-    __SDLxLib = OpenLibrary(#PB_Any, #SDLx_DynamicLibraryName)
+    If (__SDLx_DynamicLibPath = "")
+      __SDLx_DynamicLibPath = #SDLx_DynamicLibraryDefaultName
+    EndIf
+    __SDLxLib = OpenLibrary(#PB_Any, __SDLx_DynamicLibPath)
     If (Not __SDLxLib)
-      __SDLx_Debug("Failed to open SDL library '" + #SDLx_DynamicLibraryName + "'")
+      __SDLx_Debug("Failed to open SDL library '" + __SDLx_DynamicLibPath + "'")
     EndIf
   Else
     __SDLx_Debug("SDL_Init() called while already initialized")
@@ -220,6 +233,17 @@ CompilerEndIf
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
 
+Procedure.i SDLx_InitLibrary(LibraryFile.s, flags.l)
+  CompilerIf (#SDLx_DynamicLink)
+    If (__SDLxLib = #Null) ; Don't update lib path if it's currently loaded!
+      __SDLx_DynamicLibPath = LibraryFile
+    EndIf
+    ProcedureReturn (SDL_Init(flags))
+  CompilerElse
+    ProcedureReturn (SDL_Init(flags))
+  CompilerEndIf
+EndProcedure
+
 CompilerEndIf
 
 
@@ -229,8 +253,12 @@ CompilerEndIf
 
 
 ;-
-;- Main File Warning
+;- Template / Main File Warning
 
+;% DELETESTART
+MessageRequester(#PB_Compiler_Filename, "This template file is not intended to be used as-is." + #LF$ + #LF$ + "Please run 'SDLx_Build.pb' to generate the full IncludeFile.", #PB_MessageRequester_Warning)
+End
+;% DELETEEND
 CompilerIf (#PB_Compiler_IsMainFile)
   MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'examples' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
 CompilerEndIf

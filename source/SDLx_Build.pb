@@ -85,7 +85,7 @@ For MajorVersion = 2 To 3
                     Default
                       LineOut + Indentation + SDLFunction()\Name + " = GetFunction(__SDLxLib, " + #DQUOTE$ + SDLFunction()\Name + #DQUOTE$ + ")" + #OutputFileEOL$
                       If (#True)
-                        LineOut + Indentation + "CompilerIf (#SDLx_AssertAllFunctionLoads or #SDLx_RequireAllFunctionLoads)" + #OutputFileEOL$
+                        LineOut + Indentation + "CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)" + #OutputFileEOL$
                         LineOut + Indentation + Space(1*#IndentSpaces) + "If (" + SDLFunction()\Name + " = #Null)" + #OutputFileEOL$
                         LineOut + Indentation + Space(2*#IndentSpaces) + "__SDLx_Debug(" + #DQUOTE$ + "Failed to load SDL library function: '" + SDLFunction()\Name + "'" + #DQUOTE$ + ")" + #OutputFileEOL$
                         LineOut + Indentation + Space(2*#IndentSpaces) + "LoadFailed = #SDLx_RequireAllFunctionLoads" + #OutputFileEOL$
