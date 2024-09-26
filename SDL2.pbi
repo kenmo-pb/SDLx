@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-25 20:28:54 UTC
+; Generated 2024-09-26 03:35:39 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -65,9 +65,15 @@ CompilerEndIf
 CompilerIf (#True)
   Macro __SDLx_StructInt
     l ; use 32-bit PB Long for SDL struct "int" members
+  EndMacro)
+  Macro __SDLx_StructEnum
+    l ; use 32-bit PB Long for SDL struct enum members
   EndMacro
   Macro SDLx_Int
     l ; use 32-bit PB Long for SDL "int" args
+  EndMacro
+  Macro SDLx_Enum
+    l ; use 32-bit PB Long for SDL enum args
   EndMacro
 CompilerEndIf
 
@@ -436,8 +442,8 @@ EndEnumeration
 ;- SDL2 Structures
 
 Structure SDL_Keysym Align #PB_Structure_AlignC
-  scancode.l ; SDL_Scancode (enum)
-  sym.l ; SDL_Keycode (Sint32)
+  scancode.__SDLx_StructEnum ; SDL_Scancode (enum)
+  sym.l ; SDL_Keycode (typedef Sint32)
   mod.u
   unused.l
 EndStructure
@@ -512,15 +518,15 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;dgesture.SDL_DollarGestureEvent
     ;drop.SDL_DropEvent
     
-    padding.a[56] ; PB pointers never larger than 8 bytes
+    padding.a[56] ; PB pointers never larger than 8 bytes, so use this padding per SDL_events.h
   EndStructureUnion
 EndStructure
 
 Structure SDL_Rect Align #PB_Structure_AlignC
-  x.l
-  y.l
-  w.l
-  h.l
+  x.__SDLx_StructInt
+  y.__SDLx_StructInt
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
 EndStructure
 
 Structure SDL_version Align #PB_Structure_AlignC
@@ -531,17 +537,17 @@ EndStructure
 
 Structure SDL_Surface Align #PB_Structure_AlignC
   flags.l
-  *format
-  w.l
-  h.l
-  pitch.l
+  *format.SDL_PixelFormat
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
+  pitch.__SDLx_StructInt
   *pixels
   *userdata
-  locked.l
+  locked.__SDLx_StructInt
   *list_blitmap
   clip_rect.SDL_Rect
-  *map
-  refcount.l
+  *map.SDL_BlitMap
+  refcount.__SDLx_StructInt
 EndStructure
 
 Structure SDL_MessageBoxButtonData Align #PB_Structure_AlignC
@@ -603,47 +609,47 @@ PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 
 ;- - Display and Window Management
-PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.i, y.i, w.i, h.i, flags.l) ; returns *SDL_Window
+PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, x.SDLx_Int, y.SDLx_Int, w.SDLx_Int, h.SDLx_Int, flags.l) ; returns *SDL_Window
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
-PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, flags.l) ; returns 0 on success
+PrototypeC.l Proto_SDL_SetWindowFullscreen(*window.SDL_Window, flags.l) ; returns 0 on success
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
-PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.i, flags.l) ; returns *SDL_Renderer
+PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.SDLx_Int, flags.l) ; returns *SDL_Renderer
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns *SDL_Texture
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
-PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
-PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
-PrototypeC.i Proto_SDL_RenderCopy(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect) ; returns 0 on success
-PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
+PrototypeC.l Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
+PrototypeC.l Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
+PrototypeC.l Proto_SDL_RenderCopy(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect) ; returns 0 on success
+PrototypeC.l Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
-PrototypeC.i Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.i, h.i) ; returns 0 on success
+PrototypeC.l Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int) ; returns 0 on success
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_FreeSurface(*surface.SDL_Surface)
-PrototypeC.i Proto_SDL_LoadBMP_RW(*src.SDL_RWops, freesrc.i) ; returns *SDL_Surface
+PrototypeC.i Proto_SDL_LoadBMP_RW(*src.SDL_RWops, freesrc.SDLx_Int) ; returns *SDL_Surface
 
 ;- - Event Handling
-PrototypeC.i Proto_SDL_PeepEvents(*events.SDL_Event, numevents.i, action.l, minType.l, maxType.l) ; returns number of events
-PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event) ; returns 1 on success
+PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l) ; returns number of events
+PrototypeC.l Proto_SDL_PollEvent(*event.SDL_Event) ; returns 1 on success
 PrototypeC   Proto_SDL_PumpEvents()
-PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
+PrototypeC.l Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
-PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.INTEGER) ; returns pointer to Uint8 array
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns pointer to Uint8 array
 
 ;- - Mouse Support
-PrototypeC.l Proto_SDL_GetMouseState(*x.INTEGER, *y.INTEGER) ; returns Uint32 buttons bitmask
-PrototypeC.i Proto_SDL_ShowCursor(toggle.i)
+PrototypeC.l Proto_SDL_GetMouseState(*x.LONG, *y.LONG) ; returns Uint32 buttons bitmask
+PrototypeC.l Proto_SDL_ShowCursor(toggle.SDLx_Int)
 
 ;- - File I/O Abstraction
 PrototypeC.i Proto_SDL_RWFromFile(file.p-utf8, mode.p-utf8) ; returns *SDL_RWops
 
 ;- - Message Boxes
-PrototypeC.i Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns 0 on success
-PrototypeC.i Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns 0 on success
+PrototypeC.l Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns 0 on success
+PrototypeC.l Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns 0 on success
 
 
 
