@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-26 03:35:39 UTC
+; Generated 2024-09-26 04:17:45 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -210,6 +210,74 @@ EndEnumeration
 
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
+
+Enumeration ; SDL_TextureAccess
+  #SDL_TEXTUREACCESS_STATIC
+  #SDL_TEXTUREACCESS_STREAMING
+  #SDL_TEXTUREACCESS_TARGET
+EndEnumeration
+
+Macro SDL_DEFINE_PIXELFORMAT(type, order, layout, bits, bytes)
+  ((1 << 28) | ((type) << 24) | ((order) << 20) | ((layout) << 16) | ((bits) << 8) | ((bytes) << 0))
+EndMacro
+
+Enumeration ; SDL_PixelType
+  #SDL_PIXELTYPE_UNKNOWN
+  #SDL_PIXELTYPE_INDEX1
+  #SDL_PIXELTYPE_INDEX4
+  #SDL_PIXELTYPE_INDEX8
+  #SDL_PIXELTYPE_PACKED8
+  #SDL_PIXELTYPE_PACKED16
+  #SDL_PIXELTYPE_PACKED32
+  #SDL_PIXELTYPE_ARRAYU8
+  #SDL_PIXELTYPE_ARRAYU16
+  #SDL_PIXELTYPE_ARRAYU32
+  #SDL_PIXELTYPE_ARRAYF16
+  #SDL_PIXELTYPE_ARRAYF32
+  #SDL_PIXELTYPE_INDEX2
+EndEnumeration
+
+Enumeration ; SDL_PackedOrder
+  #SDL_PACKEDORDER_NONE
+  #SDL_PACKEDORDER_XRGB
+  #SDL_PACKEDORDER_RGBX
+  #SDL_PACKEDORDER_ARGB
+  #SDL_PACKEDORDER_RGBA
+  #SDL_PACKEDORDER_XBGR
+  #SDL_PACKEDORDER_BGRX
+  #SDL_PACKEDORDER_ABGR
+  #SDL_PACKEDORDER_BGRA
+EndEnumeration
+
+Enumeration ; SDL_PackedLayout
+  #SDL_PACKEDLAYOUT_NONE
+  #SDL_PACKEDLAYOUT_332
+  #SDL_PACKEDLAYOUT_4444
+  #SDL_PACKEDLAYOUT_1555
+  #SDL_PACKEDLAYOUT_5551
+  #SDL_PACKEDLAYOUT_565
+  #SDL_PACKEDLAYOUT_8888
+  #SDL_PACKEDLAYOUT_2101010
+  #SDL_PACKEDLAYOUT_1010102
+EndEnumeration
+
+Enumeration ; SDL_PixelFormatEnum
+  ; ...
+  
+  ;#SDL_PIXELFORMAT_ARGB8888 = SDL_DEFINE_PIXELFORMAT(#SDL_PIXELTYPE_PACKED32, #SDL_PACKEDORDER_ARGB, #SDL_PACKEDLAYOUT_8888, 32, 4)
+  #SDL_PIXELFORMAT_ABGR8888 = SDL_DEFINE_PIXELFORMAT(#SDL_PIXELTYPE_PACKED32, #SDL_PACKEDORDER_ABGR, #SDL_PACKEDLAYOUT_8888, 32, 4)
+  
+  ; ...
+  
+  CompilerIf (#False) ; Big-Endian systems
+    ; ...
+  CompilerElse ; Little-Endian systems (always true for PureBasic?)
+    #SDL_PIXELFORMAT_RGBA32 = #SDL_PIXELFORMAT_ABGR8888
+    ; ...
+  CompilerEndIf
+  
+  ; ...
+EndEnumeration
 
 ;- - Event Handling
 
@@ -617,15 +685,18 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, index.SDLx_Int, flags.l) ; returns *SDL_Renderer
+PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.l, access.SDLx_Int, w.SDLx_Int, h.SDLx_Int) ; returns *SDL_Texture
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns *SDL_Texture
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
+PrototypeC.l Proto_SDL_LockTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixelsPtr, *pitch.LONG)
 PrototypeC.l Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a) ; returns 0 on success
 PrototypeC.l Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns 0 on success
 PrototypeC.l Proto_SDL_RenderCopy(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect) ; returns 0 on success
 PrototypeC.l Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_Rect) ; returns 0 on success
 PrototypeC   Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.l Proto_SDL_RenderSetLogicalSize(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int) ; returns 0 on success
+PrototypeC   Proto_SDL_UnlockTexture(*texture.SDL_Texture)
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_FreeSurface(*surface.SDL_Surface)
@@ -679,15 +750,18 @@ Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
+Global SDL_CreateTexture.Proto_SDL_CreateTexture
 Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
 Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
+Global SDL_LockTexture.Proto_SDL_LockTexture
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_RenderClear.Proto_SDL_RenderClear
 Global SDL_RenderCopy.Proto_SDL_RenderCopy
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderSetLogicalSize.Proto_SDL_RenderSetLogicalSize
+Global SDL_UnlockTexture.Proto_SDL_UnlockTexture
 Global SDL_FreeSurface.Proto_SDL_FreeSurface
 Global SDL_LoadBMP_RW.Proto_SDL_LoadBMP_RW
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
@@ -817,6 +891,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_CreateTexture = GetFunction(__SDLxLib, "SDL_CreateTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_CreateTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTexture'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_CreateTextureFromSurface = #Null)
@@ -835,6 +916,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_DestroyTexture = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyTexture'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_LockTexture = GetFunction(__SDLxLib, "SDL_LockTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_LockTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_LockTexture'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -877,6 +965,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_RenderSetLogicalSize = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderSetLogicalSize'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_UnlockTexture = GetFunction(__SDLxLib, "SDL_UnlockTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_UnlockTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_UnlockTexture'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
