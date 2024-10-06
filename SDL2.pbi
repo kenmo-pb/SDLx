@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-09-26 04:17:45 UTC
+; Generated 2024-10-05 22:53:58 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -86,12 +86,28 @@ CompilerEndIf
 #SDLx_IncludeFilename = #PB_Compiler_Filename
 
 CompilerSelect (#PB_Compiler_OS)
+  CompilerCase #PB_OS_Windows
+    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
+      #SDLx_DynamicLibraryDefaultName = "SDL2.dll"
+    CompilerEndIf
+    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
+      #SDLx_StaticLibraryName = "SDL2.lib"
+    CompilerEndIf
+    
   CompilerCase #PB_OS_Linux
     CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
       #SDLx_DynamicLibraryDefaultName = "libSDL2.so"
     CompilerEndIf
     CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
       ;#SDLx_StaticLibraryName = ""
+    CompilerEndIf
+    
+  CompilerCase #PB_OS_MacOS
+    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
+      ;#SDLx_DynamicLibraryDefaultName = ""
+    CompilerEndIf
+    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
+      #SDLx_StaticLibraryName = "Frameworks/SDL2.framework/SDL2"
     CompilerEndIf
 CompilerEndSelect
 

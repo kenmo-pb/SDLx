@@ -20,6 +20,17 @@ EndStructure
 Global NewList SDLFunction.SDLFunctionStruct()
 
 
+CompilerIf (#PB_Compiler_Version < 610)
+  CompilerIf (Not Defined(time, #PB_Procedure))
+    ImportC ""
+      time(*seconds.INTEGER = #Null)
+    EndImport
+  CompilerEndIf
+  
+  Macro DateUTC()
+    time()
+  EndMacro
+CompilerEndIf
 
 
 
