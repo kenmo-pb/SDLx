@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2024-10-05 22:53:58 UTC
+; Generated 2024-10-06 02:06:13 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -794,6 +794,54 @@ Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
 
 
 CompilerEndIf
+
+;-
+;- Static Imports
+
+CompilerIf (#SDLx_StaticLink)
+
+ImportC #SDLx_StaticLibraryName
+  
+  SDL_GetVersion(*ver.SDL_version)
+  SDL_Init.i(flags.l)
+  SDL_InitSubSystem.i(flags.l)
+  SDL_Quit()
+  SDL_QuitSubSystem(flags.l)
+  SDL_CreateWindow.i(title.p-utf8, x.SDLx_Int, y.SDLx_Int, w.SDLx_Int, h.SDLx_Int, flags.l)
+  SDL_DestroyWindow(*window.SDL_Window)
+  SDL_HideWindow(*window.SDL_Window)
+  SDL_SetWindowFullscreen.l(*window.SDL_Window, flags.l)
+  SDL_ShowWindow(*window.SDL_Window)
+  SDL_CreateRenderer.i(*window.SDL_Window, index.SDLx_Int, flags.l)
+  SDL_CreateTexture.i(*renderer.SDL_Renderer, format.l, access.SDLx_Int, w.SDLx_Int, h.SDLx_Int)
+  SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
+  SDL_DestroyRenderer(*renderer.SDL_Renderer)
+  SDL_DestroyTexture(*texture.SDL_Texture)
+  SDL_LockTexture.l(*texture.SDL_Texture, *rect.SDL_Rect, *pixelsPtr, *pitch.LONG)
+  SDL_SetRenderDrawColor.l(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
+  SDL_RenderClear.l(*renderer.SDL_Renderer)
+  SDL_RenderCopy.l(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_Rect, *destrect.SDL_Rect)
+  SDL_RenderFillRect.l(*renderer.SDL_Renderer, *rect.SDL_Rect)
+  SDL_RenderPresent(*renderer.SDL_Renderer)
+  SDL_RenderSetLogicalSize.l(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int)
+  SDL_UnlockTexture(*texture.SDL_Texture)
+  SDL_FreeSurface(*surface.SDL_Surface)
+  SDL_LoadBMP_RW.i(*src.SDL_RWops, freesrc.SDLx_Int)
+  SDL_PeepEvents.l(*events.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
+  SDL_PollEvent.l(*event.SDL_Event)
+  SDL_PumpEvents()
+  SDL_PushEvent.l(*event.SDL_Event)
+  SDL_GetKeyboardState.i(*numkeys.LONG)
+  SDL_GetMouseState.l(*x.LONG, *y.LONG)
+  SDL_ShowCursor.l(toggle.SDLx_Int)
+  SDL_RWFromFile.i(file.p-utf8, mode.p-utf8)
+  SDL_ShowMessageBox.l(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
+  SDL_ShowSimpleMessageBox.l(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window)
+
+EndImport
+
+CompilerEndIf
+
 
 
 

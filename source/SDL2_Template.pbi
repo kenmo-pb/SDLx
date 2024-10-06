@@ -770,6 +770,21 @@ Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 
 CompilerEndIf
 
+;-
+;- Static Imports
+
+CompilerIf (#SDLx_StaticLink)
+
+ImportC #SDLx_StaticLibraryName
+  
+;% INDENT=1
+;% STATIC_IMPORTS
+;% INDENT=0
+EndImport
+
+CompilerEndIf
+
+
 
 
 ;-

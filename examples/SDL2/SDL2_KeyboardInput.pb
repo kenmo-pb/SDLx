@@ -4,6 +4,7 @@
 
 ;-
 
+;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
 XIncludeFile "../../SDL2.pbi"
 

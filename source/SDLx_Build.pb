@@ -2,6 +2,7 @@
 ; | SDLx_Build |
 ; +------------+
 ; | 2024-09-23 : Creation (PureBasic 6.12)
+; | 2024-10-05 : Added statically linked lib function imports
 
 ;-
 
@@ -85,6 +86,17 @@ For MajorVersion = 2 To 3
                     Default
                       LineOut + "Global " + SDLFunction()\Name + "." + #PrototypeNamePrefix + SDLFunction()\Name + #OutputFileEOL$
                   EndSelect
+                Next
+              
+              Case "STATIC_IMPORTS"
+                LineOut = ""
+                ForEach SDLFunction()
+                  LineOut + Indentation + SDLFunction()\Name
+                  If (SDLFunction()\ReturnType)
+                    LineOut + "." + SDLFunction()\ReturnType
+                  EndIf
+                  LineOut + "(" + SDLFunction()\ParamString + ")"
+                  LineOut + #OutputFileEOL$
                 Next
               
               Case "LOAD_DYNAMIC_FUNCTIONS"

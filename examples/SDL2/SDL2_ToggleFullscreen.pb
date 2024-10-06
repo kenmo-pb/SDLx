@@ -4,6 +4,7 @@
 
 ;-
 
+;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
 XIncludeFile "../../SDL2.pbi"
 
@@ -82,7 +83,7 @@ If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
                   SDL_PushEvent(@event)
                 EndIf
                 
-              Case #SDL_SCANCODE_F ; Press [F] to toggle between Windows and Fullscreen Desktop!
+              Case #SDL_SCANCODE_F, #SDL_SCANCODE_F11 ; Press [F] or [F11] to toggle between Windows and Fullscreen Desktop!
                 If (IsFullscreen)
                   SDL_SetWindowFullscreen(*window, #SDLx_WINDOW_NOT_FULLSCREEN)
                   SDL_ShowCursor(#SDL_ENABLE)
