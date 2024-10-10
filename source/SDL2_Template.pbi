@@ -121,10 +121,10 @@ CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Consta
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
-  #SDLx_RequireAllFunctionLoads = #True
+  #SDLx_RequireAllFunctionLoads = #False
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_AssertAllFunctionLoads, #PB_Constant))
-  #SDLx_AssertAllFunctionLoads = #True
+  #SDLx_AssertAllFunctionLoads = #PB_Compiler_Debugger
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_IncludeHelperProcedures, #PB_Constant))
@@ -749,7 +749,7 @@ PrototypeC.l Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf
 
 
 ;-
-;- PB Wrapper Variables
+;- Dynamic Link Variables
 
 CompilerIf (#SDLx_DynamicLink)
 
@@ -758,6 +758,8 @@ Global __SDLx_DynamicLibPath.s
 Global __SDLxLib.i = #Null
 Global __SDLx_Init.Proto_SDL_Init
 Global __SDLx_Quit.Proto_SDL_Quit
+
+Global __SDLx_InitCallback = #Null
 
 ;% DECLARE_DYNAMIC_PROTOTYPES
 
@@ -771,7 +773,7 @@ Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 CompilerEndIf
 
 ;-
-;- Static Imports
+;- Static Link Imports
 
 CompilerIf (#SDLx_StaticLink)
 
@@ -838,26 +840,31 @@ Procedure.i SDL_Init(flags.l)
 ;% LOAD_DYNAMIC_FUNCTIONS
         
         If (Not LoadFailed)
-          Result = __SDLx_Init(flags)
-          CompilerIf (#True)
-            If (Result = #SDLx_INIT_SUCCESS)
-              Protected LinkedVer.SDL_version
-              SDL_GetVersion(@LinkedVer)
-              If (LinkedVer\major = #SDL_MAJOR_VERSION)
-                If (LinkedVer\minor < #SDL_MINOR_VERSION - 1)
-                  Protected Message.s = "Warning: Dynamically linked SDL ("
-                  Message + Str(LinkedVer\major) + "." + Str(LinkedVer\minor) + "." + Str(LinkedVer\patch)
-                  Message + ") is older than SDLx compiled version ("
-                  Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_PATCHLEVEL) + ")"
-                  __SDLx_Debug(Message)
+          If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
+            Result = __SDLx_Init(flags)
+            CompilerIf (#True)
+              If (Result = #SDLx_INIT_SUCCESS)
+                Protected LinkedVer.SDL_version
+                SDL_GetVersion(@LinkedVer)
+                If (LinkedVer\major = #SDL_MAJOR_VERSION)
+                  If (LinkedVer\minor < #SDL_MINOR_VERSION - 1)
+                    Protected Message.s = "Warning: Dynamically linked SDL ("
+                    Message + Str(LinkedVer\major) + "." + Str(LinkedVer\minor) + "." + Str(LinkedVer\patch)
+                    Message + ") is older than SDLx compiled version ("
+                    Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_PATCHLEVEL) + ")"
+                    __SDLx_Debug(Message)
+                  EndIf
+                Else
+                  __SDLx_Debug("Dynamically linked SDL version (" + Str(LinkedVer\major) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
+                  SDL_Quit()
+                  Result = -1
                 EndIf
-              Else
-                __SDLx_Debug("Dynamically linked SDL version (" + Str(LinkedVer\major) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
-                SDL_Quit()
-                Result = -1
               EndIf
-            EndIf
-          CompilerEndIf
+            CompilerEndIf
+          Else
+            SDL_Quit()
+            __SDLx_Debug("SDL_Init aborted by callback returning non-zero")
+          EndIf
         EndIf
       Else
         __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Quit" + "'")
@@ -904,6 +911,18 @@ Procedure.s SDLx_GetVersionString()
     Result = Str(ver\major) + "." + Str(ver\minor) + "." + Str(ver\patch)
   EndIf
   ProcedureReturn (Result)
+EndProcedure
+
+Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
+  CompilerIf (#SDLx_StaticLink)
+    Static HasRun.i = #False
+    If (*Procedure And (Not HasRun))
+      CallFunctionFast(*Procedure)
+      HasRun = #True
+    EndIf
+  CompilerElse
+    __SDLx_InitCallback = *Procedure
+  CompilerEndIf
 EndProcedure
 
 Procedure.i SDLx_InitLibrary(LibraryFile.s, flags.l)
