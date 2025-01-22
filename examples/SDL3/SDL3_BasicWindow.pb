@@ -16,10 +16,9 @@ XIncludeFile "../../SDL3.pbi"
 If (SDL_Init(#SDL_INIT_VIDEO))
   
   ; Open a basic window...
-  CompilerIf (#False) ; TODO
-  *window = SDL_CreateWindow(#PB_Compiler_Filename, #SDL_WINDOWPOS_CENTERED, #SDL_WINDOWPOS_CENTERED, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
+  *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
   If (*window)
-    *renderer = SDL_CreateRenderer(*window, #SDLx_RENDERERINDEX_DEFAULT, #SDL_RENDERER_ACCELERATED)
+    *renderer = SDL_CreateRenderer(*window, #Null)
     If (*renderer)
       
       ; Fill white background
@@ -28,7 +27,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
       SDL_RenderClear(*renderer)
       
       ; Draw a 4x4 grid of squares, color gradient black to green
-      rect.SDL_Rect
+      rect.SDL_FRect
       rect\w = #RectSize - 2*#BorderSize
       rect\h = #RectSize - 2*#BorderSize
       For y = 0 To 3
@@ -43,7 +42,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
       
       ; Wait until Quit Requested (typically window close button, or Alt+F4, etc.)
       SDL_RenderPresent(*renderer)
-      While (Not SDL_QuitRequested())
+      While (Not SDLx_QuitRequested())
         Delay(10)
       Wend
       
@@ -52,7 +51,6 @@ If (SDL_Init(#SDL_INIT_VIDEO))
     
     SDL_DestroyWindow(*window)
   EndIf
-  CompilerEndIf
   
   SDL_Quit()
 EndIf

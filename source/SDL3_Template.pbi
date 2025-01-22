@@ -165,19 +165,77 @@ EndMacro
 ;- - Initialization and Shutdown
 
 Enumeration ; SDL_InitFlags for SDL_Init()
-  #SDL_INIT_AUDIO          = $00000010 ; implies SDL_INIT_EVENTS
-  #SDL_INIT_VIDEO          = $00000020 ; implies SDL_INIT_EVENTS
-  #SDL_INIT_JOYSTICK       = $00000200 ; implies SDL_INIT_EVENTS
-  #SDL_INIT_HAPTIC         = $00001000
-  #SDL_INIT_GAMEPAD        = $00002000 ; implies SDL_INIT_JOYSTICK
-  #SDL_INIT_EVENTS         = $00004000
-  #SDL_INIT_SENSOR         = $00008000 ; implies SDL_INIT_EVENTS
-  #SDL_INIT_CAMERA         = $00010000 ; implies SDL_INIT_EVENTS
+  #SDL_INIT_AUDIO    = $00000010 ; implies SDL_INIT_EVENTS
+  #SDL_INIT_VIDEO    = $00000020 ; implies SDL_INIT_EVENTS
+  #SDL_INIT_JOYSTICK = $00000200 ; implies SDL_INIT_EVENTS
+  #SDL_INIT_HAPTIC   = $00001000
+  #SDL_INIT_GAMEPAD  = $00002000 ; implies SDL_INIT_JOYSTICK
+  #SDL_INIT_EVENTS   = $00004000
+  #SDL_INIT_SENSOR   = $00008000 ; implies SDL_INIT_EVENTS
+  #SDL_INIT_CAMERA   = $00010000 ; implies SDL_INIT_EVENTS
+EndEnumeration
+
+Enumeration
+  #SDL_FALSE = 0
+  #SDL_TRUE  = 1
 EndEnumeration
 
 ;- - Display and Window Management
 
+Enumeration ; SDL_WindowFlags for SDL_CreateWindow()
+  #SDL_WINDOW_FULLSCREEN          = $00000001
+  #SDL_WINDOW_OPENGL              = $00000002
+  #SDL_WINDOW_OCCLUDED            = $00000004
+  #SDL_WINDOW_HIDDEN              = $00000008
+  #SDL_WINDOW_BORDERLESS          = $00000010
+  #SDL_WINDOW_RESIZABLE           = $00000020
+  #SDL_WINDOW_MINIMIZED           = $00000040
+  #SDL_WINDOW_MAXIMIZED           = $00000080
+  #SDL_WINDOW_MOUSE_GRABBED       = $00000100
+  #SDL_WINDOW_INPUT_FOCUS         = $00000200
+  #SDL_WINDOW_MOUSE_FOCUS         = $00000400
+  #SDL_WINDOW_EXTERNAL            = $00000800
+  #SDL_WINDOW_MODAL               = $00001000
+  #SDL_WINDOW_HIGH_PIXEL_DENSITY  = $00002000
+  #SDL_WINDOW_MOUSE_CAPTURE       = $00004000
+  #SDL_WINDOW_MOUSE_RELATIVE_MODE = $00008000
+  #SDL_WINDOW_ALWAYS_ON_TOP       = $00010000
+  #SDL_WINDOW_UTILITY             = $00020000
+  #SDL_WINDOW_TOOLTIP             = $00040000
+  #SDL_WINDOW_POPUP_MENU          = $00080000
+  #SDL_WINDOW_KEYBOARD_GRABBED    = $00100000
+  #SDL_WINDOW_VULKAN              = $01000000
+  #SDL_WINDOW_METAL               = $02000000
+  #SDL_WINDOW_TRANSPARENT         = $04000000
+  #SDL_WINDOW_NOT_FOCUSABLE       = $08000000
+EndEnumeration
+
 ;- - 2D Accelerated Rendering
+
+#SDL_ALPHA_TRANSPARENT = 0
+#SDL_ALPHA_OPAQUE      = 255
+
+;- - Event Handling
+
+Enumeration ; SDL_EventType
+  #SDL_EVENT_FIRST = 0
+  
+  #SDL_EVENT_QUIT = $100
+  
+  ; ...
+  
+  #SDL_EVENT_USER = $8000
+  
+  #SDL_EVENT_LAST = $FFFF
+  
+  #SDL_EVENT_ENUM_PADDING = $7FFFFFFF
+EndEnumeration
+
+Enumeration ; SDL_EventAction
+  #SDL_ADDEVENT
+  #SDL_PEEKEVENT
+  #SDL_GETEVENT
+EndEnumeration
 
 
 
@@ -189,6 +247,52 @@ EndEnumeration
 
 ;-
 ;- SDL3 Structures
+
+Structure SDL_Event Align #PB_Structure_AlignC
+  StructureUnion
+    type.l
+    
+    ;common.SDL_CommonEvent
+    ;display.SDL_DisplayEvent
+    ;window.SDL_WindowEvent
+    ;kdevice.SDL_KeyboardDeviceEvent
+    ;key.SDL_KeyboardEvent
+    ;edit.SDL_TextEditingEvent
+    ;edit_candidates.SDL_TextEditingCandidatesEvent
+    ;text.SDL_TextInputEvent
+    ;mdevice.SDL_MouseDeviceEvent
+    ;motion.SDL_MouseMotionEvent
+    ;button.SDL_MouseButtonEvent
+    ;wheel.SDL_MouseWheelEvent
+    ; ...
+    ;quit.SDL_QuitEvent
+    ; ...
+    
+    padding.a[128]
+  EndStructureUnion
+EndStructure
+
+Structure SDL_Rect Align #PB_Structure_AlignC
+  x.__SDLx_StructInt
+  y.__SDLx_StructInt
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
+EndStructure
+
+Structure SDL_FRect Align #PB_Structure_AlignC
+  x.f
+  y.f
+  w.f
+  h.f
+EndStructure
+
+Structure SDL_Renderer
+  ;
+EndStructure
+
+Structure SDL_Window
+  ;
+EndStructure
 
 
 
@@ -207,9 +311,24 @@ PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 
 ;- - Display and Window Management
+PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q) ; flags now 64-bit
+PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
+PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
+PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
+PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
+PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
+PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 
+;- - Event Handling
+PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
+PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event)
+PrototypeC   Proto_SDL_PumpEvents()
+PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 
 
@@ -340,6 +459,12 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure.i SDLx_QuitRequested()
+  ; SDL2 SDL_QuitRequested() C macro was officially removed in SDL3
+  SDL_PumpEvents()
+  ProcedureReturn (Bool(SDL_PeepEvents(#Null, 0, #SDL_PEEKEVENT, #SDL_EVENT_QUIT, #SDL_EVENT_QUIT) > 0))
+EndProcedure
 
 Procedure.s SDLx_CompiledVersionString()
   ProcedureReturn (Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION))
