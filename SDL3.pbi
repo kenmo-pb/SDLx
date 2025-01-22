@@ -1,14 +1,12 @@
-﻿;%===================================================================================%
-;% Note: This is the TEMPLATE FILE which is used to generate the complete 'SDL3.pbi' %
-;%===================================================================================%
-; +----------+
+﻿; +----------+
 ; | SDL3.pbi |
 ; +----------+
 ; | 2024-09-24 : Creation (PureBasic 6.12)
 
-;% MODIFY_DISCLAIMER
+; Warning: This file should not be directly modified!
+; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-;% GEN_TIMESTAMP
+; Generated 2025-01-22 16:11:19 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -231,10 +229,11 @@ Global __SDLx_Quit.Proto_SDL_Quit
 
 Global __SDLx_InitCallback = #Null
 
-;% DECLARE_DYNAMIC_PROTOTYPES
+Global SDL_GetVersion.Proto_SDL_GetVersion
+Global SDL_InitSubSystem.Proto_SDL_InitSubSystem
+Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 
-;% DELETESTART
-;% DELETEEND
+
 
 CompilerEndIf
 
@@ -245,9 +244,12 @@ CompilerIf (#SDLx_StaticLink)
 
 ImportC #SDLx_StaticLibraryName
   
-;% INDENT=1
-;% STATIC_IMPORTS
-;% INDENT=0
+  SDL_GetVersion.i()
+  SDL_Init.i(flags.l)
+  SDL_InitSubSystem.i(flags.l)
+  SDL_Quit()
+  SDL_QuitSubSystem(flags.l)
+
 EndImport
 
 CompilerEndIf
@@ -291,8 +293,28 @@ Procedure.i SDL_Init(flags.l)
       If (__SDLx_Quit)
         Protected LoadFailed.i = #False
         
-;% INDENT=4
-;% LOAD_DYNAMIC_FUNCTIONS
+        SDL_GetVersion = GetFunction(__SDLxLib, "SDL_GetVersion")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetVersion = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetVersion'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_InitSubSystem = GetFunction(__SDLxLib, "SDL_InitSubSystem")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_InitSubSystem = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_InitSubSystem'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_QuitSubSystem = GetFunction(__SDLxLib, "SDL_QuitSubSystem")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_QuitSubSystem = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_QuitSubSystem'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        
         
         If (Not LoadFailed)
           If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
@@ -388,10 +410,6 @@ CompilerEndIf
 ;-
 ;- Template / Main File Warning
 
-;% DELETESTART
-MessageRequester(#PB_Compiler_Filename, "This template file is not intended to be used as-is." + #LF$ + #LF$ + "Please run 'SDLx_Build.pb' to generate the full IncludeFile.", #PB_MessageRequester_Warning)
-End
-;% DELETEEND
 CompilerIf (#PB_Compiler_IsMainFile)
   MessageRequester(#PB_Compiler_Filename, "This IncludeFile is not intended to be run by itself." + #LF$ + #LF$ + "See the 'examples' subfolder, or include this in your own project!", #PB_MessageRequester_Warning)
 CompilerEndIf
