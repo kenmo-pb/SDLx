@@ -515,6 +515,7 @@ PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
 
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_HideCursor()
@@ -646,6 +647,14 @@ CompilerEndIf
 
 ;-
 ;- Helper Structures
+
+CompilerIf (#True)
+
+Structure SDLx_KeyboardStateArray
+  ks.a[0]
+EndStructure
+
+CompilerEndIf
 
 ;-
 ;- Helper Procedures

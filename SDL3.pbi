@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 15:35:46 UTC
+; Generated 2025-01-24 17:13:53 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -513,6 +513,7 @@ PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
 ;- - Keyboard Support
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
 
 ;- - Mouse Support
 PrototypeC.l Proto_SDL_HideCursor()
@@ -556,6 +557,7 @@ Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
 Global SDL_PushEvent.Proto_SDL_PushEvent
+Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
 
@@ -591,6 +593,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_PollEvent.i(*event.SDL_Event)
   SDL_PumpEvents()
   SDL_PushEvent.i(*event.SDL_Event)
+  SDL_GetKeyboardState.i(*numkeys.LONG)
   SDL_HideCursor.l()
   SDL_ShowCursor.l()
 
@@ -770,6 +773,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_GetKeyboardState = GetFunction(__SDLxLib, "SDL_GetKeyboardState")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetKeyboardState = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetKeyboardState'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_HideCursor = GetFunction(__SDLxLib, "SDL_HideCursor")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_HideCursor = #Null)
@@ -827,6 +837,14 @@ CompilerEndIf
 
 ;-
 ;- Helper Structures
+
+CompilerIf (#True)
+
+Structure SDLx_KeyboardStateArray
+  ks.a[0]
+EndStructure
+
+CompilerEndIf
 
 ;-
 ;- Helper Procedures
