@@ -229,6 +229,8 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+#SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
+
 ;- - Event Handling
 
 Enumeration ; SDL_EventType
@@ -425,6 +427,29 @@ Enumeration ; SDL_MouseWheelDirection
   #SDL_MOUSEWHEEL_FLIPPED
 EndEnumeration
 
+;- - Message Boxes
+
+Enumeration ; SDL_MessageBoxFlags
+  #SDL_MESSAGEBOX_ERROR       = $00000010
+  #SDL_MESSAGEBOX_WARNING     = $00000020
+  #SDL_MESSAGEBOX_INFORMATION = $00000040
+  
+  #SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT = $00000080
+  #SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT = $00000100
+EndEnumeration
+
+Enumeration ; SDL_MessageBoxColorType
+  #SDL_MESSAGEBOX_COLOR_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_TEXT
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BORDER
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED
+  #SDL_MESSAGEBOX_COLOR_COUNT
+EndEnumeration
+
+#SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = $00000001
+#SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = $00000002
+
 
 
 
@@ -524,7 +549,7 @@ Structure SDL_FRect Align #PB_Structure_AlignC
   h.f
 EndStructure
 
-Structure SDL_Surface
+Structure SDL_Surface Align #PB_Structure_AlignC
   flags.l ; SDL_SurfaceFlags
   format.l ; SDL_PixelFormat
   w.__SDLx_StructInt
@@ -533,6 +558,32 @@ Structure SDL_Surface
   *pixels
   refcount.__SDLx_StructInt
   *reserved
+EndStructure
+
+Structure SDL_MessageBoxButtonData Align #PB_Structure_AlignC
+  flags.l ; SDL_MessageBoxButtonFlags
+  buttonID.__SDLx_StructInt
+  *text
+EndStructure
+
+Structure SDL_MessageBoxColor Align #PB_Structure_AlignC
+  r.a
+  g.a
+  b.a
+EndStructure
+
+Structure SDL_MessageBoxColorScheme Align #PB_Structure_AlignC
+  colors.SDL_MessageBoxColor[#SDL_MESSAGEBOX_COLOR_COUNT]
+EndStructure
+
+Structure SDL_MessageBoxData Align #PB_Structure_AlignC
+  flags.l ; SDL_MessageBoxFlags
+  *window
+  *title
+  *message
+  numbuttons.__SDLx_StructInt
+  *buttons
+  *colorScheme
 EndStructure
 
 Structure SDL_Renderer
@@ -576,6 +627,7 @@ PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8)
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
@@ -599,6 +651,10 @@ PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
 PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT)
 PrototypeC.i Proto_SDL_HideCursor()
 PrototypeC.i Proto_SDL_ShowCursor()
+
+;- - Message Boxes
+PrototypeC.i Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window)
+PrototypeC.i Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
 
 
 

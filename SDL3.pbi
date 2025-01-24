@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 19:00:28 UTC
+; Generated 2025-01-24 20:11:00 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -227,6 +227,8 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+#SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
+
 ;- - Event Handling
 
 Enumeration ; SDL_EventType
@@ -423,6 +425,29 @@ Enumeration ; SDL_MouseWheelDirection
   #SDL_MOUSEWHEEL_FLIPPED
 EndEnumeration
 
+;- - Message Boxes
+
+Enumeration ; SDL_MessageBoxFlags
+  #SDL_MESSAGEBOX_ERROR       = $00000010
+  #SDL_MESSAGEBOX_WARNING     = $00000020
+  #SDL_MESSAGEBOX_INFORMATION = $00000040
+  
+  #SDL_MESSAGEBOX_BUTTONS_LEFT_TO_RIGHT = $00000080
+  #SDL_MESSAGEBOX_BUTTONS_RIGHT_TO_LEFT = $00000100
+EndEnumeration
+
+Enumeration ; SDL_MessageBoxColorType
+  #SDL_MESSAGEBOX_COLOR_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_TEXT
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BORDER
+  #SDL_MESSAGEBOX_COLOR_BUTTON_BACKGROUND
+  #SDL_MESSAGEBOX_COLOR_BUTTON_SELECTED
+  #SDL_MESSAGEBOX_COLOR_COUNT
+EndEnumeration
+
+#SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = $00000001
+#SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = $00000002
+
 
 
 
@@ -522,7 +547,7 @@ Structure SDL_FRect Align #PB_Structure_AlignC
   h.f
 EndStructure
 
-Structure SDL_Surface
+Structure SDL_Surface Align #PB_Structure_AlignC
   flags.l ; SDL_SurfaceFlags
   format.l ; SDL_PixelFormat
   w.__SDLx_StructInt
@@ -531,6 +556,32 @@ Structure SDL_Surface
   *pixels
   refcount.__SDLx_StructInt
   *reserved
+EndStructure
+
+Structure SDL_MessageBoxButtonData Align #PB_Structure_AlignC
+  flags.l ; SDL_MessageBoxButtonFlags
+  buttonID.__SDLx_StructInt
+  *text
+EndStructure
+
+Structure SDL_MessageBoxColor Align #PB_Structure_AlignC
+  r.a
+  g.a
+  b.a
+EndStructure
+
+Structure SDL_MessageBoxColorScheme Align #PB_Structure_AlignC
+  colors.SDL_MessageBoxColor[#SDL_MESSAGEBOX_COLOR_COUNT]
+EndStructure
+
+Structure SDL_MessageBoxData Align #PB_Structure_AlignC
+  flags.l ; SDL_MessageBoxFlags
+  *window
+  *title
+  *message
+  numbuttons.__SDLx_StructInt
+  *buttons
+  *colorScheme
 EndStructure
 
 Structure SDL_Renderer
@@ -574,6 +625,7 @@ PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8)
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
@@ -597,6 +649,10 @@ PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
 PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT)
 PrototypeC.i Proto_SDL_HideCursor()
 PrototypeC.i Proto_SDL_ShowCursor()
+
+;- - Message Boxes
+PrototypeC.i Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window)
+PrototypeC.i Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
 
 
 
@@ -630,6 +686,7 @@ Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
 Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
 Global SDL_RenderClear.Proto_SDL_RenderClear
+Global SDL_RenderDebugText.Proto_SDL_RenderDebugText
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderTexture.Proto_SDL_RenderTexture
@@ -645,6 +702,8 @@ Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
+Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
 
 
 
@@ -672,6 +731,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
   SDL_DestroyTexture(*texture.SDL_Texture)
   SDL_RenderClear.i(*renderer.SDL_Renderer)
+  SDL_RenderDebugText.i(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8)
   SDL_RenderFillRect.i(*renderer.SDL_Renderer, *rect.SDL_FRect)
   SDL_RenderPresent.i(*renderer.SDL_Renderer)
   SDL_RenderTexture.i(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
@@ -687,6 +747,8 @@ ImportC #SDLx_StaticLibraryName
   SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
   SDL_HideCursor.i()
   SDL_ShowCursor.i()
+  SDL_ShowSimpleMessageBox.i(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window)
+  SDL_ShowMessageBox.i(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
 
 EndImport
 
@@ -822,6 +884,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_RenderDebugText = GetFunction(__SDLxLib, "SDL_RenderDebugText")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RenderDebugText = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderDebugText'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_RenderFillRect = GetFunction(__SDLxLib, "SDL_RenderFillRect")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_RenderFillRect = #Null)
@@ -924,6 +993,20 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_ShowCursor = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowCursor'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_ShowSimpleMessageBox = GetFunction(__SDLxLib, "SDL_ShowSimpleMessageBox")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_ShowSimpleMessageBox = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowSimpleMessageBox'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_ShowMessageBox = GetFunction(__SDLxLib, "SDL_ShowMessageBox")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_ShowMessageBox = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowMessageBox'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf

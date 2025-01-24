@@ -1,14 +1,14 @@
 ﻿; +----------------------+
-; | SDL2_MessageBoxes.pb |
+; | SDL3_MessageBoxes.pb |
 ; +----------------------+
 
 ;-
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL2.pbi"
+XIncludeFile "../../SDL3.pbi"
 
-If (SDL_Init(0) = #SDLx_INIT_SUCCESS)
+If (SDL_Init(0))
   
   ; Simple Message Boxes
   
@@ -42,7 +42,7 @@ If (SDL_Init(0) = #SDLx_INIT_SUCCESS)
   EndWith
   
   ; Define custom colors...
-  Global Dim colors.SDL_MessageBoxColor(#SDL_MESSAGEBOX_COLOR_MAX - 1)
+  Global Dim colors.SDL_MessageBoxColor(#SDL_MESSAGEBOX_COLOR_COUNT - 1)
   With colors(#SDL_MESSAGEBOX_COLOR_BACKGROUND)
     \r = 64
     \g = 64
