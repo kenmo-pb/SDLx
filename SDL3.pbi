@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 17:13:53 UTC
+; Generated 2025-01-24 18:23:00 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -70,11 +70,17 @@ CompilerIf (#True)
   Macro __SDLx_StructEnum
     l ; use 32-bit PB Long for SDL struct enum members
   EndMacro
+  Macro __SDLx_StructBool
+    a ; use 8-bit PB Ascii for SDL struct bool members
+  EndMacro
   Macro SDLx_Int
     l ; use 32-bit PB Long for SDL "int" args
   EndMacro
   Macro SDLx_Enum
     l ; use 32-bit PB Long for SDL enum args
+  EndMacro
+  Macro SDLx_Bool
+    a ; use 8-bit PB Ascii for SDL bool args
   EndMacro
 CompilerEndIf
 
@@ -395,6 +401,28 @@ Enumeration ; SDL_Keymod
   
 EndEnumeration
 
+;- - Mouse Support
+
+#SDL_BUTTON_LEFT   = 1
+#SDL_BUTTON_MIDDLE = 2
+#SDL_BUTTON_RIGHT  = 3
+#SDL_BUTTON_X1     = 4
+#SDL_BUTTON_X2     = 5
+
+Macro SDL_BUTTON_MASK(X)
+  (1 << ((X)-1))
+EndMacro
+#SDL_BUTTON_LMASK  = SDL_BUTTON_MASK(#SDL_BUTTON_LEFT)
+#SDL_BUTTON_MMASK  = SDL_BUTTON_MASK(#SDL_BUTTON_MIDDLE)
+#SDL_BUTTON_RMASK  = SDL_BUTTON_MASK(#SDL_BUTTON_RIGHT)
+#SDL_BUTTON_X1MASK = SDL_BUTTON_MASK(#SDL_BUTTON_X1)
+#SDL_BUTTON_X2MASK = SDL_BUTTON_MASK(#SDL_BUTTON_X2)
+
+Enumeration ; SDL_MouseWheelDirection
+  #SDL_MOUSEWHEEL_NORMAL
+  #SDL_MOUSEWHEEL_FLIPPED
+EndEnumeration
+
 
 
 
@@ -424,8 +452,36 @@ Structure SDL_KeyboardEvent Align #PB_Structure_AlignC
   key.l ; SDL_Keycode
   mod.u ; SDL_Keymod
   raw.u
-  down.a ; bool
-  repeat_.a ; bool
+  down.__SDLx_StructBool ; bool
+  repeat_.__SDLx_StructBool ; bool
+EndStructure
+
+Structure SDL_MouseMotionEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  windowID.l ; SDL_WindowID
+  which.l ; SDL_MouseID
+  state.l ; SDL_MouseButtonFlags
+  x.f
+  y.f
+  xrel.f
+  yrel.f
+EndStructure
+
+Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  windowID.l ; SDL_WindowID
+  which.l ; SDL_MouseID
+  x.f
+  y.f
+  direction.__SDLx_StructEnum ; SDL_MouseWheelDirection
+  mouse_x.f
+  mouse_y.f
 EndStructure
 
 Structure SDL_Event Align #PB_Structure_AlignC
@@ -441,9 +497,9 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;edit_candidates.SDL_TextEditingCandidatesEvent
     ;text.SDL_TextInputEvent
     ;mdevice.SDL_MouseDeviceEvent
-    ;motion.SDL_MouseMotionEvent
+    motion.SDL_MouseMotionEvent
     ;button.SDL_MouseButtonEvent
-    ;wheel.SDL_MouseWheelEvent
+    wheel.SDL_MouseWheelEvent
     ; ...
     ;quit.SDL_QuitEvent
     ; ...
@@ -494,7 +550,7 @@ PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q) ; flags now 64-bit
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
-PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.a)
+PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.SDLx_Bool)
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
@@ -516,8 +572,9 @@ PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
 
 ;- - Mouse Support
-PrototypeC.l Proto_SDL_HideCursor()
-PrototypeC.l Proto_SDL_ShowCursor()
+PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT)
+PrototypeC.i Proto_SDL_HideCursor()
+PrototypeC.i Proto_SDL_ShowCursor()
 
 
 
@@ -558,6 +615,7 @@ Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
 Global SDL_PushEvent.Proto_SDL_PushEvent
 Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
+Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
 
@@ -580,7 +638,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_CreateWindow.i(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q)
   SDL_DestroyWindow(*window.SDL_Window)
   SDL_HideWindow(*window.SDL_Window)
-  SDL_SetWindowFullscreen.i(*window.SDL_Window, fullscreen.a)
+  SDL_SetWindowFullscreen.i(*window.SDL_Window, fullscreen.SDLx_Bool)
   SDL_ShowWindow(*window.SDL_Window)
   SDL_CreateRenderer.i(*window.SDL_Window, *name)
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
@@ -594,8 +652,9 @@ ImportC #SDLx_StaticLibraryName
   SDL_PumpEvents()
   SDL_PushEvent.i(*event.SDL_Event)
   SDL_GetKeyboardState.i(*numkeys.LONG)
-  SDL_HideCursor.l()
-  SDL_ShowCursor.l()
+  SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
+  SDL_HideCursor.i()
+  SDL_ShowCursor.i()
 
 EndImport
 
@@ -780,6 +839,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_GetMouseState = GetFunction(__SDLxLib, "SDL_GetMouseState")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetMouseState = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetMouseState'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_HideCursor = GetFunction(__SDLxLib, "SDL_HideCursor")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_HideCursor = #Null)
@@ -841,7 +907,7 @@ CompilerEndIf
 CompilerIf (#True)
 
 Structure SDLx_KeyboardStateArray
-  ks.a[0]
+  ks.__SDLx_StructBool[0]
 EndStructure
 
 CompilerEndIf
