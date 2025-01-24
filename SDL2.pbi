@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL2_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 15:35:46 UTC
+; Generated 2025-01-24 21:25:32 UTC
 
 ; SDL2 Wiki:       https://wiki.libsdl.org/SDL2
 ; API by Category: https://wiki.libsdl.org/SDL2/APIByCategory
@@ -1183,7 +1183,7 @@ CompilerEndIf
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
 
-Procedure SDLx_SetRenderDrawColorValue(*renderer.SDL_Renderer, RGBAValue.i)
+Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
   SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
 EndProcedure
 

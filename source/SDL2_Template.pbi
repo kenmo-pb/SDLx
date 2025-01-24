@@ -895,7 +895,7 @@ CompilerEndIf
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
 
-Procedure SDLx_SetRenderDrawColorValue(*renderer.SDL_Renderer, RGBAValue.i)
+Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
   SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
 EndProcedure
 

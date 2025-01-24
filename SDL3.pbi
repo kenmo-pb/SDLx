@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 20:11:00 UTC
+; Generated 2025-01-24 21:25:32 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -227,7 +227,21 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+Enumeration ; SDL_TextureAccess
+  #SDL_TEXTUREACCESS_STATIC
+  #SDL_TEXTUREACCESS_STREAMING
+  #SDL_TEXTUREACCESS_TARGET
+EndEnumeration
+
 #SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
+
+;- - Surface Creation and Simple Drawing
+
+Enumeration ; SDL_FlipMode
+  #SDL_FLIP_NONE
+  #SDL_FLIP_HORIZONTAL
+  #SDL_FLIP_VERTICAL
+EndEnumeration
 
 ;- - Event Handling
 
@@ -533,11 +547,21 @@ Structure SDL_Event Align #PB_Structure_AlignC
   EndStructureUnion
 EndStructure
 
+Structure SDL_Piont Align #PB_Structure_AlignC
+  x.__SDLx_StructInt
+  y.__SDLx_StructInt
+EndStructure
+
 Structure SDL_Rect Align #PB_Structure_AlignC
   x.__SDLx_StructInt
   y.__SDLx_StructInt
   w.__SDLx_StructInt
   h.__SDLx_StructInt
+EndStructure
+
+Structure SDL_FPoint Align #PB_Structure_AlignC
+  x.f
+  y.f
 EndStructure
 
 Structure SDL_FRect Align #PB_Structure_AlignC
@@ -584,15 +608,23 @@ Structure SDL_MessageBoxData Align #PB_Structure_AlignC
   *colorScheme
 EndStructure
 
-Structure SDL_Renderer
+Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure
 
-Structure SDL_Texture
+Structure SDL_CameraSpec Align #PB_Structure_AlignC
   ;
 EndStructure
 
-Structure SDL_Window
+Structure SDL_Renderer Align #PB_Structure_AlignC
+  ;
+EndStructure
+
+Structure SDL_Texture Align #PB_Structure_AlignC
+  ;
+EndStructure
+
+Structure SDL_Window Align #PB_Structure_AlignC
   ;
 EndStructure
 
@@ -602,6 +634,9 @@ EndStructure
 
 ;-
 ;- SDL3 Prototypes
+
+;- - Standard Include
+PrototypeC   Proto_SDL_free(*mem)
 
 ;- - Querying SDL Version
 PrototypeC.i Proto_SDL_GetVersion()
@@ -621,6 +656,7 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
+PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDLx_Enum, access.SDLx_Enum, w.SDLx_Int, h.SDLx_Int)
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface)
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
@@ -629,12 +665,21 @@ PrototypeC.i Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-u
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
+PrototypeC.i Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDLx_Enum)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
+
+;- - Camera Support
+PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
+PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
+PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
+PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
@@ -673,6 +718,7 @@ Global __SDLx_Quit.Proto_SDL_Quit
 
 Global __SDLx_InitCallback = #Null
 
+Global SDL_free.Proto_SDL_free
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubSystem.Proto_SDL_InitSubSystem
 Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
@@ -682,6 +728,7 @@ Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
+Global SDL_CreateTexture.Proto_SDL_CreateTexture
 Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
 Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
@@ -690,10 +737,17 @@ Global SDL_RenderDebugText.Proto_SDL_RenderDebugText
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderTexture.Proto_SDL_RenderTexture
+Global SDL_RenderTextureRotated.Proto_SDL_RenderTextureRotated
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
+Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
+Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
+Global SDL_CloseCamera.Proto_SDL_CloseCamera
+Global SDL_GetCameras.Proto_SDL_GetCameras
+Global SDL_OpenCamera.Proto_SDL_OpenCamera
+Global SDL_ReleaseCameraFrame.Proto_SDL_ReleaseCameraFrame
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -716,6 +770,7 @@ CompilerIf (#SDLx_StaticLink)
 
 ImportC #SDLx_StaticLibraryName
   
+  SDL_free(*mem)
   SDL_GetVersion.i()
   SDL_Init.i(flags.l)
   SDL_InitSubSystem.i(flags.l)
@@ -727,6 +782,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_SetWindowFullscreen.i(*window.SDL_Window, fullscreen.SDLx_Bool)
   SDL_ShowWindow(*window.SDL_Window)
   SDL_CreateRenderer.i(*window.SDL_Window, *name)
+  SDL_CreateTexture.i(*renderer.SDL_Renderer, format.SDLx_Enum, access.SDLx_Enum, w.SDLx_Int, h.SDLx_Int)
   SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
   SDL_DestroyTexture(*texture.SDL_Texture)
@@ -735,10 +791,17 @@ ImportC #SDLx_StaticLibraryName
   SDL_RenderFillRect.i(*renderer.SDL_Renderer, *rect.SDL_FRect)
   SDL_RenderPresent.i(*renderer.SDL_Renderer)
   SDL_RenderTexture.i(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
+  SDL_RenderTextureRotated.i(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDLx_Enum)
   SDL_SetRenderDrawColor.i(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
   SDL_SetRenderLogicalPresentation.i(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+  SDL_UpdateTexture.i(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
   SDL_DestroySurface(*surface.SDL_Surface)
   SDL_LoadBMP.i(file.p-utf8)
+  SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
+  SDL_CloseCamera(*camera.SDL_Camera)
+  SDL_GetCameras.i(*count.LONG)
+  SDL_OpenCamera.i(instance_id.l, *spec.SDL_CameraSpec)
+  SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
   SDL_PeepEvents.i(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
   SDL_PollEvent.i(*event.SDL_Event)
   SDL_PumpEvents()
@@ -793,6 +856,13 @@ Procedure.i SDL_Init(flags.l)
       If (__SDLx_Quit)
         Protected LoadFailed.i = #False
         
+        SDL_free = GetFunction(__SDLxLib, "SDL_free")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_free = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_free'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_GetVersion = GetFunction(__SDLxLib, "SDL_GetVersion")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_GetVersion = #Null)
@@ -856,6 +926,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_CreateTexture = GetFunction(__SDLxLib, "SDL_CreateTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_CreateTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTexture'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_CreateTextureFromSurface = #Null)
@@ -912,6 +989,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_RenderTextureRotated = GetFunction(__SDLxLib, "SDL_RenderTextureRotated")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RenderTextureRotated = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTextureRotated'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_SetRenderDrawColor = GetFunction(__SDLxLib, "SDL_SetRenderDrawColor")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_SetRenderDrawColor = #Null)
@@ -926,6 +1010,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_UpdateTexture = GetFunction(__SDLxLib, "SDL_UpdateTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_UpdateTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateTexture'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_DestroySurface = GetFunction(__SDLxLib, "SDL_DestroySurface")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_DestroySurface = #Null)
@@ -937,6 +1028,41 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_LoadBMP = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_LoadBMP'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_AcquireCameraFrame = GetFunction(__SDLxLib, "SDL_AcquireCameraFrame")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_AcquireCameraFrame = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_AcquireCameraFrame'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_CloseCamera = GetFunction(__SDLxLib, "SDL_CloseCamera")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_CloseCamera = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseCamera'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetCameras = GetFunction(__SDLxLib, "SDL_GetCameras")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetCameras = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameras'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_OpenCamera = GetFunction(__SDLxLib, "SDL_OpenCamera")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_OpenCamera = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenCamera'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_ReleaseCameraFrame = GetFunction(__SDLxLib, "SDL_ReleaseCameraFrame")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_ReleaseCameraFrame = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_ReleaseCameraFrame'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -1066,6 +1192,14 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
+  SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
+EndProcedure
+
+Procedure SDLx_SetRenderDrawRGBValue(*renderer.SDL_Renderer, RGBValue.i)
+  SDL_SetRenderDrawColor(*renderer, Red(RGBValue), Green(RGBValue), Blue(RGBValue), #SDL_ALPHA_OPAQUE)
+EndProcedure
 
 Procedure.i SDLx_QuitRequested()
   ; SDL2 SDL_QuitRequested() C macro was officially removed in SDL3

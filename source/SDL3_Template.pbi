@@ -229,7 +229,21 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+Enumeration ; SDL_TextureAccess
+  #SDL_TEXTUREACCESS_STATIC
+  #SDL_TEXTUREACCESS_STREAMING
+  #SDL_TEXTUREACCESS_TARGET
+EndEnumeration
+
 #SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
+
+;- - Surface Creation and Simple Drawing
+
+Enumeration ; SDL_FlipMode
+  #SDL_FLIP_NONE
+  #SDL_FLIP_HORIZONTAL
+  #SDL_FLIP_VERTICAL
+EndEnumeration
 
 ;- - Event Handling
 
@@ -535,11 +549,21 @@ Structure SDL_Event Align #PB_Structure_AlignC
   EndStructureUnion
 EndStructure
 
+Structure SDL_Piont Align #PB_Structure_AlignC
+  x.__SDLx_StructInt
+  y.__SDLx_StructInt
+EndStructure
+
 Structure SDL_Rect Align #PB_Structure_AlignC
   x.__SDLx_StructInt
   y.__SDLx_StructInt
   w.__SDLx_StructInt
   h.__SDLx_StructInt
+EndStructure
+
+Structure SDL_FPoint Align #PB_Structure_AlignC
+  x.f
+  y.f
 EndStructure
 
 Structure SDL_FRect Align #PB_Structure_AlignC
@@ -586,15 +610,23 @@ Structure SDL_MessageBoxData Align #PB_Structure_AlignC
   *colorScheme
 EndStructure
 
-Structure SDL_Renderer
+Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure
 
-Structure SDL_Texture
+Structure SDL_CameraSpec Align #PB_Structure_AlignC
   ;
 EndStructure
 
-Structure SDL_Window
+Structure SDL_Renderer Align #PB_Structure_AlignC
+  ;
+EndStructure
+
+Structure SDL_Texture Align #PB_Structure_AlignC
+  ;
+EndStructure
+
+Structure SDL_Window Align #PB_Structure_AlignC
   ;
 EndStructure
 
@@ -604,6 +636,9 @@ EndStructure
 
 ;-
 ;- SDL3 Prototypes
+
+;- - Standard Include
+PrototypeC   Proto_SDL_free(*mem)
 
 ;- - Querying SDL Version
 PrototypeC.i Proto_SDL_GetVersion()
@@ -623,6 +658,7 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
+PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDLx_Enum, access.SDLx_Enum, w.SDLx_Int, h.SDLx_Int)
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface)
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
@@ -631,12 +667,21 @@ PrototypeC.i Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-u
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
+PrototypeC.i Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDLx_Enum)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
+
+;- - Camera Support
+PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
+PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
+PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
+PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
@@ -681,6 +726,7 @@ Global __SDLx_InitCallback = #Null
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
+Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 ;% DELETEEND
 
 CompilerEndIf
@@ -795,6 +841,14 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
+  SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
+EndProcedure
+
+Procedure SDLx_SetRenderDrawRGBValue(*renderer.SDL_Renderer, RGBValue.i)
+  SDL_SetRenderDrawColor(*renderer, Red(RGBValue), Green(RGBValue), Blue(RGBValue), #SDL_ALPHA_OPAQUE)
+EndProcedure
 
 Procedure.i SDLx_QuitRequested()
   ; SDL2 SDL_QuitRequested() C macro was officially removed in SDL3
