@@ -524,7 +524,22 @@ Structure SDL_FRect Align #PB_Structure_AlignC
   h.f
 EndStructure
 
+Structure SDL_Surface
+  flags.l ; SDL_SurfaceFlags
+  format.l ; SDL_PixelFormat
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
+  pitch.__SDLx_StructInt
+  *pixels
+  refcount.__SDLx_StructInt
+  *reserved
+EndStructure
+
 Structure SDL_Renderer
+  ;
+EndStructure
+
+Structure SDL_Texture
   ;
 EndStructure
 
@@ -557,12 +572,19 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
+PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface)
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
+PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+
+;- - Surface Creation and Simple Drawing
+PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)

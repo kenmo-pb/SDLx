@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 18:23:00 UTC
+; Generated 2025-01-24 19:00:28 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -522,7 +522,22 @@ Structure SDL_FRect Align #PB_Structure_AlignC
   h.f
 EndStructure
 
+Structure SDL_Surface
+  flags.l ; SDL_SurfaceFlags
+  format.l ; SDL_PixelFormat
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
+  pitch.__SDLx_StructInt
+  *pixels
+  refcount.__SDLx_StructInt
+  *reserved
+EndStructure
+
 Structure SDL_Renderer
+  ;
+EndStructure
+
+Structure SDL_Texture
   ;
 EndStructure
 
@@ -555,12 +570,19 @@ PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
+PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface)
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
+PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
+PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+
+;- - Surface Creation and Simple Drawing
+PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
@@ -604,12 +626,17 @@ Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
+Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
+Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
 Global SDL_RenderClear.Proto_SDL_RenderClear
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
+Global SDL_RenderTexture.Proto_SDL_RenderTexture
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
+Global SDL_DestroySurface.Proto_SDL_DestroySurface
+Global SDL_LoadBMP.Proto_SDL_LoadBMP
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -641,12 +668,17 @@ ImportC #SDLx_StaticLibraryName
   SDL_SetWindowFullscreen.i(*window.SDL_Window, fullscreen.SDLx_Bool)
   SDL_ShowWindow(*window.SDL_Window)
   SDL_CreateRenderer.i(*window.SDL_Window, *name)
+  SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
+  SDL_DestroyTexture(*texture.SDL_Texture)
   SDL_RenderClear.i(*renderer.SDL_Renderer)
   SDL_RenderFillRect.i(*renderer.SDL_Renderer, *rect.SDL_FRect)
   SDL_RenderPresent.i(*renderer.SDL_Renderer)
+  SDL_RenderTexture.i(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
   SDL_SetRenderDrawColor.i(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
   SDL_SetRenderLogicalPresentation.i(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
+  SDL_DestroySurface(*surface.SDL_Surface)
+  SDL_LoadBMP.i(file.p-utf8)
   SDL_PeepEvents.i(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
   SDL_PollEvent.i(*event.SDL_Event)
   SDL_PumpEvents()
@@ -762,10 +794,24 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_CreateTextureFromSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTextureFromSurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_DestroyRenderer = GetFunction(__SDLxLib, "SDL_DestroyRenderer")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_DestroyRenderer = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyRenderer'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_DestroyTexture = GetFunction(__SDLxLib, "SDL_DestroyTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_DestroyTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyTexture'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -790,6 +836,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_RenderTexture = GetFunction(__SDLxLib, "SDL_RenderTexture")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_RenderTexture = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTexture'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_SetRenderDrawColor = GetFunction(__SDLxLib, "SDL_SetRenderDrawColor")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_SetRenderDrawColor = #Null)
@@ -801,6 +854,20 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_SetRenderLogicalPresentation = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderLogicalPresentation'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_DestroySurface = GetFunction(__SDLxLib, "SDL_DestroySurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_DestroySurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroySurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_LoadBMP = GetFunction(__SDLxLib, "SDL_LoadBMP")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_LoadBMP = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_LoadBMP'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
