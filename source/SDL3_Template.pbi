@@ -212,6 +212,14 @@ EndEnumeration
 
 ;- - 2D Accelerated Rendering
 
+Enumeration ; SDL_RendererLogicalPresentation
+  #SDL_LOGICAL_PRESENTATION_DISABLED
+  #SDL_LOGICAL_PRESENTATION_STRETCH
+  #SDL_LOGICAL_PRESENTATION_LETTERBOX
+  #SDL_LOGICAL_PRESENTATION_OVERSCAN
+  #SDL_LOGICAL_PRESENTATION_INTEGER_SCALE
+EndEnumeration
+
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
@@ -221,6 +229,24 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_FIRST = 0
   
   #SDL_EVENT_QUIT = $100
+  
+  ; ...
+  
+  #SDL_EVENT_KEY_DOWN = $300
+  #SDL_EVENT_KEY_UP
+  #SDL_EVENT_TEXT_EDITING
+  #SDL_EVENT_TEXT_INPUT
+  #SDL_EVENT_KEYMAP_CHANGED
+  #SDL_EVENT_KEYBOARD_ADDED
+  #SDL_EVENT_KEYBOARD_REMOVED
+  #SDL_EVENT_TEXT_EDITING_CANDIDATES
+  
+  #SDL_EVENT_MOUSE_MOTION = $400
+  #SDL_EVENT_MOUSE_BUTTON_DOWN
+  #SDL_EVENT_MOUSE_BUTTON_UP
+  #SDL_EVENT_MOUSE_WHEEL
+  #SDL_EVENT_MOUSE_ADDED
+  #SDL_EVENT_MOUSE_REMOVED
   
   ; ...
   
@@ -237,6 +263,141 @@ Enumeration ; SDL_EventAction
   #SDL_GETEVENT
 EndEnumeration
 
+;- - Keyboard Support
+
+Enumeration ; SDL_Scancode
+  #SDL_SCANCODE_UNKNOWN = 0
+  
+  #SDL_SCANCODE_A = 4
+  #SDL_SCANCODE_B = 5
+  #SDL_SCANCODE_C = 6
+  #SDL_SCANCODE_D = 7
+  #SDL_SCANCODE_E = 8
+  #SDL_SCANCODE_F = 9
+  #SDL_SCANCODE_G = 10
+  #SDL_SCANCODE_H = 11
+  #SDL_SCANCODE_I = 12
+  #SDL_SCANCODE_J = 13
+  #SDL_SCANCODE_K = 14
+  #SDL_SCANCODE_L = 15
+  #SDL_SCANCODE_M = 16
+  #SDL_SCANCODE_N = 17
+  #SDL_SCANCODE_O = 18
+  #SDL_SCANCODE_P = 19
+  #SDL_SCANCODE_Q = 20
+  #SDL_SCANCODE_R = 21
+  #SDL_SCANCODE_S = 22
+  #SDL_SCANCODE_T = 23
+  #SDL_SCANCODE_U = 24
+  #SDL_SCANCODE_V = 25
+  #SDL_SCANCODE_W = 26
+  #SDL_SCANCODE_X = 27
+  #SDL_SCANCODE_Y = 28
+  #SDL_SCANCODE_Z = 29
+  
+  #SDL_SCANCODE_1 = 30
+  #SDL_SCANCODE_2 = 31
+  #SDL_SCANCODE_3 = 32
+  #SDL_SCANCODE_4 = 33
+  #SDL_SCANCODE_5 = 34
+  #SDL_SCANCODE_6 = 35
+  #SDL_SCANCODE_7 = 36
+  #SDL_SCANCODE_8 = 37
+  #SDL_SCANCODE_9 = 38
+  #SDL_SCANCODE_0 = 39
+  
+  #SDL_SCANCODE_RETURN    = 40
+  #SDL_SCANCODE_ESCAPE    = 41
+  #SDL_SCANCODE_BACKSPACE = 42
+  #SDL_SCANCODE_TAB       = 43
+  #SDL_SCANCODE_SPACE     = 44
+  
+  #SDL_SCANCODE_MINUS        = 45
+  #SDL_SCANCODE_EQUALS       = 46
+  #SDL_SCANCODE_LEFTBRACKET  = 47
+  #SDL_SCANCODE_RIGHTBRACKET = 48
+  #SDL_SCANCODE_BACKSLASH    = 49
+  #SDL_SCANCODE_NONUSHASH    = 50
+  #SDL_SCANCODE_SEMICOLON    = 51
+  #SDL_SCANCODE_APOSTROPHE   = 52
+  #SDL_SCANCODE_GRAVE        = 53
+  #SDL_SCANCODE_COMMA        = 54
+  #SDL_SCANCODE_PERIOD       = 55
+  #SDL_SCANCODE_SLASH        = 56
+  
+  #SDL_SCANCODE_CAPSLOCK = 57
+  
+  #SDL_SCANCODE_F1 = 58
+  #SDL_SCANCODE_F2 = 59
+  #SDL_SCANCODE_F3 = 60
+  #SDL_SCANCODE_F4 = 61
+  #SDL_SCANCODE_F5 = 62
+  #SDL_SCANCODE_F6 = 63
+  #SDL_SCANCODE_F7 = 64
+  #SDL_SCANCODE_F8 = 65
+  #SDL_SCANCODE_F9 = 66
+  #SDL_SCANCODE_F10 = 67
+  #SDL_SCANCODE_F11 = 68
+  #SDL_SCANCODE_F12 = 69
+  
+  #SDL_SCANCODE_PRINTSCREEN = 70
+  #SDL_SCANCODE_SCROLLLOCK  = 71
+  #SDL_SCANCODE_PAUSE       = 72
+  #SDL_SCANCODE_INSERT      = 73
+  
+  #SDL_SCANCODE_HOME     = 74
+  #SDL_SCANCODE_PAGEUP   = 75
+  #SDL_SCANCODE_DELETE   = 76
+  #SDL_SCANCODE_END      = 77
+  #SDL_SCANCODE_PAGEDOWN = 78
+  #SDL_SCANCODE_RIGHT    = 79
+  #SDL_SCANCODE_LEFT     = 80
+  #SDL_SCANCODE_DOWN     = 81
+  #SDL_SCANCODE_UP       = 82
+  
+  ; ...
+  
+  #SDL_SCANCODE_LCTRL  = 224
+  #SDL_SCANCODE_LSHIFT = 225
+  #SDL_SCANCODE_LALT   = 226
+  #SDL_SCANCODE_LGUI   = 227
+  #SDL_SCANCODE_RCTRL  = 228
+  #SDL_SCANCODE_RSHIFT = 229
+  #SDL_SCANCODE_RALT   = 230
+  #SDL_SCANCODE_RGUI   = 231
+  
+  ; ...
+  
+  #SDL_SCANCODE_RESERVED = 400
+  
+  #SDL_SCANCODE_COUNT = 512
+  
+EndEnumeration
+
+Enumeration ; SDL_Keymod
+  #SDL_KMOD_NONE   = $0000
+  #SDL_KMOD_LSHIFT = $0001
+  #SDL_KMOD_RSHIFT = $0002
+  #SDL_KMOD_LEVEL5 = $0004
+  #SDL_KMOD_LCTRL  = $0040
+  #SDL_KMOD_RCTRL  = $0080
+  #SDL_KMOD_LALT   = $0100
+  #SDL_KMOD_RALT   = $0200
+  #SDL_KMOD_LGUI   = $0400
+  #SDL_KMOD_RGUI   = $0800
+  #SDL_KMOD_NUM    = $1000
+  #SDL_KMOD_CAPS   = $2000
+  #SDL_KMOD_MODE   = $4000
+  #SDL_KMOD_SCROLL = $8000
+  
+  #SDL_KMOD_CTRL  = #SDL_KMOD_LCTRL  | #SDL_KMOD_RCTRL
+  #SDL_KMOD_SHIFT = #SDL_KMOD_LSHIFT | #SDL_KMOD_RSHIFT
+  #SDL_KMOD_ALT   = #SDL_KMOD_LALT   | #SDL_KMOD_RALT
+  #SDL_KMOD_GUI   = #SDL_KMOD_LGUI   | #SDL_KMOD_RGUI
+  
+EndEnumeration
+
+
 
 
 
@@ -248,15 +409,36 @@ EndEnumeration
 ;-
 ;- SDL3 Structures
 
+Structure SDL_CommonEvent Align #PB_Structure_AlignC
+  type.l ; SDL_EventType
+  reserved.l
+  timestamp.q
+EndStructure
+
+Structure SDL_KeyboardEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  windowID.l ; SDL_WindowID
+  which.l ; SDL_KeyboardID
+  scancode.l ; SDL_Scancode
+  key.l ; SDL_Keycode
+  mod.u ; SDL_Keymod
+  raw.u
+  down.a ; bool
+  repeat_.a ; bool
+EndStructure
+
 Structure SDL_Event Align #PB_Structure_AlignC
   StructureUnion
     type.l
     
-    ;common.SDL_CommonEvent
+    common.SDL_CommonEvent
     ;display.SDL_DisplayEvent
     ;window.SDL_WindowEvent
     ;kdevice.SDL_KeyboardDeviceEvent
-    ;key.SDL_KeyboardEvent
+    key.SDL_KeyboardEvent
     ;edit.SDL_TextEditingEvent
     ;edit_candidates.SDL_TextEditingCandidatesEvent
     ;text.SDL_TextInputEvent
@@ -314,6 +496,7 @@ PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q) ; flags now 64-bit
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
+PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.a)
 PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
 
 ;- - 2D Accelerated Rendering
@@ -323,6 +506,7 @@ PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
 PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
+PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
 
 ;- - Event Handling
 PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
@@ -330,6 +514,11 @@ PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event)
 PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
 
+;- - Keyboard Support
+
+;- - Mouse Support
+PrototypeC.l Proto_SDL_HideCursor()
+PrototypeC.l Proto_SDL_ShowCursor()
 
 
 
@@ -353,6 +542,9 @@ Global __SDLx_InitCallback = #Null
 ;% DECLARE_DYNAMIC_PROTOTYPES
 
 ;% DELETESTART
+Global SDL_GetVersion.Proto_SDL_GetVersion
+Global SDL_PeepEvents.Proto_SDL_PeepEvents
+Global SDL_PumpEvents.Proto_SDL_PumpEvents
 ;% DELETEEND
 
 CompilerEndIf
