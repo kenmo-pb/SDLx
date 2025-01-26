@@ -55,12 +55,36 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
                 SDL_PushEvent(@event)
               EndIf
             EndIf
+          Case #SDL_SCANCODE_S
+            If (*window)
+              If (event\key\mod & #SDL_KMOD_CTRL)
+                SaveNextFrame.i = #True
+              EndIf
+            EndIf
         EndSelect
+      
+      ElseIf (event\type = #SDL_EVENT_CAMERA_DEVICE_APPROVED)
+        Debug "Approved to use camera: " + SDLx_GetCameraNameString(event\cdevice\which)
+        Debug "Press Ctrl+S to save frame to BMP file"
+      ElseIf (event\type = #SDL_EVENT_CAMERA_DEVICE_DENIED)
+        Debug "Denied permission to use camera!"
+      
       EndIf
     Wend
     
     *frame.SDL_Surface = SDL_AcquireCameraFrame(*camera, #Null)
     If (*frame And (*frame\w > 0) And (*frame\h > 0))
+      If (SaveNextFrame)
+        File.s = GetTemporaryDirectory() + FormatDate("%yyyy-%mm-%dd %hh_%ii_%ss.bmp", Date())
+        If (SDL_SaveBMP(*frame, File))
+          CompilerIf (#PB_Compiler_OS = #PB_OS_Windows)
+            RunProgram(File)
+          CompilerElse
+            RunProgram("open", #DQUOTE$ + File + #DQUOTE$, GetCurrentDirectory())
+          CompilerEndIf
+        EndIf
+        SaveNextFrame = #False
+      EndIf
       If (Not *texture)
         *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         If (*window)

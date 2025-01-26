@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-24 21:25:32 UTC
+; Generated 2025-01-26 04:09:18 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -249,8 +249,52 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_FIRST = 0
   
   #SDL_EVENT_QUIT = $100
+  #SDL_EVENT_TERMINATING
+  #SDL_EVENT_LOW_MEMORY
+  #SDL_EVENT_WILL_ENTER_BACKGROUND
+  #SDL_EVENT_DID_ENTER_BACKGROUND
+  #SDL_EVENT_WILL_ENTER_FOREGROUND
+  #SDL_EVENT_DID_ENTER_FOREGROUND
+  #SDL_EVENT_LOCALE_CHANGED
+  #SDL_EVENT_SYSTEM_THEME_CHANGED
   
-  ; ...
+  #SDL_EVENT_DISPLAY_ORIENTATION = $151
+  #SDL_EVENT_DISPLAY_ADDED
+  #SDL_EVENT_DISPLAY_REMOVED
+  #SDL_EVENT_DISPLAY_MOVED
+  #SDL_EVENT_DISPLAY_DESKTOP_MODE_CHANGED
+  #SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED
+  #SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED
+  #SDL_EVENT_DISPLAY_FIRST = #SDL_EVENT_DISPLAY_ORIENTATION
+  #SDL_EVENT_DISPLAY_LAST  = #SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED
+  
+  #SDL_EVENT_WINDOW_SHOWN = $202
+  #SDL_EVENT_WINDOW_HIDDEN
+  #SDL_EVENT_WINDOW_EXPOSED
+  #SDL_EVENT_WINDOW_MOVED
+  #SDL_EVENT_WINDOW_RESIZED
+  #SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED
+  #SDL_EVENT_WINDOW_METAL_VIEW_RESIZED
+  #SDL_EVENT_WINDOW_MINIMIZED
+  #SDL_EVENT_WINDOW_MAXIMIZED
+  #SDL_EVENT_WINDOW_RESTORED
+  #SDL_EVENT_WINDOW_MOUSE_ENTER
+  #SDL_EVENT_WINDOW_MOUSE_LEAVE
+  #SDL_EVENT_WINDOW_FOCUS_GAINED
+  #SDL_EVENT_WINDOW_FOCUS_LOST
+  #SDL_EVENT_WINDOW_CLOSE_REQUESTED
+  #SDL_EVENT_WINDOW_HIT_TEST
+  #SDL_EVENT_WINDOW_ICCPROF_CHANGED
+  #SDL_EVENT_WINDOW_DISPLAY_CHANGED
+  #SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED
+  #SDL_EVENT_WINDOW_SAFE_AREA_CHANGED
+  #SDL_EVENT_WINDOW_OCCLUDED
+  #SDL_EVENT_WINDOW_ENTER_FULLSCREEN
+  #SDL_EVENT_WINDOW_LEAVE_FULLSCREEN
+  #SDL_EVENT_WINDOW_DESTROYED
+  #SDL_EVENT_WINDOW_HDR_STATE_CHANGED
+  #SDL_EVENT_WINDOW_FIRST = #SDL_EVENT_WINDOW_SHOWN
+  #SDL_EVENT_WINDOW_LAST = #SDL_EVENT_WINDOW_HDR_STATE_CHANGED
   
   #SDL_EVENT_KEY_DOWN = $300
   #SDL_EVENT_KEY_UP
@@ -267,6 +311,17 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_MOUSE_WHEEL
   #SDL_EVENT_MOUSE_ADDED
   #SDL_EVENT_MOUSE_REMOVED
+  
+  ; ...
+  
+  #SDL_EVENT_CLIPBOARD_UPDATE = $900
+  
+  ; ...
+  
+  #SDL_EVENT_CAMERA_DEVICE_ADDED = $1400
+  #SDL_EVENT_CAMERA_DEVICE_REMOVED
+  #SDL_EVENT_CAMERA_DEVICE_APPROVED
+  #SDL_EVENT_CAMERA_DEVICE_DENIED
   
   ; ...
   
@@ -523,6 +578,20 @@ Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
   mouse_y.f
 EndStructure
 
+Structure SDL_CameraDeviceEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  which.l ; SDL_CameraID
+EndStructure
+
+Structure SDL_QuitEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+EndStructure
+
 Structure SDL_Event Align #PB_Structure_AlignC
   StructureUnion
     type.l
@@ -540,8 +609,11 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
     ; ...
-    ;quit.SDL_QuitEvent
+    cdevice.SDL_CameraDeviceEvent
     ; ...
+    quit.SDL_QuitEvent
+    ; ...
+    ;clipboard.SDL_ClipboardEvent
     
     padding.a[128]
   EndStructureUnion
@@ -647,6 +719,9 @@ PrototypeC.i Proto_SDL_InitSubSystem(flags.l) ; returns 1 on success
 PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
 
+;- - Error Handling
+PrototypeC.i Proto_SDL_GetError()
+
 ;- - Display and Window Management
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q) ; flags now 64-bit
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
@@ -673,10 +748,12 @@ PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixe
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
+PrototypeC.i Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8)
 
 ;- - Camera Support
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraName(instance_id.l)
 PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
@@ -722,6 +799,7 @@ Global SDL_free.Proto_SDL_free
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubSystem.Proto_SDL_InitSubSystem
 Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
+Global SDL_GetError.Proto_SDL_GetError
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
 Global SDL_HideWindow.Proto_SDL_HideWindow
@@ -743,8 +821,10 @@ Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
+Global SDL_SaveBMP.Proto_SDL_SaveBMP
 Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
 Global SDL_CloseCamera.Proto_SDL_CloseCamera
+Global SDL_GetCameraName.Proto_SDL_GetCameraName
 Global SDL_GetCameras.Proto_SDL_GetCameras
 Global SDL_OpenCamera.Proto_SDL_OpenCamera
 Global SDL_ReleaseCameraFrame.Proto_SDL_ReleaseCameraFrame
@@ -776,6 +856,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_InitSubSystem.i(flags.l)
   SDL_Quit()
   SDL_QuitSubSystem(flags.l)
+  SDL_GetError.i()
   SDL_CreateWindow.i(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q)
   SDL_DestroyWindow(*window.SDL_Window)
   SDL_HideWindow(*window.SDL_Window)
@@ -797,8 +878,10 @@ ImportC #SDLx_StaticLibraryName
   SDL_UpdateTexture.i(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
   SDL_DestroySurface(*surface.SDL_Surface)
   SDL_LoadBMP.i(file.p-utf8)
+  SDL_SaveBMP.i(*surface.SDL_Surface, file.p-utf8)
   SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
   SDL_CloseCamera(*camera.SDL_Camera)
+  SDL_GetCameraName.i(instance_id.l)
   SDL_GetCameras.i(*count.LONG)
   SDL_OpenCamera.i(instance_id.l, *spec.SDL_CameraSpec)
   SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
@@ -881,6 +964,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_QuitSubSystem = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_QuitSubSystem'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetError = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetError'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -1031,6 +1121,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_SaveBMP = GetFunction(__SDLxLib, "SDL_SaveBMP")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_SaveBMP = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_SaveBMP'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_AcquireCameraFrame = GetFunction(__SDLxLib, "SDL_AcquireCameraFrame")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_AcquireCameraFrame = #Null)
@@ -1042,6 +1139,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_CloseCamera = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseCamera'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetCameraName = GetFunction(__SDLxLib, "SDL_GetCameraName")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetCameraName = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraName'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
@@ -1192,6 +1296,25 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure.s SDLx_PeekString(*strPtr, Free.i)
+  Protected Result.s = ""
+  If (*strPtr)
+    Result = PeekS(*strPtr, -1, #PB_UTF8)
+    If (Free)
+      SDL_free(*strPtr)
+    EndIf
+  EndIf
+  ProcedureReturn (Result)
+EndProcedure
+
+Procedure.s SDLx_GetCameraNameString(instance_id.l)
+  ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
+EndProcedure
+
+Procedure.s SDLx_GetErrorString()
+  ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
+EndProcedure
 
 Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
   SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
