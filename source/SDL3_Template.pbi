@@ -566,6 +566,21 @@ Structure SDL_MouseMotionEvent Align #PB_Structure_AlignC
   yrel.f
 EndStructure
 
+Structure SDL_MouseButtonEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  windowID.l ; SDL_WindowID
+  which.l ; SDL_MouseID
+  button.a
+  down.a
+  clicks.a
+  padding.a
+  x.f
+  y.f
+EndStructure
+
 Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
   type.l
   reserved.l
@@ -608,7 +623,7 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;text.SDL_TextInputEvent
     ;mdevice.SDL_MouseDeviceEvent
     motion.SDL_MouseMotionEvent
-    ;button.SDL_MouseButtonEvent
+    button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
     ; ...
     cdevice.SDL_CameraDeviceEvent
@@ -751,6 +766,9 @@ PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixe
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
 PrototypeC.i Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8)
+
+;- - Clipboard Handling
+PrototypeC.i Proto_SDL_SetClipboardText(text.p-utf8)
 
 ;- - Camera Support
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)

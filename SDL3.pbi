@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-26 04:09:18 UTC
+; Generated 2025-01-26 04:41:44 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -564,6 +564,21 @@ Structure SDL_MouseMotionEvent Align #PB_Structure_AlignC
   yrel.f
 EndStructure
 
+Structure SDL_MouseButtonEvent Align #PB_Structure_AlignC
+  type.l
+  reserved.l
+  timestamp.q
+  
+  windowID.l ; SDL_WindowID
+  which.l ; SDL_MouseID
+  button.a
+  down.a
+  clicks.a
+  padding.a
+  x.f
+  y.f
+EndStructure
+
 Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
   type.l
   reserved.l
@@ -606,7 +621,7 @@ Structure SDL_Event Align #PB_Structure_AlignC
     ;text.SDL_TextInputEvent
     ;mdevice.SDL_MouseDeviceEvent
     motion.SDL_MouseMotionEvent
-    ;button.SDL_MouseButtonEvent
+    button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
     ; ...
     cdevice.SDL_CameraDeviceEvent
@@ -750,6 +765,9 @@ PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
 PrototypeC.i Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8)
 
+;- - Clipboard Handling
+PrototypeC.i Proto_SDL_SetClipboardText(text.p-utf8)
+
 ;- - Camera Support
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
@@ -822,6 +840,7 @@ Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
 Global SDL_SaveBMP.Proto_SDL_SaveBMP
+Global SDL_SetClipboardText.Proto_SDL_SetClipboardText
 Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
 Global SDL_CloseCamera.Proto_SDL_CloseCamera
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
@@ -879,6 +898,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_DestroySurface(*surface.SDL_Surface)
   SDL_LoadBMP.i(file.p-utf8)
   SDL_SaveBMP.i(*surface.SDL_Surface, file.p-utf8)
+  SDL_SetClipboardText.i(text.p-utf8)
   SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
   SDL_CloseCamera(*camera.SDL_Camera)
   SDL_GetCameraName.i(instance_id.l)
@@ -1125,6 +1145,13 @@ Procedure.i SDL_Init(flags.l)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_SaveBMP = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_SaveBMP'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_SetClipboardText = GetFunction(__SDLxLib, "SDL_SetClipboardText")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_SetClipboardText = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetClipboardText'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
