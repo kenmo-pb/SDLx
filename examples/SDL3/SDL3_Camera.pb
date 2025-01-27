@@ -91,6 +91,12 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
           *renderer = SDL_CreateRenderer(*window, #Null)
           If (*renderer)
             *texture = SDL_CreateTexture(*renderer, *frame\format, #SDL_TEXTUREACCESS_STREAMING, *frame\w, *frame\h)
+            If (SDLx_GetPixelFormatNameString(*frame\format) <> SDLx_GetPixelFormatNameString(*texture\format))
+              Debug ""
+              Debug "Warning: Frame PixelFormat does not match Texture PixelFormat!"
+              Debug "Frame format: " + SDLx_GetPixelFormatNameString(*frame\format)
+              Debug "Texture format: " + SDLx_GetPixelFormatNameString(*texture\format)
+            EndIf
             dstrect\w = *frame\w
             dstrect\h = *frame\h
             SDL_SetRenderLogicalPresentation(*renderer, *frame\w, *frame\h, #SDL_LOGICAL_PRESENTATION_STRETCH)

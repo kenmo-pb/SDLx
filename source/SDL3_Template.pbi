@@ -229,6 +229,9 @@ EndEnumeration
 #SDL_ALPHA_TRANSPARENT = 0
 #SDL_ALPHA_OPAQUE      = 255
 
+#SDL_ALPHA_TRANSPARENT_FLOAT = 0.0
+#SDL_ALPHA_OPAQUE_FLOAT      = 1.0
+
 Enumeration ; SDL_TextureAccess
   #SDL_TEXTUREACCESS_STATIC
   #SDL_TEXTUREACCESS_STREAMING
@@ -236,6 +239,76 @@ Enumeration ; SDL_TextureAccess
 EndEnumeration
 
 #SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
+
+;- - Pixel Formats and Conversion Routines
+
+Enumeration ; SDL_PixelType
+  #SDL_PIXELTYPE_UNKNOWN
+  #SDL_PIXELTYPE_INDEX1
+  #SDL_PIXELTYPE_INDEX4
+  #SDL_PIXELTYPE_INDEX8
+  #SDL_PIXELTYPE_PACKED8
+  #SDL_PIXELTYPE_PACKED16
+  #SDL_PIXELTYPE_PACKED32
+  #SDL_PIXELTYPE_ARRAYU8
+  #SDL_PIXELTYPE_ARRAYU16
+  #SDL_PIXELTYPE_ARRAYU32
+  #SDL_PIXELTYPE_ARRAYF16
+  #SDL_PIXELTYPE_ARRAYF32
+  ;
+  #SDL_PIXELTYPE_INDEX2
+EndEnumeration
+
+Enumeration ; SDL_PixelFormat
+  #SDL_PIXELFORMAT_UNKNOWN = 0
+  
+  ; ...
+  
+  #SDL_PIXELFORMAT_XRGB4444 = $15120c02
+  #SDL_PIXELFORMAT_XBGR4444 = $15520c02
+  #SDL_PIXELFORMAT_XRGB1555 = $15130f02
+  #SDL_PIXELFORMAT_XBGR1555 = $15530f02
+  #SDL_PIXELFORMAT_ARGB4444 = $15321002
+  #SDL_PIXELFORMAT_RGBA4444 = $15421002
+  #SDL_PIXELFORMAT_ABGR4444 = $15721002
+  #SDL_PIXELFORMAT_BGRA4444 = $15821002
+  #SDL_PIXELFORMAT_ARGB1555 = $15331002
+  #SDL_PIXELFORMAT_RGBA5551 = $15441002
+  #SDL_PIXELFORMAT_ABGR1555 = $15731002
+  #SDL_PIXELFORMAT_BGRA5551 = $15841002
+  #SDL_PIXELFORMAT_RGB565   = $15151002
+  #SDL_PIXELFORMAT_BGR565   = $15551002
+  #SDL_PIXELFORMAT_RGB24    = $17101803
+  #SDL_PIXELFORMAT_BGR24    = $17401803
+  #SDL_PIXELFORMAT_XRGB8888 = $16161804
+  #SDL_PIXELFORMAT_RGBX8888 = $16261804
+  #SDL_PIXELFORMAT_XBGR8888 = $16561804
+  #SDL_PIXELFORMAT_BGRX8888 = $16661804
+  #SDL_PIXELFORMAT_ARGB8888 = $16362004
+  #SDL_PIXELFORMAT_RGBA8888 = $16462004
+  #SDL_PIXELFORMAT_ABGR8888 = $16762004
+  #SDL_PIXELFORMAT_BGRA8888 = $16862004
+  
+  ; ...
+  
+  CompilerIf (#False) ; PureBasic never Big Endian
+    ;
+  CompilerElse ; PureBasic always Little Endian
+    #SDL_PIXELFORMAT_RGBA32 = #SDL_PIXELFORMAT_ABGR8888
+    #SDL_PIXELFORMAT_ARGB32 = #SDL_PIXELFORMAT_BGRA8888
+    #SDL_PIXELFORMAT_BGRA32 = #SDL_PIXELFORMAT_ARGB8888
+    #SDL_PIXELFORMAT_ABGR32 = #SDL_PIXELFORMAT_RGBA8888
+    #SDL_PIXELFORMAT_RGBX32 = #SDL_PIXELFORMAT_XBGR8888
+    #SDL_PIXELFORMAT_XRGB32 = #SDL_PIXELFORMAT_BGRX8888
+    #SDL_PIXELFORMAT_BGRX32 = #SDL_PIXELFORMAT_XRGB8888
+    #SDL_PIXELFORMAT_XBGR32 = #SDL_PIXELFORMAT_RGBX8888
+  CompilerEndIf
+  
+EndEnumeration
+
+Macro SDL_DEFINE_PIXELFORMAT(type, order, layout, bits, bytes)
+  ((1 << 28) | ((type) << 24) | ((order) << 20) | ((layout) << 16) | ((bits) << 8) | ((bytes) << 0))
+EndMacro
 
 ;- - Surface Creation and Simple Drawing
 
@@ -697,6 +770,13 @@ Structure SDL_MessageBoxData Align #PB_Structure_AlignC
   *colorScheme
 EndStructure
 
+Structure SDL_Texture Align #PB_Structure_AlignC
+  format.__SDLx_StructEnum
+  w.__SDLx_StructInt
+  h.__SDLx_StructInt
+  refcount.__SDLx_StructInt
+EndStructure
+
 Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure
@@ -706,10 +786,6 @@ Structure SDL_CameraSpec Align #PB_Structure_AlignC
 EndStructure
 
 Structure SDL_Renderer Align #PB_Structure_AlignC
-  ;
-EndStructure
-
-Structure SDL_Texture Align #PB_Structure_AlignC
   ;
 EndStructure
 
@@ -761,6 +837,9 @@ PrototypeC.i Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL
 PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
 PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
 PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
+
+;- - Pixel Formats and Conversion Routines
+PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDLx_Enum)
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
@@ -821,6 +900,7 @@ Global __SDLx_InitCallback = #Null
 Global SDL_free.Proto_SDL_free
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
 Global SDL_GetError.Proto_SDL_GetError
+Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -953,6 +1033,10 @@ EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.l)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
+EndProcedure
+
+Procedure.s SDLx_GetPixelFormatNameString(format.l)
+  ProcedureReturn (SDLx_PeekString(SDL_GetPixelFormatName(format), #False))
 EndProcedure
 
 Procedure.s SDLx_GetErrorString()
