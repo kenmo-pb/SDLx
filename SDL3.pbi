@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-27 02:38:40 UTC
+; Generated 2025-01-27 04:02:03 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -314,6 +314,14 @@ Enumeration ; SDL_FlipMode
   #SDL_FLIP_NONE
   #SDL_FLIP_HORIZONTAL
   #SDL_FLIP_VERTICAL
+EndEnumeration
+
+;- - Camera Support
+
+Enumeration ; SDL_CameraPosition
+  #SDL_CAMERA_POSITION_UNKNOWN
+  #SDL_CAMERA_POSITION_FRONT_FACING
+  #SDL_CAMERA_POSITION_BACK_FACING
 EndEnumeration
 
 ;- - Event Handling
@@ -775,11 +783,16 @@ Structure SDL_Texture Align #PB_Structure_AlignC
   refcount.__SDLx_StructInt
 EndStructure
 
-Structure SDL_Camera Align #PB_Structure_AlignC
-  ;
+Structure SDL_CameraSpec Align #PB_Structure_AlignC
+  format.__SDLx_StructEnum
+  color.__SDLx_StructEnum
+  width.__SDLx_StructInt
+  height.__SDLx_StructInt
+  framerate_numerator.__SDLx_StructInt
+  framerate_denominator.__SDLx_StructInt
 EndStructure
 
-Structure SDL_CameraSpec Align #PB_Structure_AlignC
+Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure
 
@@ -850,8 +863,12 @@ PrototypeC.i Proto_SDL_SetClipboardText(text.p-utf8)
 ;- - Camera Support
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
 PrototypeC.i Proto_SDL_GetCameraName(instance_id.l)
+PrototypeC.l Proto_SDL_GetCameraPermissionState(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraSupportedFormats(instance_id.l, *count.LONG)
 PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
+PrototypeC.l Proto_SDL_GetNumCameraDrivers()
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
@@ -923,8 +940,12 @@ Global SDL_SaveBMP.Proto_SDL_SaveBMP
 Global SDL_SetClipboardText.Proto_SDL_SetClipboardText
 Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
 Global SDL_CloseCamera.Proto_SDL_CloseCamera
+Global SDL_GetCameraFormat.Proto_SDL_GetCameraFormat
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
+Global SDL_GetCameraPermissionState.Proto_SDL_GetCameraPermissionState
+Global SDL_GetCameraSupportedFormats.Proto_SDL_GetCameraSupportedFormats
 Global SDL_GetCameras.Proto_SDL_GetCameras
+Global SDL_GetNumCameraDrivers.Proto_SDL_GetNumCameraDrivers
 Global SDL_OpenCamera.Proto_SDL_OpenCamera
 Global SDL_ReleaseCameraFrame.Proto_SDL_ReleaseCameraFrame
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
@@ -982,8 +1003,12 @@ ImportC #SDLx_StaticLibraryName
   SDL_SetClipboardText.i(text.p-utf8)
   SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
   SDL_CloseCamera(*camera.SDL_Camera)
+  SDL_GetCameraFormat.i(*camera.SDL_Camera, *spec.SDL_CameraSpec)
   SDL_GetCameraName.i(instance_id.l)
+  SDL_GetCameraPermissionState.l(*camera.SDL_Camera)
+  SDL_GetCameraSupportedFormats.i(instance_id.l, *count.LONG)
   SDL_GetCameras.i(*count.LONG)
+  SDL_GetNumCameraDrivers.l()
   SDL_OpenCamera.i(instance_id.l, *spec.SDL_CameraSpec)
   SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
   SDL_PeepEvents.i(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
@@ -1257,6 +1282,13 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_GetCameraFormat = GetFunction(__SDLxLib, "SDL_GetCameraFormat")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetCameraFormat = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraFormat'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_GetCameraName = GetFunction(__SDLxLib, "SDL_GetCameraName")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_GetCameraName = #Null)
@@ -1264,10 +1296,31 @@ Procedure.i SDL_Init(flags.l)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_GetCameraPermissionState = GetFunction(__SDLxLib, "SDL_GetCameraPermissionState")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetCameraPermissionState = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraPermissionState'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetCameraSupportedFormats = GetFunction(__SDLxLib, "SDL_GetCameraSupportedFormats")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetCameraSupportedFormats = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraSupportedFormats'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_GetCameras = GetFunction(__SDLxLib, "SDL_GetCameras")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_GetCameras = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameras'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetNumCameraDrivers = GetFunction(__SDLxLib, "SDL_GetNumCameraDrivers")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetNumCameraDrivers = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetNumCameraDrivers'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf

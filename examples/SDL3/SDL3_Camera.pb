@@ -26,9 +26,35 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     End
   EndIf
   
+  If (devcount > 1)
+    Debug "Found " + Str(devcount) + " cameras, using first..."
+  Else
+    Debug "Found " + Str(devcount) + " camera..."
+  EndIf
+  Debug ""
+  
   firstID.l = PeekL(*devices)
   SDL_free(*devices)
-  *camera = SDL_OpenCamera(firstID, #Null)
+  
+  *targetspec.SDL_CameraSpec = #Null
+  numformats.l
+  *formats.SDL_CameraSpec = SDL_GetCameraSupportedFormats(firstID, @numformats)
+  If (numformats > 0) And (*formats)
+    Debug Str(numformats) + " supported formats..."
+    For i = 0 To numformats - 1
+      *spec.SDL_CameraSpec = PeekI(*formats + i * SizeOf(INTEGER))
+      framerate.d = 1.0 * *spec\framerate_numerator / *spec\framerate_denominator
+      If (framerate >= 30.0) And (Not *targetspec)
+        *targetspec = *spec
+      EndIf
+      ;Debug SDLx_GetPixelFormatNameString(*spec\format)
+      Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps"
+      ;Debug ""
+    Next i
+    Debug ""
+  EndIf
+  
+  *camera = SDL_OpenCamera(firstID, *targetspec)
   If (Not *camera)
     Debug "Could not open camera!"
     End
@@ -65,6 +91,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
       
       ElseIf (event\type = #SDL_EVENT_CAMERA_DEVICE_APPROVED)
         Debug "Approved to use camera: " + SDLx_GetCameraNameString(event\cdevice\which)
+        Debug ""
         Debug "Press Ctrl+S to save frame to BMP file"
       ElseIf (event\type = #SDL_EVENT_CAMERA_DEVICE_DENIED)
         Debug "Denied permission to use camera!"
@@ -75,7 +102,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     *frame.SDL_Surface = SDL_AcquireCameraFrame(*camera, #Null)
     If (*frame And (*frame\w > 0) And (*frame\h > 0))
       If (SaveNextFrame)
-        File.s = GetTemporaryDirectory() + FormatDate("%yyyy-%mm-%dd %hh_%ii_%ss.bmp", Date())
+        File.s = GetTemporaryDirectory() + FormatDate(GetFilePart(#PB_Compiler_Filename, #PB_FileSystem_NoExtension) + " %yyyy-%mm-%dd %hh_%ii_%ss.bmp", Date())
         If (SDL_SaveBMP(*frame, File))
           CompilerIf (#PB_Compiler_OS = #PB_OS_Windows)
             RunProgram(File)
@@ -86,6 +113,11 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
         SaveNextFrame = #False
       EndIf
       If (Not *texture)
+        If (*targetspec)
+          If (SDL_GetCameraFormat(*camera, *targetspec))
+            ;Debug SDLx_GetPixelFormatNameString(*targetspec\format)
+          EndIf
+        EndIf
         *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         If (*window)
           *renderer = SDL_CreateRenderer(*window, #Null)
@@ -94,7 +126,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
             If (SDLx_GetPixelFormatNameString(*frame\format) <> SDLx_GetPixelFormatNameString(*texture\format))
               Debug ""
               Debug "Warning: Frame PixelFormat does not match Texture PixelFormat!"
-              Debug "Frame format: " + SDLx_GetPixelFormatNameString(*frame\format)
+              Debug "Frame format: "   + SDLx_GetPixelFormatNameString(*frame\format)
               Debug "Texture format: " + SDLx_GetPixelFormatNameString(*texture\format)
             EndIf
             dstrect\w = *frame\w
@@ -126,6 +158,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     Delay(20)
   Wend
   
+  SDL_free(*formats)
   SDL_DestroyTexture(*texture)
   SDL_DestroyRenderer(*renderer)
   SDL_DestroyWindow(*window)

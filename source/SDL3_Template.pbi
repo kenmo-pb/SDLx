@@ -318,6 +318,14 @@ Enumeration ; SDL_FlipMode
   #SDL_FLIP_VERTICAL
 EndEnumeration
 
+;- - Camera Support
+
+Enumeration ; SDL_CameraPosition
+  #SDL_CAMERA_POSITION_UNKNOWN
+  #SDL_CAMERA_POSITION_FRONT_FACING
+  #SDL_CAMERA_POSITION_BACK_FACING
+EndEnumeration
+
 ;- - Event Handling
 
 Enumeration ; SDL_EventType
@@ -777,11 +785,16 @@ Structure SDL_Texture Align #PB_Structure_AlignC
   refcount.__SDLx_StructInt
 EndStructure
 
-Structure SDL_Camera Align #PB_Structure_AlignC
-  ;
+Structure SDL_CameraSpec Align #PB_Structure_AlignC
+  format.__SDLx_StructEnum
+  color.__SDLx_StructEnum
+  width.__SDLx_StructInt
+  height.__SDLx_StructInt
+  framerate_numerator.__SDLx_StructInt
+  framerate_denominator.__SDLx_StructInt
 EndStructure
 
-Structure SDL_CameraSpec Align #PB_Structure_AlignC
+Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure
 
@@ -852,8 +865,12 @@ PrototypeC.i Proto_SDL_SetClipboardText(text.p-utf8)
 ;- - Camera Support
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
 PrototypeC.i Proto_SDL_GetCameraName(instance_id.l)
+PrototypeC.l Proto_SDL_GetCameraPermissionState(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraSupportedFormats(instance_id.l, *count.LONG)
 PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
+PrototypeC.l Proto_SDL_GetNumCameraDrivers()
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
