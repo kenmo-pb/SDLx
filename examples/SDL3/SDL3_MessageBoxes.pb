@@ -82,7 +82,7 @@ If (SDL_Init(0))
   EndWith
   
   ; Finally, display the MessageBox and get buttonid result!
-  result.SDLx_Int
+  result.l
   SDL_ShowMessageBox(@messageboxdata, @result)
   Debug "SDL_ShowMessageBox() Result: " + Str(Result)
   

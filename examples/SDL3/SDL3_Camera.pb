@@ -120,7 +120,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
         EndIf
         *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         If (*window)
-          *renderer = SDL_CreateRenderer(*window, #Null)
+          *renderer = SDL_CreateRenderer(*window, #Null$)
           If (*renderer)
             *texture = SDL_CreateTexture(*renderer, *frame\format, #SDL_TEXTUREACCESS_STREAMING, *frame\w, *frame\h)
             If (SDLx_GetPixelFormatNameString(*frame\format) <> SDLx_GetPixelFormatNameString(*texture\format))

@@ -12,6 +12,8 @@
 
 #IndentSpaces = 2
 
+#MinSDLVersionToRebuild = 3
+
 Structure SDLFunctionStruct
   Name.s
   ReturnType.s
@@ -35,7 +37,7 @@ CompilerEndIf
 
 
 
-For MajorVersion = 2 To 3
+For MajorVersion = #MinSDLVersionToRebuild To 3
   ClearList(SDLFunction())
   DeleteLevel.i = 0
   

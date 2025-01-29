@@ -65,27 +65,6 @@ CompilerElse
   EndMacro
 CompilerEndIf
 
-CompilerIf (#True)
-  Macro __SDLx_StructInt
-    l ; use 32-bit PB Long for SDL struct "int" members
-  EndMacro)
-  Macro __SDLx_StructEnum
-    l ; use 32-bit PB Long for SDL struct enum members
-  EndMacro
-  Macro __SDLx_StructBool
-    a ; use 8-bit PB Ascii for SDL struct bool members
-  EndMacro
-  Macro SDLx_Int
-    l ; use 32-bit PB Long for SDL "int" args
-  EndMacro
-  Macro SDLx_Enum
-    l ; use 32-bit PB Long for SDL enum args
-  EndMacro
-  Macro SDLx_Bool
-    a ; use 8-bit PB Ascii for SDL bool args
-  EndMacro
-CompilerEndIf
-
 
 ;-
 ;- SDL3 Library Files
@@ -138,6 +117,115 @@ CompilerIf (Not Defined(SDLx_IncludeHelperProcedures, #PB_Constant))
   #SDLx_IncludeHelperProcedures = #True
 CompilerEndIf
 
+
+;-
+;- Standard Types
+
+UndefineMacro Uint8
+Macro Uint8
+  a
+EndMacro
+UndefineMacro Sint8
+Macro Sint8
+  b
+EndMacro
+UndefineMacro Uint16
+Macro Uint16
+  u
+EndMacro
+UndefineMacro Sint16
+Macro Sint16
+  w
+EndMacro
+UndefineMacro Uint32
+Macro Uint32
+  l
+EndMacro
+UndefineMacro Sint32
+Macro Sint32
+  l
+EndMacro
+UndefineMacro Uint64
+Macro Uint64
+  q
+EndMacro
+UndefineMacro Sint64
+Macro Sint64
+  q
+EndMacro
+Macro POINTER_TO_A_POINTER
+  INTEGER
+EndMacro
+
+;-
+;- SDL3 Type Aliases
+
+Macro SDL_CameraID
+  Sint32
+EndMacro
+Macro SDL_Colorspace
+  Sint32 ; enum
+EndMacro
+Macro SDL_DisplayID
+  Uint32
+EndMacro
+Macro SDL_EventAction
+  Sint32 ; enum
+EndMacro
+Macro SDL_EventType
+  Sint32 ; enum
+EndMacro
+Macro SDL_FlipMode
+  Sint32 ; enum
+EndMacro
+Macro SDL_InitFlags
+  Uint32
+EndMacro
+Macro SDL_KeyboardID
+  Uint32
+EndMacro
+Macro SDL_Keycode
+  Uint32
+EndMacro
+Macro SDL_Keymod
+  Uint16
+EndMacro
+Macro SDL_MessageBoxButtonFlags
+  Uint32
+EndMacro
+Macro SDL_MessageBoxFlags
+  Uint32
+EndMacro
+Macro SDL_MouseButtonFlags
+  Uint32
+EndMacro
+Macro SDL_MouseID
+  Uint32
+EndMacro
+Macro SDL_MouseWheelDirection
+  Sint32 ; enum
+EndMacro
+Macro SDL_PixelFormat
+  Sint32 ; enum
+EndMacro
+Macro SDL_RendererLogicalPresentation
+  Sint32 ; enum
+EndMacro
+Macro SDL_Scancode
+  Sint32 ; enum
+EndMacro
+Macro SDL_SurfaceFlags
+  Uint32
+EndMacro
+Macro SDL_TextureAccess
+  Uint32 ; enum
+EndMacro
+Macro SDL_WindowFlags
+  Uint64
+EndMacro
+Macro SDL_WindowID
+  Uint32
+EndMacro
 
 
 ;-
@@ -262,37 +350,93 @@ EndEnumeration
 Enumeration ; SDL_PixelFormat
   #SDL_PIXELFORMAT_UNKNOWN = 0
   
-  ; ...
+  #SDL_PIXELFORMAT_INDEX1LSB = $11100100
+  #SDL_PIXELFORMAT_INDEX1MSB = $11200100
+  #SDL_PIXELFORMAT_INDEX2LSB = $1c100200
+  #SDL_PIXELFORMAT_INDEX2MSB = $1c200200
+  #SDL_PIXELFORMAT_INDEX4LSB = $12100400
+  #SDL_PIXELFORMAT_INDEX4MSB = $12200400
+  #SDL_PIXELFORMAT_INDEX8 = $13000801
+  
+  #SDL_PIXELFORMAT_RGB332 = $14110801
   
   #SDL_PIXELFORMAT_XRGB4444 = $15120c02
   #SDL_PIXELFORMAT_XBGR4444 = $15520c02
   #SDL_PIXELFORMAT_XRGB1555 = $15130f02
   #SDL_PIXELFORMAT_XBGR1555 = $15530f02
+  
   #SDL_PIXELFORMAT_ARGB4444 = $15321002
   #SDL_PIXELFORMAT_RGBA4444 = $15421002
   #SDL_PIXELFORMAT_ABGR4444 = $15721002
   #SDL_PIXELFORMAT_BGRA4444 = $15821002
+  
   #SDL_PIXELFORMAT_ARGB1555 = $15331002
   #SDL_PIXELFORMAT_RGBA5551 = $15441002
   #SDL_PIXELFORMAT_ABGR1555 = $15731002
   #SDL_PIXELFORMAT_BGRA5551 = $15841002
-  #SDL_PIXELFORMAT_RGB565   = $15151002
-  #SDL_PIXELFORMAT_BGR565   = $15551002
-  #SDL_PIXELFORMAT_RGB24    = $17101803
-  #SDL_PIXELFORMAT_BGR24    = $17401803
+  
+  #SDL_PIXELFORMAT_RGB565 = $15151002
+  #SDL_PIXELFORMAT_BGR565 = $15551002
+  
+  #SDL_PIXELFORMAT_RGB24 = $17101803
+  #SDL_PIXELFORMAT_BGR24 = $17401803
+  
   #SDL_PIXELFORMAT_XRGB8888 = $16161804
   #SDL_PIXELFORMAT_RGBX8888 = $16261804
   #SDL_PIXELFORMAT_XBGR8888 = $16561804
   #SDL_PIXELFORMAT_BGRX8888 = $16661804
+  
   #SDL_PIXELFORMAT_ARGB8888 = $16362004
   #SDL_PIXELFORMAT_RGBA8888 = $16462004
   #SDL_PIXELFORMAT_ABGR8888 = $16762004
   #SDL_PIXELFORMAT_BGRA8888 = $16862004
   
-  ; ...
+  #SDL_PIXELFORMAT_XRGB2101010 = $16172004
+  #SDL_PIXELFORMAT_XBGR2101010 = $16572004
+  #SDL_PIXELFORMAT_ARGB2101010 = $16372004
+  #SDL_PIXELFORMAT_ABGR2101010 = $16772004
+  
+  #SDL_PIXELFORMAT_RGB48 = $18103006
+  #SDL_PIXELFORMAT_BGR48 = $18403006
+  
+  #SDL_PIXELFORMAT_RGBA64 = $18204008
+  #SDL_PIXELFORMAT_ARGB64 = $18304008
+  #SDL_PIXELFORMAT_BGRA64 = $18504008
+  #SDL_PIXELFORMAT_ABGR64 = $18604008
+  
+  #SDL_PIXELFORMAT_RGB48_FLOAT = $1a103006
+  #SDL_PIXELFORMAT_BGR48_FLOAT = $1a403006
+  #SDL_PIXELFORMAT_RGBA64_FLOAT = $1a204008
+  #SDL_PIXELFORMAT_ARGB64_FLOAT = $1a304008
+  #SDL_PIXELFORMAT_BGRA64_FLOAT = $1a504008
+  #SDL_PIXELFORMAT_ABGR64_FLOAT = $1a604008
+  #SDL_PIXELFORMAT_RGB96_FLOAT = $1b10600c
+  #SDL_PIXELFORMAT_BGR96_FLOAT = $1b40600c
+  #SDL_PIXELFORMAT_RGBA128_FLOAT = $1b208010
+  #SDL_PIXELFORMAT_ARGB128_FLOAT = $1b308010
+  #SDL_PIXELFORMAT_BGRA128_FLOAT = $1b508010
+  #SDL_PIXELFORMAT_ABGR128_FLOAT = $1b608010
+  
+  #SDL_PIXELFORMAT_YV12 = $32315659
+  #SDL_PIXELFORMAT_IYUV = $56555949
+  #SDL_PIXELFORMAT_YUY2 = $32595559
+  #SDL_PIXELFORMAT_UYVY = $59565955
+  #SDL_PIXELFORMAT_YVYU = $55595659
+  #SDL_PIXELFORMAT_NV12 = $3231564e
+  #SDL_PIXELFORMAT_NV21 = $3132564e
+  #SDL_PIXELFORMAT_P010 = $30313050
+  
+  #SDL_PIXELFORMAT_EXTERNAL_OES = $2053454f
   
   CompilerIf (#False) ; PureBasic never Big Endian
-    ;
+    #SDL_PIXELFORMAT_RGBA32 = #SDL_PIXELFORMAT_RGBA8888
+    #SDL_PIXELFORMAT_ARGB32 = #SDL_PIXELFORMAT_ARGB8888
+    #SDL_PIXELFORMAT_BGRA32 = #SDL_PIXELFORMAT_BGRA8888
+    #SDL_PIXELFORMAT_ABGR32 = #SDL_PIXELFORMAT_ABGR8888
+    #SDL_PIXELFORMAT_RGBX32 = #SDL_PIXELFORMAT_RGBX8888
+    #SDL_PIXELFORMAT_XRGB32 = #SDL_PIXELFORMAT_XRGB8888
+    #SDL_PIXELFORMAT_BGRX32 = #SDL_PIXELFORMAT_BGRX8888
+    #SDL_PIXELFORMAT_XBGR32 = #SDL_PIXELFORMAT_XBGR8888
   CompilerElse ; PureBasic always Little Endian
     #SDL_PIXELFORMAT_RGBA32 = #SDL_PIXELFORMAT_ABGR8888
     #SDL_PIXELFORMAT_ARGB32 = #SDL_PIXELFORMAT_BGRA8888
@@ -303,7 +447,6 @@ Enumeration ; SDL_PixelFormat
     #SDL_PIXELFORMAT_BGRX32 = #SDL_PIXELFORMAT_XRGB8888
     #SDL_PIXELFORMAT_XBGR32 = #SDL_PIXELFORMAT_RGBX8888
   CompilerEndIf
-  
 EndEnumeration
 
 Macro SDL_DEFINE_PIXELFORMAT(type, order, layout, bits, bytes)
@@ -332,13 +475,16 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_FIRST = 0
   
   #SDL_EVENT_QUIT = $100
+  
   #SDL_EVENT_TERMINATING
   #SDL_EVENT_LOW_MEMORY
   #SDL_EVENT_WILL_ENTER_BACKGROUND
   #SDL_EVENT_DID_ENTER_BACKGROUND
   #SDL_EVENT_WILL_ENTER_FOREGROUND
   #SDL_EVENT_DID_ENTER_FOREGROUND
+  
   #SDL_EVENT_LOCALE_CHANGED
+  
   #SDL_EVENT_SYSTEM_THEME_CHANGED
   
   #SDL_EVENT_DISPLAY_ORIENTATION = $151
@@ -349,7 +495,7 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_DISPLAY_CURRENT_MODE_CHANGED
   #SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED
   #SDL_EVENT_DISPLAY_FIRST = #SDL_EVENT_DISPLAY_ORIENTATION
-  #SDL_EVENT_DISPLAY_LAST  = #SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED
+  #SDL_EVENT_DISPLAY_LAST = #SDL_EVENT_DISPLAY_CONTENT_SCALE_CHANGED
   
   #SDL_EVENT_WINDOW_SHOWN = $202
   #SDL_EVENT_WINDOW_HIDDEN
@@ -395,24 +541,79 @@ Enumeration ; SDL_EventType
   #SDL_EVENT_MOUSE_ADDED
   #SDL_EVENT_MOUSE_REMOVED
   
-  ; ...
+  #SDL_EVENT_JOYSTICK_AXIS_MOTION = $600
+  #SDL_EVENT_JOYSTICK_BALL_MOTION
+  #SDL_EVENT_JOYSTICK_HAT_MOTION
+  #SDL_EVENT_JOYSTICK_BUTTON_DOWN
+  #SDL_EVENT_JOYSTICK_BUTTON_UP
+  #SDL_EVENT_JOYSTICK_ADDED
+  #SDL_EVENT_JOYSTICK_REMOVED
+  #SDL_EVENT_JOYSTICK_BATTERY_UPDATED
+  #SDL_EVENT_JOYSTICK_UPDATE_COMPLETE
+  
+  #SDL_EVENT_GAMEPAD_AXIS_MOTION = $650
+  #SDL_EVENT_GAMEPAD_BUTTON_DOWN
+  #SDL_EVENT_GAMEPAD_BUTTON_UP
+  #SDL_EVENT_GAMEPAD_ADDED
+  #SDL_EVENT_GAMEPAD_REMOVED
+  #SDL_EVENT_GAMEPAD_REMAPPED
+  #SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN
+  #SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION
+  #SDL_EVENT_GAMEPAD_TOUCHPAD_UP
+  #SDL_EVENT_GAMEPAD_SENSOR_UPDATE
+  #SDL_EVENT_GAMEPAD_UPDATE_COMPLETE
+  #SDL_EVENT_GAMEPAD_STEAM_HANDLE_UPDATED
+  
+  #SDL_EVENT_FINGER_DOWN = $700
+  #SDL_EVENT_FINGER_UP
+  #SDL_EVENT_FINGER_MOTION
+  #SDL_EVENT_FINGER_CANCELED
   
   #SDL_EVENT_CLIPBOARD_UPDATE = $900
   
-  ; ...
+  #SDL_EVENT_DROP_FILE = $1000
+  #SDL_EVENT_DROP_TEXT
+  #SDL_EVENT_DROP_BEGIN
+  #SDL_EVENT_DROP_COMPLETE
+  #SDL_EVENT_DROP_POSITION
+  
+  #SDL_EVENT_AUDIO_DEVICE_ADDED = $1100
+  #SDL_EVENT_AUDIO_DEVICE_REMOVED
+  #SDL_EVENT_AUDIO_DEVICE_FORMAT_CHANGED
+  
+  #SDL_EVENT_SENSOR_UPDATE = $1200
+  
+  #SDL_EVENT_PEN_PROXIMITY_IN = $1300
+  #SDL_EVENT_PEN_PROXIMITY_OUT
+  #SDL_EVENT_PEN_DOWN
+  #SDL_EVENT_PEN_UP
+  #SDL_EVENT_PEN_BUTTON_DOWN
+  #SDL_EVENT_PEN_BUTTON_UP
+  #SDL_EVENT_PEN_MOTION
+  #SDL_EVENT_PEN_AXIS
   
   #SDL_EVENT_CAMERA_DEVICE_ADDED = $1400
   #SDL_EVENT_CAMERA_DEVICE_REMOVED
   #SDL_EVENT_CAMERA_DEVICE_APPROVED
   #SDL_EVENT_CAMERA_DEVICE_DENIED
   
-  ; ...
+  #SDL_EVENT_RENDER_TARGETS_RESET = $2000
+  #SDL_EVENT_RENDER_DEVICE_RESET
+  #SDL_EVENT_RENDER_DEVICE_LOST
+  
+  #SDL_EVENT_PRIVATE0 = $4000
+  #SDL_EVENT_PRIVATE1
+  #SDL_EVENT_PRIVATE2
+  #SDL_EVENT_PRIVATE3
+  
+  #SDL_EVENT_POLL_SENTINEL = $7F00
   
   #SDL_EVENT_USER = $8000
   
   #SDL_EVENT_LAST = $FFFF
   
   #SDL_EVENT_ENUM_PADDING = $7FFFFFFF
+  
 EndEnumeration
 
 Enumeration ; SDL_EventAction
@@ -464,24 +665,24 @@ Enumeration ; SDL_Scancode
   #SDL_SCANCODE_9 = 38
   #SDL_SCANCODE_0 = 39
   
-  #SDL_SCANCODE_RETURN    = 40
-  #SDL_SCANCODE_ESCAPE    = 41
+  #SDL_SCANCODE_RETURN = 40
+  #SDL_SCANCODE_ESCAPE = 41
   #SDL_SCANCODE_BACKSPACE = 42
-  #SDL_SCANCODE_TAB       = 43
-  #SDL_SCANCODE_SPACE     = 44
+  #SDL_SCANCODE_TAB = 43
+  #SDL_SCANCODE_SPACE = 44
   
-  #SDL_SCANCODE_MINUS        = 45
-  #SDL_SCANCODE_EQUALS       = 46
-  #SDL_SCANCODE_LEFTBRACKET  = 47
+  #SDL_SCANCODE_MINUS = 45
+  #SDL_SCANCODE_EQUALS = 46
+  #SDL_SCANCODE_LEFTBRACKET = 47
   #SDL_SCANCODE_RIGHTBRACKET = 48
-  #SDL_SCANCODE_BACKSLASH    = 49
-  #SDL_SCANCODE_NONUSHASH    = 50
-  #SDL_SCANCODE_SEMICOLON    = 51
-  #SDL_SCANCODE_APOSTROPHE   = 52
-  #SDL_SCANCODE_GRAVE        = 53
-  #SDL_SCANCODE_COMMA        = 54
-  #SDL_SCANCODE_PERIOD       = 55
-  #SDL_SCANCODE_SLASH        = 56
+  #SDL_SCANCODE_BACKSLASH = 49
+  #SDL_SCANCODE_NONUSHASH = 50
+  #SDL_SCANCODE_SEMICOLON = 51
+  #SDL_SCANCODE_APOSTROPHE = 52
+  #SDL_SCANCODE_GRAVE = 53
+  #SDL_SCANCODE_COMMA = 54
+  #SDL_SCANCODE_PERIOD = 55
+  #SDL_SCANCODE_SLASH = 56
   
   #SDL_SCANCODE_CAPSLOCK = 57
   
@@ -499,32 +700,199 @@ Enumeration ; SDL_Scancode
   #SDL_SCANCODE_F12 = 69
   
   #SDL_SCANCODE_PRINTSCREEN = 70
-  #SDL_SCANCODE_SCROLLLOCK  = 71
-  #SDL_SCANCODE_PAUSE       = 72
-  #SDL_SCANCODE_INSERT      = 73
-  
-  #SDL_SCANCODE_HOME     = 74
-  #SDL_SCANCODE_PAGEUP   = 75
-  #SDL_SCANCODE_DELETE   = 76
-  #SDL_SCANCODE_END      = 77
+  #SDL_SCANCODE_SCROLLLOCK = 71
+  #SDL_SCANCODE_PAUSE = 72
+  #SDL_SCANCODE_INSERT = 73
+  #SDL_SCANCODE_HOME = 74
+  #SDL_SCANCODE_PAGEUP = 75
+  #SDL_SCANCODE_DELETE = 76
+  #SDL_SCANCODE_END = 77
   #SDL_SCANCODE_PAGEDOWN = 78
-  #SDL_SCANCODE_RIGHT    = 79
-  #SDL_SCANCODE_LEFT     = 80
-  #SDL_SCANCODE_DOWN     = 81
-  #SDL_SCANCODE_UP       = 82
+  #SDL_SCANCODE_RIGHT = 79
+  #SDL_SCANCODE_LEFT = 80
+  #SDL_SCANCODE_DOWN = 81
+  #SDL_SCANCODE_UP = 82
   
-  ; ...
+  #SDL_SCANCODE_NUMLOCKCLEAR = 83
+  #SDL_SCANCODE_KP_DIVIDE = 84
+  #SDL_SCANCODE_KP_MULTIPLY = 85
+  #SDL_SCANCODE_KP_MINUS = 86
+  #SDL_SCANCODE_KP_PLUS = 87
+  #SDL_SCANCODE_KP_ENTER = 88
+  #SDL_SCANCODE_KP_1 = 89
+  #SDL_SCANCODE_KP_2 = 90
+  #SDL_SCANCODE_KP_3 = 91
+  #SDL_SCANCODE_KP_4 = 92
+  #SDL_SCANCODE_KP_5 = 93
+  #SDL_SCANCODE_KP_6 = 94
+  #SDL_SCANCODE_KP_7 = 95
+  #SDL_SCANCODE_KP_8 = 96
+  #SDL_SCANCODE_KP_9 = 97
+  #SDL_SCANCODE_KP_0 = 98
+  #SDL_SCANCODE_KP_PERIOD = 99
   
-  #SDL_SCANCODE_LCTRL  = 224
+  #SDL_SCANCODE_NONUSBACKSLASH = 100
+  #SDL_SCANCODE_APPLICATION = 101
+  #SDL_SCANCODE_POWER = 102
+  #SDL_SCANCODE_KP_EQUALS = 103
+  #SDL_SCANCODE_F13 = 104
+  #SDL_SCANCODE_F14 = 105
+  #SDL_SCANCODE_F15 = 106
+  #SDL_SCANCODE_F16 = 107
+  #SDL_SCANCODE_F17 = 108
+  #SDL_SCANCODE_F18 = 109
+  #SDL_SCANCODE_F19 = 110
+  #SDL_SCANCODE_F20 = 111
+  #SDL_SCANCODE_F21 = 112
+  #SDL_SCANCODE_F22 = 113
+  #SDL_SCANCODE_F23 = 114
+  #SDL_SCANCODE_F24 = 115
+  #SDL_SCANCODE_EXECUTE = 116
+  #SDL_SCANCODE_HELP = 117
+  #SDL_SCANCODE_MENU = 118
+  #SDL_SCANCODE_SELECT = 119
+  #SDL_SCANCODE_STOP = 120
+  #SDL_SCANCODE_AGAIN = 121
+  #SDL_SCANCODE_UNDO = 122
+  #SDL_SCANCODE_CUT = 123
+  #SDL_SCANCODE_COPY = 124
+  #SDL_SCANCODE_PASTE = 125
+  #SDL_SCANCODE_FIND = 126
+  #SDL_SCANCODE_MUTE = 127
+  #SDL_SCANCODE_VOLUMEUP = 128
+  #SDL_SCANCODE_VOLUMEDOWN = 129
+  
+  #SDL_SCANCODE_KP_COMMA = 133
+  #SDL_SCANCODE_KP_EQUALSAS400 = 134
+  
+  #SDL_SCANCODE_INTERNATIONAL1 = 135
+  #SDL_SCANCODE_INTERNATIONAL2 = 136
+  #SDL_SCANCODE_INTERNATIONAL3 = 137
+  #SDL_SCANCODE_INTERNATIONAL4 = 138
+  #SDL_SCANCODE_INTERNATIONAL5 = 139
+  #SDL_SCANCODE_INTERNATIONAL6 = 140
+  #SDL_SCANCODE_INTERNATIONAL7 = 141
+  #SDL_SCANCODE_INTERNATIONAL8 = 142
+  #SDL_SCANCODE_INTERNATIONAL9 = 143
+  #SDL_SCANCODE_LANG1 = 144
+  #SDL_SCANCODE_LANG2 = 145
+  #SDL_SCANCODE_LANG3 = 146
+  #SDL_SCANCODE_LANG4 = 147
+  #SDL_SCANCODE_LANG5 = 148
+  #SDL_SCANCODE_LANG6 = 149
+  #SDL_SCANCODE_LANG7 = 150
+  #SDL_SCANCODE_LANG8 = 151
+  #SDL_SCANCODE_LANG9 = 152
+  
+  #SDL_SCANCODE_ALTERASE = 153
+  #SDL_SCANCODE_SYSREQ = 154
+  #SDL_SCANCODE_CANCEL = 155
+  #SDL_SCANCODE_CLEAR = 156
+  #SDL_SCANCODE_PRIOR = 157
+  #SDL_SCANCODE_RETURN2 = 158
+  #SDL_SCANCODE_SEPARATOR = 159
+  #SDL_SCANCODE_OUT = 160
+  #SDL_SCANCODE_OPER = 161
+  #SDL_SCANCODE_CLEARAGAIN = 162
+  #SDL_SCANCODE_CRSEL = 163
+  #SDL_SCANCODE_EXSEL = 164
+  
+  #SDL_SCANCODE_KP_00 = 176
+  #SDL_SCANCODE_KP_000 = 177
+  #SDL_SCANCODE_THOUSANDSSEPARATOR = 178
+  #SDL_SCANCODE_DECIMALSEPARATOR = 179
+  #SDL_SCANCODE_CURRENCYUNIT = 180
+  #SDL_SCANCODE_CURRENCYSUBUNIT = 181
+  #SDL_SCANCODE_KP_LEFTPAREN = 182
+  #SDL_SCANCODE_KP_RIGHTPAREN = 183
+  #SDL_SCANCODE_KP_LEFTBRACE = 184
+  #SDL_SCANCODE_KP_RIGHTBRACE = 185
+  #SDL_SCANCODE_KP_TAB = 186
+  #SDL_SCANCODE_KP_BACKSPACE = 187
+  #SDL_SCANCODE_KP_A = 188
+  #SDL_SCANCODE_KP_B = 189
+  #SDL_SCANCODE_KP_C = 190
+  #SDL_SCANCODE_KP_D = 191
+  #SDL_SCANCODE_KP_E = 192
+  #SDL_SCANCODE_KP_F = 193
+  #SDL_SCANCODE_KP_XOR = 194
+  #SDL_SCANCODE_KP_POWER = 195
+  #SDL_SCANCODE_KP_PERCENT = 196
+  #SDL_SCANCODE_KP_LESS = 197
+  #SDL_SCANCODE_KP_GREATER = 198
+  #SDL_SCANCODE_KP_AMPERSAND = 199
+  #SDL_SCANCODE_KP_DBLAMPERSAND = 200
+  #SDL_SCANCODE_KP_VERTICALBAR = 201
+  #SDL_SCANCODE_KP_DBLVERTICALBAR = 202
+  #SDL_SCANCODE_KP_COLON = 203
+  #SDL_SCANCODE_KP_HASH = 204
+  #SDL_SCANCODE_KP_SPACE = 205
+  #SDL_SCANCODE_KP_AT = 206
+  #SDL_SCANCODE_KP_EXCLAM = 207
+  #SDL_SCANCODE_KP_MEMSTORE = 208
+  #SDL_SCANCODE_KP_MEMRECALL = 209
+  #SDL_SCANCODE_KP_MEMCLEAR = 210
+  #SDL_SCANCODE_KP_MEMADD = 211
+  #SDL_SCANCODE_KP_MEMSUBTRACT = 212
+  #SDL_SCANCODE_KP_MEMMULTIPLY = 213
+  #SDL_SCANCODE_KP_MEMDIVIDE = 214
+  #SDL_SCANCODE_KP_PLUSMINUS = 215
+  #SDL_SCANCODE_KP_CLEAR = 216
+  #SDL_SCANCODE_KP_CLEARENTRY = 217
+  #SDL_SCANCODE_KP_BINARY = 218
+  #SDL_SCANCODE_KP_OCTAL = 219
+  #SDL_SCANCODE_KP_DECIMAL = 220
+  #SDL_SCANCODE_KP_HEXADECIMAL = 221
+  
+  #SDL_SCANCODE_LCTRL = 224
   #SDL_SCANCODE_LSHIFT = 225
-  #SDL_SCANCODE_LALT   = 226
-  #SDL_SCANCODE_LGUI   = 227
-  #SDL_SCANCODE_RCTRL  = 228
+  #SDL_SCANCODE_LALT = 226
+  #SDL_SCANCODE_LGUI = 227
+  #SDL_SCANCODE_RCTRL = 228
   #SDL_SCANCODE_RSHIFT = 229
-  #SDL_SCANCODE_RALT   = 230
-  #SDL_SCANCODE_RGUI   = 231
+  #SDL_SCANCODE_RALT = 230
+  #SDL_SCANCODE_RGUI = 231
   
-  ; ...
+  #SDL_SCANCODE_MODE = 257
+  
+  #SDL_SCANCODE_SLEEP = 258
+  #SDL_SCANCODE_WAKE = 259
+  
+  #SDL_SCANCODE_CHANNEL_INCREMENT = 260
+  #SDL_SCANCODE_CHANNEL_DECREMENT = 261
+  
+  #SDL_SCANCODE_MEDIA_PLAY = 262
+  #SDL_SCANCODE_MEDIA_PAUSE = 263
+  #SDL_SCANCODE_MEDIA_RECORD = 264
+  #SDL_SCANCODE_MEDIA_FAST_FORWARD = 265
+  #SDL_SCANCODE_MEDIA_REWIND = 266
+  #SDL_SCANCODE_MEDIA_NEXT_TRACK = 267
+  #SDL_SCANCODE_MEDIA_PREVIOUS_TRACK = 268
+  #SDL_SCANCODE_MEDIA_STOP = 269
+  #SDL_SCANCODE_MEDIA_EJECT = 270
+  #SDL_SCANCODE_MEDIA_PLAY_PAUSE = 271
+  #SDL_SCANCODE_MEDIA_SELECT = 272
+  
+  #SDL_SCANCODE_AC_NEW = 273
+  #SDL_SCANCODE_AC_OPEN = 274
+  #SDL_SCANCODE_AC_CLOSE = 275
+  #SDL_SCANCODE_AC_EXIT = 276
+  #SDL_SCANCODE_AC_SAVE = 277
+  #SDL_SCANCODE_AC_PRINT = 278
+  #SDL_SCANCODE_AC_PROPERTIES = 279
+  
+  #SDL_SCANCODE_AC_SEARCH = 280
+  #SDL_SCANCODE_AC_HOME = 281
+  #SDL_SCANCODE_AC_BACK = 282
+  #SDL_SCANCODE_AC_FORWARD = 283
+  #SDL_SCANCODE_AC_STOP = 284
+  #SDL_SCANCODE_AC_REFRESH = 285
+  #SDL_SCANCODE_AC_BOOKMARKS = 286
+  
+  #SDL_SCANCODE_SOFTLEFT = 287
+  #SDL_SCANCODE_SOFTRIGHT = 288
+  #SDL_SCANCODE_CALL = 289
+  #SDL_SCANCODE_ENDCALL = 290
   
   #SDL_SCANCODE_RESERVED = 400
   
@@ -612,88 +980,91 @@ EndEnumeration
 ;-
 ;- SDL3 Structures
 
-Structure SDL_CommonEvent Align #PB_Structure_AlignC
-  type.l ; SDL_EventType
-  reserved.l
-  timestamp.q
+Structure  SDL_CommonEvent Align #PB_Structure_AlignC
+  type.Uint32
+  reserved.Uint32
+  timestamp.Uint64
 EndStructure
 
-Structure SDL_KeyboardEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
-  
-  windowID.l ; SDL_WindowID
-  which.l ; SDL_KeyboardID
-  scancode.l ; SDL_Scancode
-  key.l ; SDL_Keycode
-  mod.u ; SDL_Keymod
-  raw.u
-  down.__SDLx_StructBool ; bool
-  repeat_.__SDLx_StructBool ; bool
+Structure  SDL_KeyboardEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  which.SDL_KeyboardID
+  scancode.SDL_Scancode
+  key.SDL_Keycode
+  mod.SDL_Keymod
+  raw.Uint16
+  down.Uint8
+  repeat_.Uint8
 EndStructure
 
-Structure SDL_MouseMotionEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
-  
-  windowID.l ; SDL_WindowID
-  which.l ; SDL_MouseID
-  state.l ; SDL_MouseButtonFlags
+Structure  SDL_MouseMotionEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  which.SDL_MouseID
+  state.SDL_MouseButtonFlags
   x.f
   y.f
   xrel.f
   yrel.f
 EndStructure
 
-Structure SDL_MouseButtonEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
-  
-  windowID.l ; SDL_WindowID
-  which.l ; SDL_MouseID
-  button.a
-  down.a
-  clicks.a
-  padding.a
+Structure  SDL_MouseButtonEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  which.SDL_MouseID
+  button.Uint8
+  down.Uint8
+  clicks.Uint8
+  padding.Uint8
   x.f
   y.f
 EndStructure
 
-Structure SDL_MouseWheelEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
-  
-  windowID.l ; SDL_WindowID
-  which.l ; SDL_MouseID
+Structure  SDL_MouseWheelEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  which.SDL_MouseID
   x.f
   y.f
-  direction.__SDLx_StructEnum ; SDL_MouseWheelDirection
+  direction.SDL_MouseWheelDirection
   mouse_x.f
   mouse_y.f
 EndStructure
 
-Structure SDL_CameraDeviceEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
-  
-  which.l ; SDL_CameraID
+Structure  SDL_CameraDeviceEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_CameraID
 EndStructure
 
-Structure SDL_QuitEvent Align #PB_Structure_AlignC
-  type.l
-  reserved.l
-  timestamp.q
+Structure  SDL_QuitEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
 EndStructure
 
-Structure SDL_Event Align #PB_Structure_AlignC
+Structure  SDL_ClipboardEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  owner.Uint8
+  num_mime_types.Sint32
+  *mime_types.POINTER_TO_A_POINTER
+EndStructure
+
+Structure  SDL_Event Align #PB_Structure_AlignC
   StructureUnion
-    type.l
-    
+    type.Uint32
     common.SDL_CommonEvent
     ;display.SDL_DisplayEvent
     ;window.SDL_WindowEvent
@@ -706,35 +1077,52 @@ Structure SDL_Event Align #PB_Structure_AlignC
     motion.SDL_MouseMotionEvent
     button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
-    ; ...
+    ;jdevice.SDL_JoyDeviceEvent
+    ;jaxis.SDL_JoyAxisEvent
+    ;jball.SDL_JoyBallEvent
+    ;jhat.SDL_JoyHatEvent
+    ;jbutton.SDL_JoyButtonEvent
+    ;jbattery.SDL_JoyBatteryEvent
+    ;gdevice.SDL_GamepadDeviceEvent
+    ;gaxis.SDL_GamepadAxisEvent
+    ;gbutton.SDL_GamepadButtonEvent
+    ;gtouchpad.SDL_GamepadTouchpadEvent
+    ;gsensor.SDL_GamepadSensorEvent
+    ;adevice.SDL_AudioDeviceEvent
     cdevice.SDL_CameraDeviceEvent
-    ; ...
+    ;sensor.SDL_SensorEvent
     quit.SDL_QuitEvent
-    ; ...
-    ;clipboard.SDL_ClipboardEvent
+    ;user.SDL_UserEvent
+    ;tfinger.SDL_TouchFingerEvent
+    ;pproximity.SDL_PenProximityEvent
+    ;ptouch.SDL_PenTouchEvent
+    ;pmotion.SDL_PenMotionEvent
+    ;pbutton.SDL_PenButtonEvent
+    ;paxis.SDL_PenAxisEvent
+    ;render.SDL_RenderEvent
+    ;drop.SDL_DropEvent
+    clipboard.SDL_ClipboardEvent
     
-    padding.a[128]
+    padding.Uint8[128]
   EndStructureUnion
 EndStructure
 
-Structure SDL_Piont Align #PB_Structure_AlignC
-  x.__SDLx_StructInt
-  y.__SDLx_StructInt
+Structure  SDL_Point Align #PB_Structure_AlignC
+  x.Sint32
+  y.Sint32
 EndStructure
-
-Structure SDL_Rect Align #PB_Structure_AlignC
-  x.__SDLx_StructInt
-  y.__SDLx_StructInt
-  w.__SDLx_StructInt
-  h.__SDLx_StructInt
-EndStructure
-
-Structure SDL_FPoint Align #PB_Structure_AlignC
+Structure  SDL_FPoint Align #PB_Structure_AlignC
   x.f
   y.f
 EndStructure
 
-Structure SDL_FRect Align #PB_Structure_AlignC
+Structure SDL_Rect Align #PB_Structure_AlignC
+  x.Sint32
+  y.Sint32
+  w.Sint32
+  h.Sint32
+EndStructure
+Structure  SDL_FRect Align #PB_Structure_AlignC
   x.f
   y.f
   w.f
@@ -742,56 +1130,72 @@ Structure SDL_FRect Align #PB_Structure_AlignC
 EndStructure
 
 Structure SDL_Surface Align #PB_Structure_AlignC
-  flags.l ; SDL_SurfaceFlags
-  format.l ; SDL_PixelFormat
-  w.__SDLx_StructInt
-  h.__SDLx_StructInt
-  pitch.__SDLx_StructInt
+  flags.SDL_SurfaceFlags
+  format.SDL_PixelFormat
+  w.Sint32
+  h.Sint32
+  pitch.Sint32
   *pixels
-  refcount.__SDLx_StructInt
+  refcount.Sint32
   *reserved
 EndStructure
 
-Structure SDL_MessageBoxButtonData Align #PB_Structure_AlignC
-  flags.l ; SDL_MessageBoxButtonFlags
-  buttonID.__SDLx_StructInt
+Structure  SDL_MessageBoxButtonData Align #PB_Structure_AlignC
+  flags.SDL_MessageBoxButtonFlags
+  buttonID.Sint32
   *text
 EndStructure
 
 Structure SDL_MessageBoxColor Align #PB_Structure_AlignC
-  r.a
-  g.a
-  b.a
+  r.Uint8
+  g.Uint8
+  b.Uint8
 EndStructure
 
 Structure SDL_MessageBoxColorScheme Align #PB_Structure_AlignC
   colors.SDL_MessageBoxColor[#SDL_MESSAGEBOX_COLOR_COUNT]
 EndStructure
 
-Structure SDL_MessageBoxData Align #PB_Structure_AlignC
-  flags.l ; SDL_MessageBoxFlags
-  *window
+Structure  SDL_MessageBoxData Align #PB_Structure_AlignC
+  flags.SDL_MessageBoxFlags
+  *window.SDL_Window
   *title
   *message
-  numbuttons.__SDLx_StructInt
-  *buttons
-  *colorScheme
+  
+  numbuttons.Sint32
+  *buttons.SDL_MessageBoxButtonData
+  
+  *colorScheme.SDL_MessageBoxColorScheme
 EndStructure
 
 Structure SDL_Texture Align #PB_Structure_AlignC
-  format.__SDLx_StructEnum
-  w.__SDLx_StructInt
-  h.__SDLx_StructInt
-  refcount.__SDLx_StructInt
+  format.SDL_PixelFormat
+  w.Sint32
+  h.Sint32
+  refcount.Sint32
 EndStructure
 
-Structure SDL_CameraSpec Align #PB_Structure_AlignC
-  format.__SDLx_StructEnum
-  color.__SDLx_StructEnum
-  width.__SDLx_StructInt
-  height.__SDLx_StructInt
-  framerate_numerator.__SDLx_StructInt
-  framerate_denominator.__SDLx_StructInt
+Structure  SDL_CameraSpec Align #PB_Structure_AlignC
+  format.SDL_PixelFormat
+  colorspace.SDL_Colorspace
+  width.Sint32
+  height.Sint32
+  framerate_numerator.Sint32
+  framerate_denominator.Sint32
+EndStructure
+
+Structure  SDL_DisplayMode Align #PB_Structure_AlignC
+  displayID.SDL_DisplayID
+  format.SDL_PixelFormat
+  w.Sint32
+  h.Sint32
+  pixel_density.f
+  refresh_rate.f
+  refresh_rate_numerator.Sint32
+  refresh_rate_denominator.Sint32
+  
+  *internal.SDL_DisplayModeData
+
 EndStructure
 
 Structure SDL_Camera Align #PB_Structure_AlignC
@@ -817,80 +1221,88 @@ EndStructure
 PrototypeC   Proto_SDL_free(*mem)
 
 ;- - Querying SDL Version
-PrototypeC.i Proto_SDL_GetVersion()
+PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
 ;- - Initialization and Shutdown
-PrototypeC.i Proto_SDL_Init(flags.l) ; returns 1 on success
-PrototypeC.i Proto_SDL_InitSubSystem(flags.l) ; returns 1 on success
+PrototypeC.a Proto_SDL_Init(flags.SDL_InitFlags) ; returns bool
+PrototypeC.a Proto_SDL_InitSubSystem(flags.SDL_InitFlags) ; returns bool
 PrototypeC   Proto_SDL_Quit()
-PrototypeC   Proto_SDL_QuitSubSystem(flags.l)
+PrototypeC   Proto_SDL_QuitSubSystem(flags.SDL_InitFlags)
+PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
 ;- - Error Handling
-PrototypeC.i Proto_SDL_GetError()
+PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
 ;- - Display and Window Management
-PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.SDLx_Int, h.SDLx_Int, flags.q) ; flags now 64-bit
+PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
-PrototypeC   Proto_SDL_HideWindow(*window.SDL_Window)
-PrototypeC.i Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.SDLx_Bool)
-PrototypeC   Proto_SDL_ShowWindow(*window.SDL_Window)
+PrototypeC.a Proto_SDL_HideWindow(*window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_MaximizeWindow(*window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_MinimizeWindow(*window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_RaiseWindow(*window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
+PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
 ;- - 2D Accelerated Rendering
-PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, *name)
-PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDLx_Enum, access.SDLx_Enum, w.SDLx_Int, h.SDLx_Int)
-PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface)
+PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, name.p-utf8) ; returns SDL_Renderer *
+PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDL_PixelFormat, access.SDL_TextureAccess, w.Sint32, h.Sint32) ; returns SDL_Texture *
+PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns SDL_Texture *
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
-PrototypeC.i Proto_SDL_RenderClear(*renderer.SDL_Renderer)
-PrototypeC.i Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8)
-PrototypeC.i Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; now expects a FLOAT rect
-PrototypeC.i Proto_SDL_RenderPresent(*renderer.SDL_Renderer)
-PrototypeC.i Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
-PrototypeC.i Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDLx_Enum)
-PrototypeC.i Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.a, g.a, b.a, a.a)
-PrototypeC.i Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.SDLx_Int, h.SDLx_Int, mode.SDLx_Enum)
-PrototypeC.i Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.SDLx_Int)
+PrototypeC.a Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns bool
+PrototypeC.a Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8) ; returns bool
+PrototypeC.a Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; returns bool
+PrototypeC.a Proto_SDL_RenderPresent(*renderer.SDL_Renderer) ; returns bool
+PrototypeC.a Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect) ; returns bool
+PrototypeC.a Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDL_FlipMode) ; returns bool
+PrototypeC.a Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation) ; returns bool
+PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32) ; returns bool
 
 ;- - Pixel Formats and Conversion Routines
-PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDLx_Enum)
+PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns const char *
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
-PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8)
-PrototypeC.i Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8)
+PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
+PrototypeC.a Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8) ; returns bool
 
 ;- - Clipboard Handling
-PrototypeC.i Proto_SDL_SetClipboardText(text.p-utf8)
+PrototypeC.a Proto_SDL_SetClipboardText(text.p-utf8) ; returns bool
 
 ;- - Camera Support
-PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD)
+PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD) ; returns SDL_Surface *
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
-PrototypeC.i Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
-PrototypeC.i Proto_SDL_GetCameraName(instance_id.l)
-PrototypeC.l Proto_SDL_GetCameraPermissionState(*camera.SDL_Camera)
-PrototypeC.i Proto_SDL_GetCameraSupportedFormats(instance_id.l, *count.LONG)
-PrototypeC.i Proto_SDL_GetCameras(*count.LONG)
-PrototypeC.l Proto_SDL_GetNumCameraDrivers()
-PrototypeC.i Proto_SDL_OpenCamera(instance_id.l, *spec.SDL_CameraSpec)
+PrototypeC.a Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
+PrototypeC.i Proto_SDL_GetCameraName(instance_id.SDL_CameraID) ; returns const char *
+PrototypeC.l Proto_SDL_GetCameraPermissionState(*camera.SDL_Camera) ; returns int
+PrototypeC.i Proto_SDL_GetCameraSupportedFormats(devid.SDL_CameraID, *count.LONG) ; returns SDL_CameraSpec **
+PrototypeC.i Proto_SDL_GetCameras(*count.LONG) ; returns SDL_CameraID *
+PrototypeC.l Proto_SDL_GetNumCameraDrivers() ; returns int
+PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec) ; returns SDL_Camera *
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
 ;- - Event Handling
-PrototypeC.i Proto_SDL_PeepEvents(*event.SDL_Event, numevents.SDLx_Int, action.SDLx_Enum, minType.l, maxType.l)
-PrototypeC.i Proto_SDL_PollEvent(*event.SDL_Event)
+PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
+PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
 PrototypeC   Proto_SDL_PumpEvents()
-PrototypeC.i Proto_SDL_PushEvent(*event.SDL_Event)
+PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
 
 ;- - Keyboard Support
-PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG)
+PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns const bool *
 
 ;- - Mouse Support
-PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT)
-PrototypeC.i Proto_SDL_HideCursor()
-PrototypeC.i Proto_SDL_ShowCursor()
+PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButtonFlags
+PrototypeC.a Proto_SDL_HideCursor() ; returns bool
+PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
 ;- - Message Boxes
-PrototypeC.i Proto_SDL_ShowSimpleMessageBox(flags.l, title.p-utf8, message.p-utf8, *window.SDL_Window)
-PrototypeC.i Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
+PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
+PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
 
 
 
@@ -957,7 +1369,7 @@ Procedure SDL_Quit()
   EndIf
 EndProcedure
 
-Procedure.i SDL_Init(flags.l)
+Procedure.a SDL_Init(flags.SDL_InitFlags)
   Protected Success.i = #False
   
   If (__SDLxLib = #Null)
@@ -1027,7 +1439,7 @@ CompilerEndIf
 CompilerIf (#True)
 
 Structure SDLx_KeyboardStateArray
-  ks.__SDLx_StructBool[0]
+  ks.Uint8[0]
 EndStructure
 
 CompilerEndIf
@@ -1048,11 +1460,11 @@ Procedure.s SDLx_PeekString(*strPtr, Free.i)
   ProcedureReturn (Result)
 EndProcedure
 
-Procedure.s SDLx_GetCameraNameString(instance_id.l)
+Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
 EndProcedure
 
-Procedure.s SDLx_GetPixelFormatNameString(format.l)
+Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)
   ProcedureReturn (SDLx_PeekString(SDL_GetPixelFormatName(format), #False))
 EndProcedure
 
@@ -1060,12 +1472,12 @@ Procedure.s SDLx_GetErrorString()
   ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
 EndProcedure
 
-Procedure SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
-  SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue))
+Procedure.a SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
+  ProcedureReturn (SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue)))
 EndProcedure
 
-Procedure SDLx_SetRenderDrawRGBValue(*renderer.SDL_Renderer, RGBValue.i)
-  SDL_SetRenderDrawColor(*renderer, Red(RGBValue), Green(RGBValue), Blue(RGBValue), #SDL_ALPHA_OPAQUE)
+Procedure.a SDLx_SetRenderDrawRGBValue(*renderer.SDL_Renderer, RGBValue.i)
+  ProcedureReturn (SDL_SetRenderDrawColor(*renderer, Red(RGBValue), Green(RGBValue), Blue(RGBValue), #SDL_ALPHA_OPAQUE))
 EndProcedure
 
 Procedure.i SDLx_QuitRequested()
@@ -1099,7 +1511,7 @@ Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
   CompilerEndIf
 EndProcedure
 
-Procedure.i SDLx_InitLibrary(LibraryFile.s, flags.l)
+Procedure.a SDLx_InitLibrary(LibraryFile.s, flags.SDL_InitFlags)
   CompilerIf (#SDLx_DynamicLink)
     If (__SDLxLib = #Null) ; Don't update lib path if it's currently loaded!
       __SDLx_DynamicLibPath = LibraryFile
