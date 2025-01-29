@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-29 03:35:52 UTC
+; Generated 2025-01-29 03:44:15 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -204,6 +204,9 @@ Macro SDL_MouseWheelDirection
   Sint32 ; enum
 EndMacro
 Macro SDL_PixelFormat
+  Sint32 ; enum
+EndMacro
+Macro SDL_PowerState
   Sint32 ; enum
 EndMacro
 Macro SDL_RendererLogicalPresentation
@@ -943,6 +946,17 @@ Enumeration ; SDL_MouseWheelDirection
   #SDL_MOUSEWHEEL_FLIPPED
 EndEnumeration
 
+;- - Power Management Status
+
+Enumeration ; SDL_PowerState
+  #SDL_POWERSTATE_ERROR = -1
+  #SDL_POWERSTATE_UNKNOWN
+  #SDL_POWERSTATE_ON_BATTERY
+  #SDL_POWERSTATE_NO_BATTERY
+  #SDL_POWERSTATE_CHARGING
+  #SDL_POWERSTATE_CHARGED
+EndEnumeration
+
 ;- - Message Boxes
 
 Enumeration ; SDL_MessageBoxFlags
@@ -1298,6 +1312,9 @@ PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButt
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
+;- - Power Management Status
+PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
+
 ;- - Message Boxes
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
@@ -1376,6 +1393,7 @@ Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+Global SDL_GetPowerInfo.Proto_SDL_GetPowerInfo
 Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
 Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
 
@@ -1447,6 +1465,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
   SDL_HideCursor.a()
   SDL_ShowCursor.a()
+  SDL_GetPowerInfo.l(*seconds.LONG, *percent.LONG)
   SDL_ShowSimpleMessageBox.a(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window)
   SDL_ShowMessageBox.a(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
 
@@ -1875,6 +1894,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_ShowCursor = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowCursor'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_GetPowerInfo = GetFunction(__SDLxLib, "SDL_GetPowerInfo")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_GetPowerInfo = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPowerInfo'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf

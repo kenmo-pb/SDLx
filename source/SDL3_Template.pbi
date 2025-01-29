@@ -208,6 +208,9 @@ EndMacro
 Macro SDL_PixelFormat
   Sint32 ; enum
 EndMacro
+Macro SDL_PowerState
+  Sint32 ; enum
+EndMacro
 Macro SDL_RendererLogicalPresentation
   Sint32 ; enum
 EndMacro
@@ -945,6 +948,17 @@ Enumeration ; SDL_MouseWheelDirection
   #SDL_MOUSEWHEEL_FLIPPED
 EndEnumeration
 
+;- - Power Management Status
+
+Enumeration ; SDL_PowerState
+  #SDL_POWERSTATE_ERROR = -1
+  #SDL_POWERSTATE_UNKNOWN
+  #SDL_POWERSTATE_ON_BATTERY
+  #SDL_POWERSTATE_NO_BATTERY
+  #SDL_POWERSTATE_CHARGING
+  #SDL_POWERSTATE_CHARGED
+EndEnumeration
+
 ;- - Message Boxes
 
 Enumeration ; SDL_MessageBoxFlags
@@ -1299,6 +1313,9 @@ PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns const bool *
 PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButtonFlags
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
+
+;- - Power Management Status
+PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
 
 ;- - Message Boxes
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
