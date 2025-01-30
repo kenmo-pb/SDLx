@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-30 15:53:28 UTC
+; Generated 2025-01-30 23:55:06 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1281,8 +1281,11 @@ PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns cons
 ;- - Surface Creation and Simple Drawing
 PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
+PrototypeC.a Proto_SDL_FlipSurface(*surface.SDL_Surface, flip.SDL_FlipMode) ; returns bool
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
+PrototypeC.a Proto_SDL_LockSurface(*surface.SDL_Surface) ; returns bool
 PrototypeC.a Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8) ; returns bool
+PrototypeC   Proto_SDL_UnlockSurface(*surface.SDL_Surface)
 
 ;- - Clipboard Handling
 PrototypeC.a Proto_SDL_SetClipboardText(text.p-utf8) ; returns bool
@@ -1374,8 +1377,11 @@ Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_ConvertPixels.Proto_SDL_ConvertPixels
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
+Global SDL_FlipSurface.Proto_SDL_FlipSurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
+Global SDL_LockSurface.Proto_SDL_LockSurface
 Global SDL_SaveBMP.Proto_SDL_SaveBMP
+Global SDL_UnlockSurface.Proto_SDL_UnlockSurface
 Global SDL_SetClipboardText.Proto_SDL_SetClipboardText
 Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
 Global SDL_CloseCamera.Proto_SDL_CloseCamera
@@ -1447,8 +1453,11 @@ ImportC #SDLx_StaticLibraryName
   SDL_GetPixelFormatName.i(format.SDL_PixelFormat)
   SDL_ConvertPixels.a(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32)
   SDL_DestroySurface(*surface.SDL_Surface)
+  SDL_FlipSurface.a(*surface.SDL_Surface, flip.SDL_FlipMode)
   SDL_LoadBMP.i(file.p-utf8)
+  SDL_LockSurface.a(*surface.SDL_Surface)
   SDL_SaveBMP.a(*surface.SDL_Surface, file.p-utf8)
+  SDL_UnlockSurface(*surface.SDL_Surface)
   SDL_SetClipboardText.a(text.p-utf8)
   SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
   SDL_CloseCamera(*camera.SDL_Camera)
@@ -1760,6 +1769,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_FlipSurface = GetFunction(__SDLxLib, "SDL_FlipSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_FlipSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_FlipSurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_LoadBMP = GetFunction(__SDLxLib, "SDL_LoadBMP")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_LoadBMP = #Null)
@@ -1767,10 +1783,24 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
+        SDL_LockSurface = GetFunction(__SDLxLib, "SDL_LockSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_LockSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_LockSurface'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
         SDL_SaveBMP = GetFunction(__SDLxLib, "SDL_SaveBMP")
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_SaveBMP = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_SaveBMP'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_UnlockSurface = GetFunction(__SDLxLib, "SDL_UnlockSurface")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_UnlockSurface = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_UnlockSurface'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
