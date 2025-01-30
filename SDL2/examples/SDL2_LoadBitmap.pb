@@ -1,28 +1,28 @@
 ﻿; +--------------------+
-; | SDL3_LoadBitmap.pb |
+; | SDL2_LoadBitmap.pb |
 ; +--------------------+
 
 ;-
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL3.pbi"
+XIncludeFile "../SDL2.pbi"
 
 #WinW = 640
 #WinH = 480
 
-If (SDL_Init(#SDL_INIT_VIDEO))
+If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
   
   ; Open a basic window...
-  *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
+  *window = SDL_CreateWindow(#PB_Compiler_Filename, #SDL_WINDOWPOS_CENTERED, #SDL_WINDOWPOS_CENTERED, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
   If (*window)
-    *renderer = SDL_CreateRenderer(*window, #Null$)
+    *renderer = SDL_CreateRenderer(*window, #SDLx_RENDERERINDEX_DEFAULT, #SDL_RENDERER_ACCELERATED | #SDL_RENDERER_PRESENTVSYNC)
     If (*renderer)
       
       ImageFile.s = #PB_Compiler_Home + "examples" + #PS$ + "sources" + #PS$ + "Data" + #PS$ + "PureBasicLogo.bmp"
       *surface.SDL_Surface = SDL_LoadBMP(ImageFile)
       If (*surface)
-        rect.SDL_FRect
+        rect.SDL_Rect
         rect\w = *surface\w
         rect\h = *surface\h
         rect\x = 0
@@ -35,16 +35,16 @@ If (SDL_Init(#SDL_INIT_VIDEO))
           
           HasShown = #False
           event.SDL_Event
-          While (Not SDLx_QuitRequested())
+          While (Not SDL_QuitRequested())
             While (SDL_PollEvent(@event))
-              If (event\type = #SDL_EVENT_KEY_DOWN)
-                Select (event\key\scancode)
+              If (event\type = #SDL_KEYDOWN)
+                Select (event\key\keysym\scancode)
                   Case #SDL_SCANCODE_ESCAPE
-                    event\type = #SDL_EVENT_QUIT
+                    event\type = #SDL_QUIT
                     SDL_PushEvent(@event)
                   Case #SDL_SCANCODE_W, #SDL_SCANCODE_Q
-                    If (event\key\mod & #SDL_KMOD_CTRL)
-                      event\type = #SDL_EVENT_QUIT
+                    If (event\key\keysym\mod & #KMOD_CTRL)
+                      event\type = #SDL_QUIT
                       SDL_PushEvent(@event)
                     EndIf
                 EndSelect
@@ -64,7 +64,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
             ; Fill white background
             SDL_SetRenderDrawColor(*renderer, 255, 255, 255, #SDL_ALPHA_OPAQUE)
             SDL_RenderClear(*renderer)
-            SDL_RenderTexture(*renderer, *texture, #Null, @rect)
+            SDL_RenderCopy(*renderer, *texture, #Null, @rect)
             If (Not HasShown)
               SDL_ShowWindow(*window)
               HasShown = #True
@@ -76,7 +76,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
           
           SDL_DestroyTexture(*texture)
         EndIf
-        SDL_DestroySurface(*surface)
+        SDL_FreeSurface(*surface)
       Else
         Debug "Could not load bitmap: " + ImageFile
       EndIf

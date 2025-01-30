@@ -1,23 +1,23 @@
 ﻿; +-----------------------+
-; | SDL3_KeyboardInput.pb |
+; | SDL2_KeyboardInput.pb |
 ; +-----------------------+
 
 ;-
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL3.pbi"
+XIncludeFile "../SDL2.pbi"
 
 #WinW = 800
 #WinH = 600
 #RectSize = #WinH/10
 
-If (SDL_Init(#SDL_INIT_VIDEO))
+If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
   
   ; Open a basic window...
-  *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
+  *window = SDL_CreateWindow(#PB_Compiler_Filename, #SDL_WINDOWPOS_CENTERED, #SDL_WINDOWPOS_CENTERED, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
   If (*window)
-    *renderer = SDL_CreateRenderer(*window, #Null$)
+    *renderer = SDL_CreateRenderer(*window, #SDLx_RENDERERINDEX_DEFAULT, #SDL_RENDERER_ACCELERATED | #SDL_RENDERER_PRESENTVSYNC)
     If (*renderer)
       
       ; Initialize some basic gameplay variables
@@ -32,7 +32,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
       
       ; Prepare some SDL structs
       event.SDL_Event
-      rect.SDL_FRect
+      rect.SDL_Rect
       rect\w = #RectSize
       rect\h = #RectSize
       HasShown.i = #False
@@ -49,18 +49,18 @@ If (SDL_Init(#SDL_INIT_VIDEO))
         ; Process SDL events...
         SDL_PumpEvents()
         While (SDL_PollEvent(@event))
-          If (event\type = #SDL_EVENT_QUIT)
+          If (event\type = #SDL_QUIT)
             ExitFlag = #True
-          ElseIf (event\type = #SDL_EVENT_KEY_DOWN)
+          ElseIf (event\type = #SDL_KEYDOWN)
             
             ; [Escape] or [Ctrl+Q] or [Ctrl+W] to quit
-            Select (event\key\scancode)
+            Select (event\key\keysym\scancode)
               Case #SDL_SCANCODE_ESCAPE
-                event\type = #SDL_EVENT_QUIT
+                event\type = #SDL_QUIT
                 SDL_PushEvent(@event)
               Case #SDL_SCANCODE_Q, #SDL_SCANCODE_W
-                If (event\key\mod & #SDL_KMOD_CTRL)
-                  event\type = #SDL_EVENT_QUIT
+                If (event\key\keysym\mod & #KMOD_CTRL)
+                  event\type = #SDL_QUIT
                   SDL_PushEvent(@event)
                 EndIf
             EndSelect

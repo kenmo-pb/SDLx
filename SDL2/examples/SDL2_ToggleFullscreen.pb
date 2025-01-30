@@ -1,12 +1,12 @@
 ﻿; +--------------------------+
-; | SDL3_FullscreenToggle.pb |
+; | SDL2_FullscreenToggle.pb |
 ; +--------------------------+
 
 ;-
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL3.pbi"
+XIncludeFile "../SDL2.pbi"
 
 #WinW = 600
 #WinH = 600
@@ -18,7 +18,7 @@ Global IsFullscreen.i = #False
 
 Procedure Redraw()
   Static HasShown.i = #False
-  Static rect.SDL_FRect
+  Static rect.SDL_Rect
   
   If (IsFullscreen Or (#True))
     ; Black borders
@@ -57,41 +57,41 @@ Procedure Redraw()
   
 EndProcedure
 
-If (SDL_Init(#SDL_INIT_VIDEO))
+If (SDL_Init(#SDL_INIT_VIDEO) = #SDLx_INIT_SUCCESS)
   
   ; Open a basic window...
-  *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_RESIZABLE | #SDL_WINDOW_HIDDEN)
+  *window = SDL_CreateWindow(#PB_Compiler_Filename, #SDL_WINDOWPOS_CENTERED, #SDL_WINDOWPOS_CENTERED, #WinW, #WinH, #SDL_WINDOW_RESIZABLE | #SDL_WINDOW_HIDDEN)
   If (*window)
-    *renderer = SDL_CreateRenderer(*window, #Null$)
+    *renderer = SDL_CreateRenderer(*window, #SDLx_RENDERERINDEX_DEFAULT, #SDL_RENDERER_ACCELERATED)
     If (*renderer)
       
       ; Wait until Quit Requested (typically window close button, or Alt+F4, etc.)
       event.SDL_Event
       Redraw()
-      While (Not SDLx_QuitRequested())
+      While (Not SDL_QuitRequested())
         While (SDL_PollEvent(@event))
-          If (event\type = #SDL_EVENT_KEY_DOWN)
-            Select (event\key\scancode)
+          If (event\type = #SDL_KEYDOWN)
+            Select (event\key\keysym\scancode)
               
               ; [Escape] or [Ctrl-W] or [Ctrl-Q] to quit
               Case #SDL_SCANCODE_ESCAPE
-                event\type = #SDL_EVENT_QUIT
+                event\type = #SDL_QUIT
                 SDL_PushEvent(@event)
               Case #SDL_SCANCODE_W, #SDL_SCANCODE_Q
-                If (event\key\mod & #SDL_KMOD_CTRL)
-                  event\type = #SDL_EVENT_QUIT
+                If (event\key\keysym\mod & #KMOD_CTRL)
+                  event\type = #SDL_QUIT
                   SDL_PushEvent(@event)
                 EndIf
                 
               Case #SDL_SCANCODE_F, #SDL_SCANCODE_F11 ; Press [F] or [F11] to toggle between Windows and Fullscreen Desktop!
                 If (IsFullscreen)
-                  SDL_SetWindowFullscreen(*window, #False)
-                  SDL_ShowCursor()
+                  SDL_SetWindowFullscreen(*window, #SDLx_WINDOW_NOT_FULLSCREEN)
+                  SDL_ShowCursor(#SDL_ENABLE)
                   IsFullscreen = #False
                 Else
-                  SDL_SetRenderLogicalPresentation(*renderer, #WinW, #WinH, #SDL_LOGICAL_PRESENTATION_LETTERBOX)
-                  SDL_SetWindowFullscreen(*window, #True)
-                  SDL_HideCursor()
+                  SDL_RenderSetLogicalSize(*renderer, #WinW, #WinH)
+                  SDL_SetWindowFullscreen(*window, #SDL_WINDOW_FULLSCREEN_DESKTOP)
+                  SDL_ShowCursor(#SDL_DISABLE)
                   IsFullscreen = #True
                 EndIf
                 

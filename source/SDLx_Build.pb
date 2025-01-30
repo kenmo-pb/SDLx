@@ -44,7 +44,11 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
   SDLName.s = "SDL" + Str(MajorVersion)
   TemplateFileName.s = SDLName + "_Template.pbi"
   OutputFileName.s = SDLName + ".pbi"
-  OutputFileFull.s = ".." + #PS$ + OutputFileName
+  OutputFileFull.s = ".." + #PS$
+  If (MajorVersion = 2)
+    OutputFileFull + "SDL2" + #PS$
+  EndIf
+  OutputFileFull + OutputFileName
   
   If (FileSize(TemplateFileName) > 0)
     If (ReadFile(0, TemplateFileName))

@@ -6,7 +6,7 @@
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL2.pbi"
+XIncludeFile "../SDL2.pbi"
 
 If (SDL_Init(0) = #SDLx_INIT_SUCCESS)
   

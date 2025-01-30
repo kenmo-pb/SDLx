@@ -6,7 +6,7 @@
 
 ;#SDLx_StaticLink = #True
 #SDLx_DebugErrors = #True
-XIncludeFile "../../SDL2.pbi"
+XIncludeFile "../SDL2.pbi"
 
 Debug "Loading " + #SDLx_LibName + " via '" + #SDLx_IncludeFilename + "'..."
 Debug "(IncludeFile based on SDL version " + SDLx_CompiledVersionString() + ")"

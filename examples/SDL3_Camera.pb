@@ -6,7 +6,7 @@
 
 ;#SDLx_StaticLink = #True
 ;#SDLx_DebugErrors = #True
-XIncludeFile "../../SDL3.pbi"
+XIncludeFile "../SDL3.pbi"
 
 #WinH = 600
 
