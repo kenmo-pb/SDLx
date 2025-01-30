@@ -1281,6 +1281,7 @@ PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixe
 PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns const char *
 
 ;- - Surface Creation and Simple Drawing
+PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8) ; returns bool

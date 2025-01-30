@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-29 03:44:15 UTC
+; Generated 2025-01-30 15:53:28 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1279,6 +1279,7 @@ PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixe
 PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns const char *
 
 ;- - Surface Creation and Simple Drawing
+PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8) ; returns bool
@@ -1371,6 +1372,7 @@ Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
+Global SDL_ConvertPixels.Proto_SDL_ConvertPixels
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
 Global SDL_SaveBMP.Proto_SDL_SaveBMP
@@ -1443,6 +1445,7 @@ ImportC #SDLx_StaticLibraryName
   SDL_SetRenderLogicalPresentation.a(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation)
   SDL_UpdateTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32)
   SDL_GetPixelFormatName.i(format.SDL_PixelFormat)
+  SDL_ConvertPixels.a(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32)
   SDL_DestroySurface(*surface.SDL_Surface)
   SDL_LoadBMP.i(file.p-utf8)
   SDL_SaveBMP.a(*surface.SDL_Surface, file.p-utf8)
@@ -1740,6 +1743,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
         CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
           If (SDL_GetPixelFormatName = #Null)
             __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPixelFormatName'")
+            LoadFailed = #SDLx_RequireAllFunctionLoads
+          EndIf
+        CompilerEndIf
+        SDL_ConvertPixels = GetFunction(__SDLxLib, "SDL_ConvertPixels")
+        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+          If (SDL_ConvertPixels = #Null)
+            __SDLx_Debug("Failed to load SDL library function: 'SDL_ConvertPixels'")
             LoadFailed = #SDLx_RequireAllFunctionLoads
           EndIf
         CompilerEndIf
