@@ -1,6 +1,8 @@
 ﻿; +--------------------+
 ; | SDL3_LoadBitmap.pb |
 ; +--------------------+
+; | https://wiki.libsdl.org/SDL3/CategorySurface
+; | https://wiki.libsdl.org/SDL3/CategoryRender
 
 ;-
 

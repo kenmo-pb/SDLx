@@ -1,6 +1,8 @@
 ﻿; +---------------------+
 ; | SDL3_VersionInfo.pb |
 ; +---------------------+
+; | https://wiki.libsdl.org/SDL3/CategoryInit
+; | https://wiki.libsdl.org/SDL3/CategoryVersion
 
 ;-
 

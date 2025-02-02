@@ -1,6 +1,8 @@
 ﻿; +---------------------+
 ; | SDL3_BasicWindow.pb |
 ; +---------------------+
+; | https://wiki.libsdl.org/SDL3/CategoryVideo
+; | https://wiki.libsdl.org/SDL3/CategoryEvents
 
 ;-
 

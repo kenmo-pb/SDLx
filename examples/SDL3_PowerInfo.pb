@@ -1,6 +1,7 @@
 ﻿; +-------------------+
 ; | SDL3_PowerInfo.pb |
 ; +-------------------+
+; | https://wiki.libsdl.org/SDL3/CategoryPower
 
 ;-
 

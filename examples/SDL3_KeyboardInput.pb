@@ -1,6 +1,8 @@
 ﻿; +-----------------------+
 ; | SDL3_KeyboardInput.pb |
 ; +-----------------------+
+; | https://wiki.libsdl.org/SDL3/CategoryEvents
+; | https://wiki.libsdl.org/SDL3/CategoryKeyboard
 
 ;-
 

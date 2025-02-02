@@ -1,6 +1,9 @@
 ﻿; +----------------+
 ; | SDL3_Camera.pb |
 ; +----------------+
+; | https://wiki.libsdl.org/SDL3/CategoryCamera
+; | https://wiki.libsdl.org/SDL3/CategorySurface
+; | https://wiki.libsdl.org/SDL3/CategoryRender
 
 ;-
 
