@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-01-30 23:55:06 UTC
+; Generated 2025-02-02 05:01:35 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -40,10 +40,10 @@ CompilerEndIf
 ;-
 ;- Build Switches
 
-CompilerIf (Not Defined(SDLx_StaticLink, #PB_Constant))
-  #SDLx_StaticLink = #False
+CompilerIf (Not Defined(SDLx_UseImport, #PB_Constant))
+  #SDLx_UseImport = #False
 CompilerEndIf
-#SDLx_DynamicLink = Bool(Not #SDLx_StaticLink)
+#SDLx_UseOpenLibrary = Bool(Not #SDLx_UseImport)
 
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
@@ -73,35 +73,35 @@ CompilerEndIf
 
 CompilerSelect (#PB_Compiler_OS)
   CompilerCase #PB_OS_Windows
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      #SDLx_DynamicLibraryDefaultName = "SDL3.dll"
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      #SDLx_OpenLibraryDefaultName = "SDL3.dll"
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      #SDLx_StaticLibraryName = "SDL3.lib"
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      #SDLx_ImportLibraryName = "SDL3.lib"
     CompilerEndIf
     
   CompilerCase #PB_OS_Linux
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      #SDLx_DynamicLibraryDefaultName = "libSDL3.so"
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      #SDLx_OpenLibraryDefaultName = "libSDL3.so"
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      ;#SDLx_StaticLibraryName = ""
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      ;#SDLx_ImportLibraryName = ""
     CompilerEndIf
     
   CompilerCase #PB_OS_MacOS
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      ;#SDLx_DynamicLibraryDefaultName = ""
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      ;#SDLx_OpenLibraryDefaultName = ""
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      #SDLx_StaticLibraryName = "Frameworks/SDL3.framework/SDL3"
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      #SDLx_ImportLibraryName = "Frameworks/SDL3.framework/SDL3"
     CompilerEndIf
 CompilerEndSelect
 
-CompilerIf (#SDLx_DynamicLink And (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant)))
-  CompilerError "#SDLx_DynamicLibraryDefaultName must be defined to dynamically link " + #SDLx_LibName + "!"
+CompilerIf (#SDLx_UseOpenLibrary And (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant)))
+  CompilerError "#SDLx_OpenLibraryDefaultName must be defined to open " + #SDLx_LibName + "!"
 CompilerEndIf
-CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Constant)))
-  CompilerError "#SDLx_StaticLibraryName must be defined to statically link " + #SDLx_LibName + "!"
+CompilerIf (#SDLx_UseImport And (Not Defined(SDLx_ImportLibraryName, #PB_Constant)))
+  CompilerError "#SDLx_ImportLibraryName must be defined to Import " + #SDLx_LibName + "!"
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
@@ -1330,9 +1330,9 @@ PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *butto
 
 
 ;-
-;- Dynamic Link Variables
+;- OpenLibrary Variables
 
-CompilerIf (#SDLx_DynamicLink)
+CompilerIf (#SDLx_UseOpenLibrary)
 
 Global __SDLx_DynamicLibPath.s
 
@@ -1410,11 +1410,11 @@ Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
 CompilerEndIf
 
 ;-
-;- Static Link Imports
+;- Function Imports
 
-CompilerIf (#SDLx_StaticLink)
+CompilerIf (#SDLx_UseImport)
 
-ImportC #SDLx_StaticLibraryName
+ImportC #SDLx_ImportLibraryName
   
   SDL_free(*mem)
   SDL_GetVersion.l()
@@ -1490,13 +1490,17 @@ CompilerEndIf
 ;-
 ;- PB Wrapper Procedures
 
-CompilerIf (#SDLx_DynamicLink)
+CompilerIf (#SDLx_UseOpenLibrary)
 
 Procedure SDL_Quit()
   If (__SDLxLib)
     __SDLx_Quit()
     CloseLibrary(__SDLxLib)
-    __SDLxLib = #Null
+    __SDLxLib   = #Null
+    __SDLx_Init = #Null
+    __SDLx_Quit = #Null
+    SDL_InitSubsystem = #Null
+    SDL_QuitSubsystem = #Null
   Else
     __SDLx_Debug("SDL_Quit() called while not initialized")
   EndIf
@@ -1507,7 +1511,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   
   If (__SDLxLib = #Null)
     If (__SDLx_DynamicLibPath = "")
-      __SDLx_DynamicLibPath = #SDLx_DynamicLibraryDefaultName
+      __SDLx_DynamicLibPath = #SDLx_OpenLibraryDefaultName
     EndIf
     __SDLxLib = OpenLibrary(#PB_Any, __SDLx_DynamicLibPath)
     If (Not __SDLxLib)
@@ -1518,479 +1522,483 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   EndIf
   
   If (__SDLxLib)
-    __SDLx_Init = GetFunction(__SDLxLib, "SDL_Init")
-    If (__SDLx_Init)
-      __SDLx_Quit = GetFunction(__SDLxLib, "SDL_Quit")
-      If (__SDLx_Quit)
-        Protected LoadFailed.i = #False
-        
-        SDL_free = GetFunction(__SDLxLib, "SDL_free")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_free = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_free'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetVersion = GetFunction(__SDLxLib, "SDL_GetVersion")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetVersion = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetVersion'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_InitSubSystem = GetFunction(__SDLxLib, "SDL_InitSubSystem")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_InitSubSystem = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_InitSubSystem'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_QuitSubSystem = GetFunction(__SDLxLib, "SDL_QuitSubSystem")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_QuitSubSystem = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_QuitSubSystem'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_WasInit = GetFunction(__SDLxLib, "SDL_WasInit")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_WasInit = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_WasInit'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetError = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetError'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_CreateWindow = GetFunction(__SDLxLib, "SDL_CreateWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_CreateWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_DestroyWindow = GetFunction(__SDLxLib, "SDL_DestroyWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_DestroyWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_HideWindow = GetFunction(__SDLxLib, "SDL_HideWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_HideWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_HideWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_MaximizeWindow = GetFunction(__SDLxLib, "SDL_MaximizeWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_MaximizeWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_MaximizeWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_MinimizeWindow = GetFunction(__SDLxLib, "SDL_MinimizeWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_MinimizeWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_MinimizeWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RaiseWindow = GetFunction(__SDLxLib, "SDL_RaiseWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RaiseWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RaiseWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RestoreWindow = GetFunction(__SDLxLib, "SDL_RestoreWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RestoreWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RestoreWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetWindowAlwaysOnTop = GetFunction(__SDLxLib, "SDL_SetWindowAlwaysOnTop")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetWindowAlwaysOnTop = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowAlwaysOnTop'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetWindowFullscreen = GetFunction(__SDLxLib, "SDL_SetWindowFullscreen")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetWindowFullscreen = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreen'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetWindowFullscreenMode = GetFunction(__SDLxLib, "SDL_SetWindowFullscreenMode")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetWindowFullscreenMode = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreenMode'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetWindowSize = GetFunction(__SDLxLib, "SDL_SetWindowSize")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetWindowSize = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowSize'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ShowWindow = GetFunction(__SDLxLib, "SDL_ShowWindow")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ShowWindow = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowWindow'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_CreateRenderer = GetFunction(__SDLxLib, "SDL_CreateRenderer")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_CreateRenderer = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateRenderer'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_CreateTexture = GetFunction(__SDLxLib, "SDL_CreateTexture")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_CreateTexture = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTexture'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_CreateTextureFromSurface = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTextureFromSurface'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_DestroyRenderer = GetFunction(__SDLxLib, "SDL_DestroyRenderer")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_DestroyRenderer = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyRenderer'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_DestroyTexture = GetFunction(__SDLxLib, "SDL_DestroyTexture")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_DestroyTexture = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyTexture'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderClear = GetFunction(__SDLxLib, "SDL_RenderClear")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderClear = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderClear'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderDebugText = GetFunction(__SDLxLib, "SDL_RenderDebugText")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderDebugText = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderDebugText'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderFillRect = GetFunction(__SDLxLib, "SDL_RenderFillRect")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderFillRect = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderFillRect'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderPresent = GetFunction(__SDLxLib, "SDL_RenderPresent")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderPresent = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderPresent'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderTexture = GetFunction(__SDLxLib, "SDL_RenderTexture")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderTexture = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTexture'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_RenderTextureRotated = GetFunction(__SDLxLib, "SDL_RenderTextureRotated")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_RenderTextureRotated = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTextureRotated'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetRenderDrawColor = GetFunction(__SDLxLib, "SDL_SetRenderDrawColor")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetRenderDrawColor = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderDrawColor'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetRenderLogicalPresentation = GetFunction(__SDLxLib, "SDL_SetRenderLogicalPresentation")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetRenderLogicalPresentation = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderLogicalPresentation'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_UpdateTexture = GetFunction(__SDLxLib, "SDL_UpdateTexture")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_UpdateTexture = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateTexture'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetPixelFormatName = GetFunction(__SDLxLib, "SDL_GetPixelFormatName")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetPixelFormatName = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPixelFormatName'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ConvertPixels = GetFunction(__SDLxLib, "SDL_ConvertPixels")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ConvertPixels = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ConvertPixels'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_DestroySurface = GetFunction(__SDLxLib, "SDL_DestroySurface")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_DestroySurface = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroySurface'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_FlipSurface = GetFunction(__SDLxLib, "SDL_FlipSurface")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_FlipSurface = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_FlipSurface'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_LoadBMP = GetFunction(__SDLxLib, "SDL_LoadBMP")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_LoadBMP = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_LoadBMP'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_LockSurface = GetFunction(__SDLxLib, "SDL_LockSurface")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_LockSurface = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_LockSurface'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SaveBMP = GetFunction(__SDLxLib, "SDL_SaveBMP")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SaveBMP = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SaveBMP'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_UnlockSurface = GetFunction(__SDLxLib, "SDL_UnlockSurface")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_UnlockSurface = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_UnlockSurface'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_SetClipboardText = GetFunction(__SDLxLib, "SDL_SetClipboardText")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_SetClipboardText = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_SetClipboardText'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_AcquireCameraFrame = GetFunction(__SDLxLib, "SDL_AcquireCameraFrame")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_AcquireCameraFrame = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_AcquireCameraFrame'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_CloseCamera = GetFunction(__SDLxLib, "SDL_CloseCamera")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_CloseCamera = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseCamera'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetCameraFormat = GetFunction(__SDLxLib, "SDL_GetCameraFormat")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetCameraFormat = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraFormat'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetCameraName = GetFunction(__SDLxLib, "SDL_GetCameraName")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetCameraName = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraName'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetCameraPermissionState = GetFunction(__SDLxLib, "SDL_GetCameraPermissionState")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetCameraPermissionState = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraPermissionState'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetCameraSupportedFormats = GetFunction(__SDLxLib, "SDL_GetCameraSupportedFormats")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetCameraSupportedFormats = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraSupportedFormats'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetCameras = GetFunction(__SDLxLib, "SDL_GetCameras")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetCameras = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameras'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetNumCameraDrivers = GetFunction(__SDLxLib, "SDL_GetNumCameraDrivers")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetNumCameraDrivers = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetNumCameraDrivers'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_OpenCamera = GetFunction(__SDLxLib, "SDL_OpenCamera")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_OpenCamera = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenCamera'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ReleaseCameraFrame = GetFunction(__SDLxLib, "SDL_ReleaseCameraFrame")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ReleaseCameraFrame = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ReleaseCameraFrame'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_PeepEvents = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_PeepEvents'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_PollEvent = GetFunction(__SDLxLib, "SDL_PollEvent")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_PollEvent = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_PollEvent'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_PumpEvents = GetFunction(__SDLxLib, "SDL_PumpEvents")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_PumpEvents = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_PumpEvents'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_PushEvent = GetFunction(__SDLxLib, "SDL_PushEvent")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_PushEvent = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_PushEvent'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetKeyboardState = GetFunction(__SDLxLib, "SDL_GetKeyboardState")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetKeyboardState = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetKeyboardState'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetMouseState = GetFunction(__SDLxLib, "SDL_GetMouseState")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetMouseState = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetMouseState'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_HideCursor = GetFunction(__SDLxLib, "SDL_HideCursor")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_HideCursor = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_HideCursor'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ShowCursor = GetFunction(__SDLxLib, "SDL_ShowCursor")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ShowCursor = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowCursor'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_GetPowerInfo = GetFunction(__SDLxLib, "SDL_GetPowerInfo")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_GetPowerInfo = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPowerInfo'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ShowSimpleMessageBox = GetFunction(__SDLxLib, "SDL_ShowSimpleMessageBox")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ShowSimpleMessageBox = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowSimpleMessageBox'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        SDL_ShowMessageBox = GetFunction(__SDLxLib, "SDL_ShowMessageBox")
-        CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-          If (SDL_ShowMessageBox = #Null)
-            __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowMessageBox'")
-            LoadFailed = #SDLx_RequireAllFunctionLoads
-          EndIf
-        CompilerEndIf
-        
-        
-        If (Not LoadFailed)
-          If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
-            Success = __SDLx_Init(flags)
-            CompilerIf (#True)
-              If (Success)
-                Protected LinkedVer.i = SDL_GetVersion()
-                If (SDL_VERSIONNUM_MAJOR(LinkedVer) = #SDL_MAJOR_VERSION)
-                  If (SDL_VERSIONNUM_MINOR(LinkedVer) < #SDL_MINOR_VERSION - 1)
-                    Protected Message.s = "Warning: Dynamically linked SDL ("
-                    Message + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MINOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MICRO(LinkedVer))
-                    Message + ") is older than SDLx compiled version ("
-                    Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION) + ")"
-                    __SDLx_Debug(Message)
+    If (SDL_InitSubsystem)
+      Success = SDL_InitSubsystem(flags)
+    Else
+      __SDLx_Init = GetFunction(__SDLxLib, "SDL_Init")
+      If (__SDLx_Init)
+        __SDLx_Quit = GetFunction(__SDLxLib, "SDL_Quit")
+        If (__SDLx_Quit)
+          Protected LoadFailed.i = #False
+          
+          SDL_free = GetFunction(__SDLxLib, "SDL_free")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_free = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_free'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetVersion = GetFunction(__SDLxLib, "SDL_GetVersion")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetVersion = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetVersion'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_InitSubSystem = GetFunction(__SDLxLib, "SDL_InitSubSystem")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_InitSubSystem = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_InitSubSystem'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_QuitSubSystem = GetFunction(__SDLxLib, "SDL_QuitSubSystem")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_QuitSubSystem = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_QuitSubSystem'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_WasInit = GetFunction(__SDLxLib, "SDL_WasInit")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_WasInit = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_WasInit'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetError = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetError'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CreateWindow = GetFunction(__SDLxLib, "SDL_CreateWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DestroyWindow = GetFunction(__SDLxLib, "SDL_DestroyWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DestroyWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_HideWindow = GetFunction(__SDLxLib, "SDL_HideWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_HideWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_HideWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_MaximizeWindow = GetFunction(__SDLxLib, "SDL_MaximizeWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_MaximizeWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_MaximizeWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_MinimizeWindow = GetFunction(__SDLxLib, "SDL_MinimizeWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_MinimizeWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_MinimizeWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RaiseWindow = GetFunction(__SDLxLib, "SDL_RaiseWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RaiseWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RaiseWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RestoreWindow = GetFunction(__SDLxLib, "SDL_RestoreWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RestoreWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RestoreWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowAlwaysOnTop = GetFunction(__SDLxLib, "SDL_SetWindowAlwaysOnTop")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowAlwaysOnTop = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowAlwaysOnTop'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowFullscreen = GetFunction(__SDLxLib, "SDL_SetWindowFullscreen")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowFullscreen = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreen'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowFullscreenMode = GetFunction(__SDLxLib, "SDL_SetWindowFullscreenMode")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowFullscreenMode = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreenMode'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowSize = GetFunction(__SDLxLib, "SDL_SetWindowSize")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowSize = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowSize'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ShowWindow = GetFunction(__SDLxLib, "SDL_ShowWindow")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ShowWindow = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CreateRenderer = GetFunction(__SDLxLib, "SDL_CreateRenderer")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateRenderer = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateRenderer'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CreateTexture = GetFunction(__SDLxLib, "SDL_CreateTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTexture'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CreateTextureFromSurface = GetFunction(__SDLxLib, "SDL_CreateTextureFromSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateTextureFromSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateTextureFromSurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DestroyRenderer = GetFunction(__SDLxLib, "SDL_DestroyRenderer")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DestroyRenderer = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyRenderer'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DestroyTexture = GetFunction(__SDLxLib, "SDL_DestroyTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DestroyTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyTexture'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderClear = GetFunction(__SDLxLib, "SDL_RenderClear")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderClear = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderClear'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderDebugText = GetFunction(__SDLxLib, "SDL_RenderDebugText")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderDebugText = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderDebugText'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderFillRect = GetFunction(__SDLxLib, "SDL_RenderFillRect")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderFillRect = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderFillRect'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderPresent = GetFunction(__SDLxLib, "SDL_RenderPresent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderPresent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderPresent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderTexture = GetFunction(__SDLxLib, "SDL_RenderTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTexture'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RenderTextureRotated = GetFunction(__SDLxLib, "SDL_RenderTextureRotated")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RenderTextureRotated = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RenderTextureRotated'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetRenderDrawColor = GetFunction(__SDLxLib, "SDL_SetRenderDrawColor")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetRenderDrawColor = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderDrawColor'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetRenderLogicalPresentation = GetFunction(__SDLxLib, "SDL_SetRenderLogicalPresentation")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetRenderLogicalPresentation = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderLogicalPresentation'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_UpdateTexture = GetFunction(__SDLxLib, "SDL_UpdateTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_UpdateTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateTexture'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetPixelFormatName = GetFunction(__SDLxLib, "SDL_GetPixelFormatName")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetPixelFormatName = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPixelFormatName'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ConvertPixels = GetFunction(__SDLxLib, "SDL_ConvertPixels")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ConvertPixels = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ConvertPixels'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DestroySurface = GetFunction(__SDLxLib, "SDL_DestroySurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DestroySurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroySurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_FlipSurface = GetFunction(__SDLxLib, "SDL_FlipSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_FlipSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlipSurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_LoadBMP = GetFunction(__SDLxLib, "SDL_LoadBMP")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_LoadBMP = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_LoadBMP'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_LockSurface = GetFunction(__SDLxLib, "SDL_LockSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_LockSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_LockSurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SaveBMP = GetFunction(__SDLxLib, "SDL_SaveBMP")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SaveBMP = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SaveBMP'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_UnlockSurface = GetFunction(__SDLxLib, "SDL_UnlockSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_UnlockSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_UnlockSurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetClipboardText = GetFunction(__SDLxLib, "SDL_SetClipboardText")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetClipboardText = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetClipboardText'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_AcquireCameraFrame = GetFunction(__SDLxLib, "SDL_AcquireCameraFrame")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_AcquireCameraFrame = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_AcquireCameraFrame'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CloseCamera = GetFunction(__SDLxLib, "SDL_CloseCamera")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CloseCamera = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseCamera'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetCameraFormat = GetFunction(__SDLxLib, "SDL_GetCameraFormat")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetCameraFormat = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraFormat'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetCameraName = GetFunction(__SDLxLib, "SDL_GetCameraName")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetCameraName = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraName'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetCameraPermissionState = GetFunction(__SDLxLib, "SDL_GetCameraPermissionState")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetCameraPermissionState = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraPermissionState'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetCameraSupportedFormats = GetFunction(__SDLxLib, "SDL_GetCameraSupportedFormats")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetCameraSupportedFormats = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameraSupportedFormats'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetCameras = GetFunction(__SDLxLib, "SDL_GetCameras")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetCameras = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetCameras'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetNumCameraDrivers = GetFunction(__SDLxLib, "SDL_GetNumCameraDrivers")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetNumCameraDrivers = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetNumCameraDrivers'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_OpenCamera = GetFunction(__SDLxLib, "SDL_OpenCamera")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_OpenCamera = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenCamera'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ReleaseCameraFrame = GetFunction(__SDLxLib, "SDL_ReleaseCameraFrame")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ReleaseCameraFrame = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ReleaseCameraFrame'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PeepEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PeepEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PollEvent = GetFunction(__SDLxLib, "SDL_PollEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PollEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PollEvent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PumpEvents = GetFunction(__SDLxLib, "SDL_PumpEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PumpEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PumpEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PushEvent = GetFunction(__SDLxLib, "SDL_PushEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PushEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PushEvent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetKeyboardState = GetFunction(__SDLxLib, "SDL_GetKeyboardState")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetKeyboardState = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetKeyboardState'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetMouseState = GetFunction(__SDLxLib, "SDL_GetMouseState")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetMouseState = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetMouseState'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_HideCursor = GetFunction(__SDLxLib, "SDL_HideCursor")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_HideCursor = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_HideCursor'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ShowCursor = GetFunction(__SDLxLib, "SDL_ShowCursor")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ShowCursor = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowCursor'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetPowerInfo = GetFunction(__SDLxLib, "SDL_GetPowerInfo")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetPowerInfo = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPowerInfo'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ShowSimpleMessageBox = GetFunction(__SDLxLib, "SDL_ShowSimpleMessageBox")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ShowSimpleMessageBox = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowSimpleMessageBox'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_ShowMessageBox = GetFunction(__SDLxLib, "SDL_ShowMessageBox")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ShowMessageBox = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowMessageBox'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          
+          
+          If (Not LoadFailed)
+            If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
+              Success = __SDLx_Init(flags)
+              CompilerIf (#True)
+                If (Success)
+                  Protected LinkedVer.i = SDL_GetVersion()
+                  If (SDL_VERSIONNUM_MAJOR(LinkedVer) = #SDL_MAJOR_VERSION)
+                    If (SDL_VERSIONNUM_MINOR(LinkedVer) < #SDL_MINOR_VERSION - 1)
+                      Protected Message.s = "Warning: Dynamically linked SDL ("
+                      Message + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MINOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MICRO(LinkedVer))
+                      Message + ") is older than SDLx compiled version ("
+                      Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION) + ")"
+                      __SDLx_Debug(Message)
+                    EndIf
+                  Else
+                    __SDLx_Debug("Dynamically linked SDL version (" + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
+                    SDL_Quit()
+                    Success = #False
                   EndIf
-                Else
-                  __SDLx_Debug("Dynamically linked SDL version (" + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
-                  SDL_Quit()
-                  Success = #False
                 EndIf
-              EndIf
-            CompilerEndIf
-          Else
-            SDL_Quit()
-            __SDLx_Debug("SDL_Init aborted by callback returning non-zero")
+              CompilerEndIf
+            Else
+              SDL_Quit()
+              __SDLx_Debug("SDL_Init aborted by callback returning non-zero")
+            EndIf
           EndIf
+        Else
+          __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Quit" + "'")
         EndIf
       Else
-        __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Quit" + "'")
+        __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Init" + "'")
       EndIf
-    Else
-      __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Init" + "'")
     EndIf
   EndIf
   
@@ -2014,6 +2022,14 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure.i SDLx_LibraryLoaded()
+  CompilerIf (#SDLx_UseImport)
+    ProcedureReturn (#True)
+  CompilerElse
+    ProcedureReturn (Bool(__SDLx_Init))
+  CompilerEndIf
+EndProcedure
 
 Procedure.s SDLx_PeekString(*strPtr, Free.i)
   Protected Result.s = ""
@@ -2066,7 +2082,7 @@ Procedure.s SDLx_GetVersionString()
 EndProcedure
 
 Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
-  CompilerIf (#SDLx_StaticLink)
+  CompilerIf (#SDLx_UseImport)
     Static HasRun.i = #False
     If (*Procedure And (Not HasRun))
       CallFunctionFast(*Procedure)
@@ -2078,7 +2094,7 @@ Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
 EndProcedure
 
 Procedure.a SDLx_InitLibrary(LibraryFile.s, flags.SDL_InitFlags)
-  CompilerIf (#SDLx_DynamicLink)
+  CompilerIf (#SDLx_UseOpenLibrary)
     If (__SDLxLib = #Null) ; Don't update lib path if it's currently loaded!
       __SDLx_DynamicLibPath = LibraryFile
     EndIf

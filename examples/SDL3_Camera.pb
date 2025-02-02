@@ -4,7 +4,7 @@
 
 ;-
 
-;#SDLx_StaticLink = #True
+;#SDLx_UseImport = #True
 ;#SDLx_DebugErrors = #True
 XIncludeFile "../SDL3.pbi"
 
@@ -47,9 +47,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
       If (framerate >= 30.0) And (Not *targetspec)
         *targetspec = *spec
       EndIf
-      ;Debug SDLx_GetPixelFormatNameString(*spec\format)
       Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps"
-      ;Debug ""
     Next i
     Debug ""
   EndIf

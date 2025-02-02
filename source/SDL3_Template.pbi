@@ -42,10 +42,10 @@ CompilerEndIf
 ;-
 ;- Build Switches
 
-CompilerIf (Not Defined(SDLx_StaticLink, #PB_Constant))
-  #SDLx_StaticLink = #False
+CompilerIf (Not Defined(SDLx_UseImport, #PB_Constant))
+  #SDLx_UseImport = #False
 CompilerEndIf
-#SDLx_DynamicLink = Bool(Not #SDLx_StaticLink)
+#SDLx_UseOpenLibrary = Bool(Not #SDLx_UseImport)
 
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
@@ -75,35 +75,35 @@ CompilerEndIf
 
 CompilerSelect (#PB_Compiler_OS)
   CompilerCase #PB_OS_Windows
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      #SDLx_DynamicLibraryDefaultName = "SDL3.dll"
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      #SDLx_OpenLibraryDefaultName = "SDL3.dll"
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      #SDLx_StaticLibraryName = "SDL3.lib"
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      #SDLx_ImportLibraryName = "SDL3.lib"
     CompilerEndIf
     
   CompilerCase #PB_OS_Linux
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      #SDLx_DynamicLibraryDefaultName = "libSDL3.so"
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      #SDLx_OpenLibraryDefaultName = "libSDL3.so"
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      ;#SDLx_StaticLibraryName = ""
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      ;#SDLx_ImportLibraryName = ""
     CompilerEndIf
     
   CompilerCase #PB_OS_MacOS
-    CompilerIf (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant))
-      ;#SDLx_DynamicLibraryDefaultName = ""
+    CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+      ;#SDLx_OpenLibraryDefaultName = ""
     CompilerEndIf
-    CompilerIf (Not Defined(SDLx_StaticLibraryName, #PB_Constant))
-      #SDLx_StaticLibraryName = "Frameworks/SDL3.framework/SDL3"
+    CompilerIf (Not Defined(SDLx_ImportLibraryName, #PB_Constant))
+      #SDLx_ImportLibraryName = "Frameworks/SDL3.framework/SDL3"
     CompilerEndIf
 CompilerEndSelect
 
-CompilerIf (#SDLx_DynamicLink And (Not Defined(SDLx_DynamicLibraryDefaultName, #PB_Constant)))
-  CompilerError "#SDLx_DynamicLibraryDefaultName must be defined to dynamically link " + #SDLx_LibName + "!"
+CompilerIf (#SDLx_UseOpenLibrary And (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant)))
+  CompilerError "#SDLx_OpenLibraryDefaultName must be defined to open " + #SDLx_LibName + "!"
 CompilerEndIf
-CompilerIf (#SDLx_StaticLink And (Not Defined(SDLx_StaticLibraryName, #PB_Constant)))
-  CompilerError "#SDLx_StaticLibraryName must be defined to statically link " + #SDLx_LibName + "!"
+CompilerIf (#SDLx_UseImport And (Not Defined(SDLx_ImportLibraryName, #PB_Constant)))
+  CompilerError "#SDLx_ImportLibraryName must be defined to Import " + #SDLx_LibName + "!"
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
@@ -1332,9 +1332,9 @@ PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *butto
 
 
 ;-
-;- Dynamic Link Variables
+;- OpenLibrary Variables
 
-CompilerIf (#SDLx_DynamicLink)
+CompilerIf (#SDLx_UseOpenLibrary)
 
 Global __SDLx_DynamicLibPath.s
 
@@ -1352,19 +1352,21 @@ Global SDL_GetCameraName.Proto_SDL_GetCameraName
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetVersion.Proto_SDL_GetVersion
+Global SDL_InitSubsystem.Proto_SDL_InitSubsystem
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
+Global SDL_QuitSubsystem.Proto_SDL_QuitSubsystem
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 ;% DELETEEND
 
 CompilerEndIf
 
 ;-
-;- Static Link Imports
+;- Function Imports
 
-CompilerIf (#SDLx_StaticLink)
+CompilerIf (#SDLx_UseImport)
 
-ImportC #SDLx_StaticLibraryName
+ImportC #SDLx_ImportLibraryName
   
 ;% INDENT=1
 ;% STATIC_IMPORTS
@@ -1378,13 +1380,17 @@ CompilerEndIf
 ;-
 ;- PB Wrapper Procedures
 
-CompilerIf (#SDLx_DynamicLink)
+CompilerIf (#SDLx_UseOpenLibrary)
 
 Procedure SDL_Quit()
   If (__SDLxLib)
     __SDLx_Quit()
     CloseLibrary(__SDLxLib)
-    __SDLxLib = #Null
+    __SDLxLib   = #Null
+    __SDLx_Init = #Null
+    __SDLx_Quit = #Null
+    SDL_InitSubsystem = #Null
+    SDL_QuitSubsystem = #Null
   Else
     __SDLx_Debug("SDL_Quit() called while not initialized")
   EndIf
@@ -1395,7 +1401,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   
   If (__SDLxLib = #Null)
     If (__SDLx_DynamicLibPath = "")
-      __SDLx_DynamicLibPath = #SDLx_DynamicLibraryDefaultName
+      __SDLx_DynamicLibPath = #SDLx_OpenLibraryDefaultName
     EndIf
     __SDLxLib = OpenLibrary(#PB_Any, __SDLx_DynamicLibPath)
     If (Not __SDLxLib)
@@ -1406,46 +1412,50 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   EndIf
   
   If (__SDLxLib)
-    __SDLx_Init = GetFunction(__SDLxLib, "SDL_Init")
-    If (__SDLx_Init)
-      __SDLx_Quit = GetFunction(__SDLxLib, "SDL_Quit")
-      If (__SDLx_Quit)
-        Protected LoadFailed.i = #False
-        
-;% INDENT=4
+    If (SDL_InitSubsystem)
+      Success = SDL_InitSubsystem(flags)
+    Else
+      __SDLx_Init = GetFunction(__SDLxLib, "SDL_Init")
+      If (__SDLx_Init)
+        __SDLx_Quit = GetFunction(__SDLxLib, "SDL_Quit")
+        If (__SDLx_Quit)
+          Protected LoadFailed.i = #False
+          
+;% INDENT=5
 ;% LOAD_DYNAMIC_FUNCTIONS
-        
-        If (Not LoadFailed)
-          If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
-            Success = __SDLx_Init(flags)
-            CompilerIf (#True)
-              If (Success)
-                Protected LinkedVer.i = SDL_GetVersion()
-                If (SDL_VERSIONNUM_MAJOR(LinkedVer) = #SDL_MAJOR_VERSION)
-                  If (SDL_VERSIONNUM_MINOR(LinkedVer) < #SDL_MINOR_VERSION - 1)
-                    Protected Message.s = "Warning: Dynamically linked SDL ("
-                    Message + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MINOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MICRO(LinkedVer))
-                    Message + ") is older than SDLx compiled version ("
-                    Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION) + ")"
-                    __SDLx_Debug(Message)
+          
+          If (Not LoadFailed)
+            If ((__SDLx_InitCallback = #Null) Or (CallFunctionFast(__SDLx_InitCallback) = 0))
+              Success = __SDLx_Init(flags)
+              CompilerIf (#True)
+                If (Success)
+                  Protected LinkedVer.i = SDL_GetVersion()
+                  If (SDL_VERSIONNUM_MAJOR(LinkedVer) = #SDL_MAJOR_VERSION)
+                    If (SDL_VERSIONNUM_MINOR(LinkedVer) < #SDL_MINOR_VERSION - 1)
+                      Protected Message.s = "Warning: Dynamically linked SDL ("
+                      Message + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MINOR(LinkedVer)) + "." + Str(SDL_VERSIONNUM_MICRO(LinkedVer))
+                      Message + ") is older than SDLx compiled version ("
+                      Message + Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION) + ")"
+                      __SDLx_Debug(Message)
+                    EndIf
+                  Else
+                    __SDLx_Debug("Dynamically linked SDL version (" + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
+                    SDL_Quit()
+                    Success = #False
                   EndIf
-                Else
-                  __SDLx_Debug("Dynamically linked SDL version (" + Str(SDL_VERSIONNUM_MAJOR(LinkedVer)) + ") does not match compiled SDLx version (" + Str(#SDL_MAJOR_VERSION) + ")!")
-                  SDL_Quit()
-                  Success = #False
                 EndIf
-              EndIf
-            CompilerEndIf
-          Else
-            SDL_Quit()
-            __SDLx_Debug("SDL_Init aborted by callback returning non-zero")
+              CompilerEndIf
+            Else
+              SDL_Quit()
+              __SDLx_Debug("SDL_Init aborted by callback returning non-zero")
+            EndIf
           EndIf
+        Else
+          __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Quit" + "'")
         EndIf
       Else
-        __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Quit" + "'")
+        __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Init" + "'")
       EndIf
-    Else
-      __SDLx_Debug("Failed to load SDL library function: '" + "SDL_Init" + "'")
     EndIf
   EndIf
   
@@ -1469,6 +1479,14 @@ CompilerEndIf
 ;- Helper Procedures
 
 CompilerIf (#SDLx_IncludeHelperProcedures)
+
+Procedure.i SDLx_LibraryLoaded()
+  CompilerIf (#SDLx_UseImport)
+    ProcedureReturn (#True)
+  CompilerElse
+    ProcedureReturn (Bool(__SDLx_Init))
+  CompilerEndIf
+EndProcedure
 
 Procedure.s SDLx_PeekString(*strPtr, Free.i)
   Protected Result.s = ""
@@ -1521,7 +1539,7 @@ Procedure.s SDLx_GetVersionString()
 EndProcedure
 
 Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
-  CompilerIf (#SDLx_StaticLink)
+  CompilerIf (#SDLx_UseImport)
     Static HasRun.i = #False
     If (*Procedure And (Not HasRun))
       CallFunctionFast(*Procedure)
@@ -1533,7 +1551,7 @@ Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
 EndProcedure
 
 Procedure.a SDLx_InitLibrary(LibraryFile.s, flags.SDL_InitFlags)
-  CompilerIf (#SDLx_DynamicLink)
+  CompilerIf (#SDLx_UseOpenLibrary)
     If (__SDLxLib = #Null) ; Don't update lib path if it's currently loaded!
       __SDLx_DynamicLibPath = LibraryFile
     EndIf

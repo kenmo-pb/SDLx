@@ -4,7 +4,7 @@
 
 ;-
 
-;#SDLx_StaticLink = #True
+;#SDLx_UseImport = #True
 #SDLx_DebugErrors = #True
 XIncludeFile "../SDL3.pbi"
 
@@ -14,13 +14,12 @@ Debug ""
 
 If (SDL_Init(0))
   
-  If (#SDLx_StaticLink)
+  If (#SDLx_UseImport)
     Debug "Initialized OK!"
-    Debug "Statically linked SDL version " + SDLx_GetVersionString()
   Else
     Debug "Loaded and initialized OK!"
-    Debug "Dynamically linked SDL version " + SDLx_GetVersionString()
   EndIf
+  Debug "Linked SDL version " + SDLx_GetVersionString()
   
   SDL_Quit()
 Else
