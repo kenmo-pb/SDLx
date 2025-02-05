@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-02 05:30:30 UTC
+; Generated 2025-02-05 01:04:17 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1427,6 +1427,22 @@ PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButt
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
+;- - Gamepad Support
+PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
+PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
+PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
+PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_GamepadButton) ; returns bool
+PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
+PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
+PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
+PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
+PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
+PrototypeC.a Proto_SDL_HasGamepad() ; returns bool
+PrototypeC.a Proto_SDL_IsGamepad(instance_id.SDL_JoystickID) ; returns bool
+PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gamepad *
+PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC   Proto_SDL_UpdateGamepads()
+
 ;- - Power Management Status
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
 
@@ -1512,6 +1528,20 @@ Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+Global SDL_AddGamepadMappingsFromFile.Proto_SDL_AddGamepadMappingsFromFile
+Global SDL_CloseGamepad.Proto_SDL_CloseGamepad
+Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
+Global SDL_GetGamepadButton.Proto_SDL_GetGamepadButton
+Global SDL_GetGamepadID.Proto_SDL_GetGamepadID
+Global SDL_GetGamepadJoystick.Proto_SDL_GetGamepadJoystick
+Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
+Global SDL_GetGamepads.Proto_SDL_GetGamepads
+Global SDL_GetGamepadType.Proto_SDL_GetGamepadType
+Global SDL_HasGamepad.Proto_SDL_HasGamepad
+Global SDL_IsGamepad.Proto_SDL_IsGamepad
+Global SDL_OpenGamepad.Proto_SDL_OpenGamepad
+Global SDL_RumbleGamepad.Proto_SDL_RumbleGamepad
+Global SDL_UpdateGamepads.Proto_SDL_UpdateGamepads
 Global SDL_GetPowerInfo.Proto_SDL_GetPowerInfo
 Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
 Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
@@ -1588,6 +1618,20 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
   SDL_HideCursor.a()
   SDL_ShowCursor.a()
+  SDL_AddGamepadMappingsFromFile.l(file.p-utf8)
+  SDL_CloseGamepad(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadAxis.w(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
+  SDL_GetGamepadButton.a(*gamepad.SDL_Gamepad, button.SDL_GamepadButton)
+  SDL_GetGamepadID.l(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadJoystick.i(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadName.i(*gamepad.SDL_Gamepad)
+  SDL_GetGamepads.i(*count.LONG)
+  SDL_GetGamepadType.l(*gamepad.SDL_Gamepad)
+  SDL_HasGamepad.a()
+  SDL_IsGamepad.a(instance_id.SDL_JoystickID)
+  SDL_OpenGamepad.i(instance_id.SDL_JoystickID)
+  SDL_RumbleGamepad.a(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
+  SDL_UpdateGamepads()
   SDL_GetPowerInfo.l(*seconds.LONG, *percent.LONG)
   SDL_ShowSimpleMessageBox.a(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window)
   SDL_ShowMessageBox.a(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
@@ -2055,6 +2099,104 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_AddGamepadMappingsFromFile = GetFunction(__SDLxLib, "SDL_AddGamepadMappingsFromFile")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_AddGamepadMappingsFromFile = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_AddGamepadMappingsFromFile'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CloseGamepad = GetFunction(__SDLxLib, "SDL_CloseGamepad")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CloseGamepad = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadAxis = GetFunction(__SDLxLib, "SDL_GetGamepadAxis")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadAxis = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadAxis'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadButton = GetFunction(__SDLxLib, "SDL_GetGamepadButton")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadButton = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadButton'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadID = GetFunction(__SDLxLib, "SDL_GetGamepadID")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadID = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadID'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadJoystick = GetFunction(__SDLxLib, "SDL_GetGamepadJoystick")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadJoystick = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadJoystick'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadName = GetFunction(__SDLxLib, "SDL_GetGamepadName")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadName = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadName'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepads = GetFunction(__SDLxLib, "SDL_GetGamepads")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepads = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepads'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadType = GetFunction(__SDLxLib, "SDL_GetGamepadType")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadType = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadType'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_HasGamepad = GetFunction(__SDLxLib, "SDL_HasGamepad")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_HasGamepad = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_HasGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_IsGamepad = GetFunction(__SDLxLib, "SDL_IsGamepad")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_IsGamepad = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_IsGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_OpenGamepad = GetFunction(__SDLxLib, "SDL_OpenGamepad")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_OpenGamepad = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_RumbleGamepad = GetFunction(__SDLxLib, "SDL_RumbleGamepad")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_RumbleGamepad = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_RumbleGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_UpdateGamepads = GetFunction(__SDLxLib, "SDL_UpdateGamepads")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_UpdateGamepads = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateGamepads'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetPowerInfo = GetFunction(__SDLxLib, "SDL_GetPowerInfo")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetPowerInfo = #Null)
@@ -2155,6 +2297,10 @@ EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
+EndProcedure
+
+Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
+  ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))
 EndProcedure
 
 Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)

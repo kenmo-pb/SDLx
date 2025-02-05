@@ -1429,6 +1429,22 @@ PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButt
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
+;- - Gamepad Support
+PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
+PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
+PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
+PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_GamepadButton) ; returns bool
+PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
+PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
+PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
+PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
+PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
+PrototypeC.a Proto_SDL_HasGamepad() ; returns bool
+PrototypeC.a Proto_SDL_IsGamepad(instance_id.SDL_JoystickID) ; returns bool
+PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gamepad *
+PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC   Proto_SDL_UpdateGamepads()
+
 ;- - Power Management Status
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
 
@@ -1460,6 +1476,7 @@ Global __SDLx_InitCallback = #Null
 ;% DELETESTART
 Global SDL_free.Proto_SDL_free
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
+Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetVersion.Proto_SDL_GetVersion
@@ -1612,6 +1629,10 @@ EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
+EndProcedure
+
+Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
+  ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))
 EndProcedure
 
 Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)
