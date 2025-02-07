@@ -21,7 +21,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   *texture.SDL_Texture   = #Null
   
   devcount.l
-  *devices = SDL_GetCameras(@devcount)
+  *devices.SDLx_IDArray = SDL_GetCameras(@devcount)
   
   If ((*devices = #Null) Or (devcount = 0))
     Debug "No camera device could be found!"
@@ -36,7 +36,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   EndIf
   Debug ""
   
-  firstID.l = PeekL(*devices)
+  firstID.SDL_CameraID = *devices\id[0]
   SDL_free(*devices)
   
   *targetspec.SDL_CameraSpec = #Null
@@ -47,7 +47,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     For i = 0 To numformats - 1
       *spec.SDL_CameraSpec = PeekI(*formats + i * SizeOf(INTEGER))
       framerate.d = 1.0 * *spec\framerate_numerator / *spec\framerate_denominator
-      If (framerate >= 30.0) And (Not *targetspec)
+      If (framerate >= 20.0) And (Not *targetspec)
         *targetspec = *spec
       EndIf
       Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps"
@@ -166,6 +166,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   SDL_CloseCamera(*camera)
   
   SDL_Quit()
+  CloseDebugOutput()
 EndIf
 
 ;-

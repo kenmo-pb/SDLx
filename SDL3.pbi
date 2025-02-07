@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-05 01:04:17 UTC
+; Generated 2025-02-07 04:39:57 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -227,6 +227,12 @@ EndMacro
 Macro SDL_PowerState
   Sint32 ; enum
 EndMacro
+Macro SDL_PropertiesID
+  Uint32
+EndMacro
+Macro SDL_PropertyType
+  Sint32 ; enum
+EndMacro
 Macro SDL_RendererLogicalPresentation
   Sint32 ; enum
 EndMacro
@@ -291,6 +297,17 @@ EndEnumeration
 Enumeration
   #SDL_FALSE = 0
   #SDL_TRUE  = 1
+EndEnumeration
+
+;- - Object Properties
+
+Enumeration ; SDL_PropertyType
+  #SDL_PROPERTY_TYPE_INVALID
+  #SDL_PROPERTY_TYPE_POINTER
+  #SDL_PROPERTY_TYPE_STRING
+  #SDL_PROPERTY_TYPE_NUMBER
+  #SDL_PROPERTY_TYPE_FLOAT
+  #SDL_PROPERTY_TYPE_BOOLEAN
 EndEnumeration
 
 ;- - Display and Window Management
@@ -1155,6 +1172,17 @@ Structure  SDL_MouseWheelEvent Align #PB_Structure_AlignC
   mouse_y.f
 EndStructure
 
+Structure  SDL_GamepadButtonEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+  button.Uint8
+  down.Uint8
+  padding1.Uint8
+  padding2.Uint8
+EndStructure
+
 Structure  SDL_CameraDeviceEvent Align #PB_Structure_AlignC
   type.SDL_EventType
   reserved.Uint32
@@ -1200,7 +1228,7 @@ Structure  SDL_Event Align #PB_Structure_AlignC
     ;jbattery.SDL_JoyBatteryEvent
     ;gdevice.SDL_GamepadDeviceEvent
     ;gaxis.SDL_GamepadAxisEvent
-    ;gbutton.SDL_GamepadButtonEvent
+    gbutton.SDL_GamepadButtonEvent
     ;gtouchpad.SDL_GamepadTouchpadEvent
     ;gsensor.SDL_GamepadSensorEvent
     ;adevice.SDL_AudioDeviceEvent
@@ -1353,6 +1381,10 @@ PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.SDL_InitFlags)
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
+;- - Object Properties
+PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback, *userdata) ; returns bool
+PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
+
 ;- - Error Handling
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
@@ -1435,6 +1467,8 @@ PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_Gamepad
 PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
+PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
+PrototypeC.l Proto_SDL_GetGamepadProperties(*gamepad.SDL_Gamepad) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
 PrototypeC.a Proto_SDL_HasGamepad() ; returns bool
@@ -1474,6 +1508,8 @@ Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubSystem.Proto_SDL_InitSubSystem
 Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 Global SDL_WasInit.Proto_SDL_WasInit
+Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
+Global SDL_GetGlobalProperties.Proto_SDL_GetGlobalProperties
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
@@ -1535,6 +1571,8 @@ Global SDL_GetGamepadButton.Proto_SDL_GetGamepadButton
 Global SDL_GetGamepadID.Proto_SDL_GetGamepadID
 Global SDL_GetGamepadJoystick.Proto_SDL_GetGamepadJoystick
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
+Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
+Global SDL_GetGamepadProperties.Proto_SDL_GetGamepadProperties
 Global SDL_GetGamepads.Proto_SDL_GetGamepads
 Global SDL_GetGamepadType.Proto_SDL_GetGamepadType
 Global SDL_HasGamepad.Proto_SDL_HasGamepad
@@ -1564,6 +1602,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_Quit()
   SDL_QuitSubSystem(flags.SDL_InitFlags)
   SDL_WasInit.l(flags.SDL_InitFlags)
+  SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback, *userdata)
+  SDL_GetGlobalProperties.l()
   SDL_GetError.i()
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
   SDL_DestroyWindow(*window.SDL_Window)
@@ -1625,6 +1665,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetGamepadID.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepadJoystick.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadName.i(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadNameForID.i(instance_id.SDL_JoystickID)
+  SDL_GetGamepadProperties.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepads.i(*count.LONG)
   SDL_GetGamepadType.l(*gamepad.SDL_Gamepad)
   SDL_HasGamepad.a()
@@ -1718,6 +1760,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_WasInit = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_WasInit'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_EnumerateProperties = GetFunction(__SDLxLib, "SDL_EnumerateProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_EnumerateProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_EnumerateProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGlobalProperties = GetFunction(__SDLxLib, "SDL_GetGlobalProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGlobalProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGlobalProperties'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2148,6 +2204,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetGamepadNameForID = GetFunction(__SDLxLib, "SDL_GetGamepadNameForID")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadNameForID = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadNameForID'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadProperties = GetFunction(__SDLxLib, "SDL_GetGamepadProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetGamepads = GetFunction(__SDLxLib, "SDL_GetGamepads")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGamepads = #Null)
@@ -2265,6 +2335,10 @@ CompilerEndIf
 
 CompilerIf (#True)
 
+Structure SDLx_IDArray
+  id.Uint32[0]
+EndStructure
+
 Structure SDLx_KeyboardStateArray
   ks.Uint8[0]
 EndStructure
@@ -2303,6 +2377,10 @@ Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))
 EndProcedure
 
+Procedure.s SDLx_GetGamepadNameForIDString(instance_id.SDL_JoystickID)
+  ProcedureReturn (SDLx_PeekString(SDL_GetGamepadNameForID(instance_id), #False))
+EndProcedure
+
 Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)
   ProcedureReturn (SDLx_PeekString(SDL_GetPixelFormatName(format), #False))
 EndProcedure
@@ -2317,6 +2395,25 @@ EndProcedure
 
 Procedure.a SDLx_SetRenderDrawRGBValue(*renderer.SDL_Renderer, RGBValue.i)
   ProcedureReturn (SDL_SetRenderDrawColor(*renderer, Red(RGBValue), Green(RGBValue), Blue(RGBValue), #SDL_ALPHA_OPAQUE))
+EndProcedure
+
+Procedure SDLx_DrawRect(*renderer.SDL_Renderer, x.f, y.f, width.f, height.f, RGBValue.i)
+  Protected frect.SDL_FRect
+  frect\x = x
+  frect\y = y
+  frect\w = width
+  frect\h = height
+  SDLx_SetRenderDrawRGBValue(*renderer, RGBValue)
+  SDL_RenderFillRect(*renderer, @frect)
+EndProcedure
+
+Procedure.f SDLx_GetGamepadAxisFloat(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
+  Protected IntValue.i = SDL_GetGamepadAxis(*gamepad, axis)
+  If (IntValue < 0)
+    ProcedureReturn (IntValue / -#SDL_JOYSTICK_AXIS_MIN)
+  Else
+    ProcedureReturn (IntValue / #SDL_JOYSTICK_AXIS_MAX)
+  EndIf
 EndProcedure
 
 Procedure.i SDLx_QuitRequested()
