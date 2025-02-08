@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-07 04:39:57 UTC
+; Generated 2025-02-07 18:32:06 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -2339,8 +2339,20 @@ Structure SDLx_IDArray
   id.Uint32[0]
 EndStructure
 
+Structure SDLx_IntegerArray
+  i.i[0]
+EndStructure
+
 Structure SDLx_KeyboardStateArray
   ks.Uint8[0]
+EndStructure
+
+Structure SDLx_LongArray
+  l.l[0]
+EndStructure
+
+Structure SDLx_PointerArray
+  ptr.i[0]
 EndStructure
 
 CompilerEndIf

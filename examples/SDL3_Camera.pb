@@ -150,7 +150,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     EndIf
     SDL_RenderPresent(*renderer)
     
-    If ((Not *texture) And (ElapsedMilliseconds() - StartTime > 5*1000))
+    If ((Not *texture) And (ElapsedMilliseconds() - StartTime > 15*1000))
       ; time out if no camera frames received
       Debug "No camera frames received!"
       Break

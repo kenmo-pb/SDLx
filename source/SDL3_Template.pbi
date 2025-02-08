@@ -1638,8 +1638,20 @@ Structure SDLx_IDArray
   id.Uint32[0]
 EndStructure
 
+Structure SDLx_IntegerArray
+  i.i[0]
+EndStructure
+
 Structure SDLx_KeyboardStateArray
   ks.Uint8[0]
+EndStructure
+
+Structure SDLx_LongArray
+  l.l[0]
+EndStructure
+
+Structure SDLx_PointerArray
+  ptr.i[0]
 EndStructure
 
 CompilerEndIf
