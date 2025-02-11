@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-07 18:32:06 UTC
+; Generated 2025-02-11 23:52:31 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -463,6 +463,8 @@ Enumeration ; SDL_PixelFormat
   #SDL_PIXELFORMAT_P010 = $30313050
   
   #SDL_PIXELFORMAT_EXTERNAL_OES = $2053454f
+  
+  #SDL_PIXELFORMAT_MJPG = $47504a4d
   
   CompilerIf (#False) ; PureBasic never Big Endian
     #SDL_PIXELFORMAT_RGBA32 = #SDL_PIXELFORMAT_RGBA8888
