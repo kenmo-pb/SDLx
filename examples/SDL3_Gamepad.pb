@@ -24,7 +24,7 @@ Macro ColorForAxis(GamepadAxis)
   ($404040) + Bool(SDLx_GetGamepadAxisFloat(*gamepad, (GamepadAxis)) > 0.10) * $00A000
 EndMacro
 
-If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
+If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
   
   ; Check for at least one gamepad...
   If (Not SDL_HasGamepad())
@@ -51,6 +51,25 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
     EndIf
     SDL_free(*IDA)
     Debug ""
+  EndIf
+  
+  count.l = 0
+  *IDA.SDLx_IDArray = SDL_GetHaptics(@count)
+  If (*IDA)
+    If (count > 0)
+      *haptic = SDL_OpenHaptic(*IDA\id[0])
+      If (*haptic)
+        If (Not SDL_InitHapticRumble(*haptic))
+          SDL_CloseHaptic(*haptic)
+          *haptic = #Null
+        EndIf
+      EndIf
+      If (Not *haptic)
+        Debug "Could not open Haptic (Force Feedback / Rumble)"
+        Debug ""
+      EndIf
+    EndIf
+    SDL_free(*IDA)
   EndIf
   
   ; Open a basic window...
@@ -89,8 +108,12 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
           
           ElseIf (event\type = #SDL_EVENT_GAMEPAD_BUTTON_DOWN)
             If (event\gbutton\button = #SDL_GAMEPAD_BUTTON_START)
-              Debug "Start! (Attempt to rumble!)"
-              SDL_RumbleGamepad(*gamepad, $1000, $1000, 100)
+              If (*haptic)
+                Debug "Start! Rumble!"
+                SDL_PlayHapticRumble(*haptic, 1.0, 250)
+              Else
+                Debug "Start! (No rumble)"
+              EndIf
             EndIf
           
           EndIf
@@ -160,6 +183,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
     SDL_DestroyWindow(*window)
   EndIf
   
+  SDL_CloseHaptic(*haptic)
   SDL_CloseGamepad(*gamepad)
   
   SDL_Quit()

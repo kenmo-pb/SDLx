@@ -187,6 +187,9 @@ EndMacro
 Macro SDL_GamepadType
   Sint32 ; enum
 EndMacro
+Macro SDL_HapticID
+  Uint32
+EndMacro
 Macro SDL_InitFlags
   Uint32
 EndMacro
@@ -1353,6 +1356,10 @@ Structure SDL_Gamepad Align #PB_Structure_AlignC
   ;
 EndStructure
 
+Structure SDL_Haptic Align #PB_Structure_AlignC
+  ;
+EndStructure
+
 Structure SDL_Joystick Align #PB_Structure_AlignC
   ;
 EndStructure
@@ -1480,6 +1487,15 @@ PrototypeC.a Proto_SDL_IsGamepad(instance_id.SDL_JoystickID) ; returns bool
 PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gamepad *
 PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
 PrototypeC   Proto_SDL_UpdateGamepads()
+
+;- - Force Feedback Support
+PrototypeC   Proto_SDL_CloseHaptic(*haptic.SDL_Haptic)
+PrototypeC.i Proto_SDL_GetHaptics(*count.LONG) ; returns SDL_HapticID *
+PrototypeC.a Proto_SDL_InitHapticRumble(*haptic.SDL_Haptic) ; returns bool
+PrototypeC.i Proto_SDL_OpenHaptic(instance_id.SDL_HapticID) ; returns SDL_Haptic *
+PrototypeC.i Proto_SDL_OpenHapticFromJoystick(*joystick.SDL_Joystick) ; returns SDL_Haptic *
+PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.Uint32) ; returns bool
+PrototypeC.a Proto_SDL_StopHapticRumble(*haptic.SDL_Haptic) ; returns bool
 
 ;- - Power Management Status
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState

@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-11 23:52:31 UTC
+; Generated 2025-02-15 20:46:03 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -184,6 +184,9 @@ Macro SDL_GamepadButton
 EndMacro
 Macro SDL_GamepadType
   Sint32 ; enum
+EndMacro
+Macro SDL_HapticID
+  Uint32
 EndMacro
 Macro SDL_InitFlags
   Uint32
@@ -1351,6 +1354,10 @@ Structure SDL_Gamepad Align #PB_Structure_AlignC
   ;
 EndStructure
 
+Structure SDL_Haptic Align #PB_Structure_AlignC
+  ;
+EndStructure
+
 Structure SDL_Joystick Align #PB_Structure_AlignC
   ;
 EndStructure
@@ -1479,6 +1486,15 @@ PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gam
 PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
 PrototypeC   Proto_SDL_UpdateGamepads()
 
+;- - Force Feedback Support
+PrototypeC   Proto_SDL_CloseHaptic(*haptic.SDL_Haptic)
+PrototypeC.i Proto_SDL_GetHaptics(*count.LONG) ; returns SDL_HapticID *
+PrototypeC.a Proto_SDL_InitHapticRumble(*haptic.SDL_Haptic) ; returns bool
+PrototypeC.i Proto_SDL_OpenHaptic(instance_id.SDL_HapticID) ; returns SDL_Haptic *
+PrototypeC.i Proto_SDL_OpenHapticFromJoystick(*joystick.SDL_Joystick) ; returns SDL_Haptic *
+PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.Uint32) ; returns bool
+PrototypeC.a Proto_SDL_StopHapticRumble(*haptic.SDL_Haptic) ; returns bool
+
 ;- - Power Management Status
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
 
@@ -1582,6 +1598,13 @@ Global SDL_IsGamepad.Proto_SDL_IsGamepad
 Global SDL_OpenGamepad.Proto_SDL_OpenGamepad
 Global SDL_RumbleGamepad.Proto_SDL_RumbleGamepad
 Global SDL_UpdateGamepads.Proto_SDL_UpdateGamepads
+Global SDL_CloseHaptic.Proto_SDL_CloseHaptic
+Global SDL_GetHaptics.Proto_SDL_GetHaptics
+Global SDL_InitHapticRumble.Proto_SDL_InitHapticRumble
+Global SDL_OpenHaptic.Proto_SDL_OpenHaptic
+Global SDL_OpenHapticFromJoystick.Proto_SDL_OpenHapticFromJoystick
+Global SDL_PlayHapticRumble.Proto_SDL_PlayHapticRumble
+Global SDL_StopHapticRumble.Proto_SDL_StopHapticRumble
 Global SDL_GetPowerInfo.Proto_SDL_GetPowerInfo
 Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
 Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
@@ -1676,6 +1699,13 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenGamepad.i(instance_id.SDL_JoystickID)
   SDL_RumbleGamepad.a(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
   SDL_UpdateGamepads()
+  SDL_CloseHaptic(*haptic.SDL_Haptic)
+  SDL_GetHaptics.i(*count.LONG)
+  SDL_InitHapticRumble.a(*haptic.SDL_Haptic)
+  SDL_OpenHaptic.i(instance_id.SDL_HapticID)
+  SDL_OpenHapticFromJoystick.i(*joystick.SDL_Joystick)
+  SDL_PlayHapticRumble.a(*haptic.SDL_Haptic, strength.f, length.Uint32)
+  SDL_StopHapticRumble.a(*haptic.SDL_Haptic)
   SDL_GetPowerInfo.l(*seconds.LONG, *percent.LONG)
   SDL_ShowSimpleMessageBox.a(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window)
   SDL_ShowMessageBox.a(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
@@ -2266,6 +2296,55 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_UpdateGamepads = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateGamepads'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CloseHaptic = GetFunction(__SDLxLib, "SDL_CloseHaptic")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CloseHaptic = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CloseHaptic'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetHaptics = GetFunction(__SDLxLib, "SDL_GetHaptics")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetHaptics = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetHaptics'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_InitHapticRumble = GetFunction(__SDLxLib, "SDL_InitHapticRumble")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_InitHapticRumble = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_InitHapticRumble'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_OpenHaptic = GetFunction(__SDLxLib, "SDL_OpenHaptic")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_OpenHaptic = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenHaptic'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_OpenHapticFromJoystick = GetFunction(__SDLxLib, "SDL_OpenHapticFromJoystick")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_OpenHapticFromJoystick = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_OpenHapticFromJoystick'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PlayHapticRumble = GetFunction(__SDLxLib, "SDL_PlayHapticRumble")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PlayHapticRumble = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PlayHapticRumble'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_StopHapticRumble = GetFunction(__SDLxLib, "SDL_StopHapticRumble")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_StopHapticRumble = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_StopHapticRumble'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
