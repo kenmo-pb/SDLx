@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-16 02:49:52 UTC
+; Generated 2025-02-16 02:53:01 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1408,6 +1408,7 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
@@ -1539,6 +1540,7 @@ Global SDL_RestoreWindow.Proto_SDL_RestoreWindow
 Global SDL_SetWindowAlwaysOnTop.Proto_SDL_SetWindowAlwaysOnTop
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_SetWindowFullscreenMode.Proto_SDL_SetWindowFullscreenMode
+Global SDL_SetWindowPosition.Proto_SDL_SetWindowPosition
 Global SDL_SetWindowSize.Proto_SDL_SetWindowSize
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
@@ -1640,6 +1642,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetWindowAlwaysOnTop.a(*window.SDL_Window, on_top.Uint8)
   SDL_SetWindowFullscreen.a(*window.SDL_Window, fullscreen.Uint8)
   SDL_SetWindowFullscreenMode.a(*window.SDL_Window, *mode.SDL_DisplayMode)
+  SDL_SetWindowPosition.a(*window.SDL_Window, x.Sint32, y.Sint32)
   SDL_SetWindowSize.a(*window.SDL_Window, w.Sint32, h.Sint32)
   SDL_ShowWindow.a(*window.SDL_Window)
   SDL_CreateRenderer.i(*window.SDL_Window, name.p-utf8)
@@ -1883,6 +1886,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetWindowFullscreenMode = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreenMode'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowPosition = GetFunction(__SDLxLib, "SDL_SetWindowPosition")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowPosition = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowPosition'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf

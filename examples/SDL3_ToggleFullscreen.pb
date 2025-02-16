@@ -66,6 +66,7 @@ If (SDL_Init(#SDL_INIT_VIDEO))
   If (*window)
     *renderer = SDL_CreateRenderer(*window, #Null$)
     If (*renderer)
+      SDL_SetRenderLogicalPresentation(*renderer, #WinW, #WinH, #SDL_LOGICAL_PRESENTATION_LETTERBOX)
       
       ; Wait until Quit Requested (typically window close button, or Alt+F4, etc.)
       event.SDL_Event
@@ -91,7 +92,6 @@ If (SDL_Init(#SDL_INIT_VIDEO))
                   SDL_ShowCursor()
                   IsFullscreen = #False
                 Else
-                  SDL_SetRenderLogicalPresentation(*renderer, #WinW, #WinH, #SDL_LOGICAL_PRESENTATION_LETTERBOX)
                   SDL_SetWindowFullscreen(*window, #True)
                   SDL_HideCursor()
                   IsFullscreen = #True
