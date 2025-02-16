@@ -265,7 +265,7 @@ EndMacro
 
 #SDL_MAJOR_VERSION = 3
 #SDL_MINOR_VERSION = 2
-#SDL_MICRO_VERSION = 0
+#SDL_MICRO_VERSION = 5
 
 Macro SDL_VERSIONNUM(major, minor, patch)
   ((major)*1000000 + (minor)*1000 + (patch))
