@@ -140,9 +140,15 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
             
             If (Left(Line, 10) = "PrototypeC")
               AddElement(SDLFunction())
-              SDLFunction()\Name = Trim(StringField(Mid(Line, 14 + Len(#PrototypeNamePrefix)), 1, "("))
+              SDLFunction()\Name = Trim(StringField(Mid(Line, 14), 1, "("))
               SDLFunction()\ReturnType = Trim(Mid(Line, 12, 1))
               SDLFunction()\ParamString = Trim(StringField(StringField(Line, 2, "("), 1, ")"))
+              If (Left(SDLFunction()\Name, Len(#PrototypeNamePrefix)) = #PrototypeNamePrefix)
+                ; OK, keep it
+                SDLFunction()\Name = Mid(SDLFunction()\Name, 1 + Len(#PrototypeNamePrefix))
+              Else
+                DeleteElement(SDLFunction())
+              EndIf
             ElseIf (Left(Trim(Line), 10) = "Structure ")
               NumStructs + 1
             EndIf

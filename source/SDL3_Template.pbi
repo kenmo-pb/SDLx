@@ -1447,8 +1447,15 @@ PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 ;- - Configuration Variables
 
 ;- - Object Properties
-PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback, *userdata) ; returns bool
+PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, *name)
+;
+PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
+PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
+PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
+PrototypeC.l Proto_SDL_GetPropertyType(props.SDL_PropertiesID, name.p-utf8) ; returns SDL_PropertyType
+PrototypeC.i Proto_SDL_GetStringProperty(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Error Handling
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
@@ -1599,6 +1606,7 @@ Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
+Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubsystem.Proto_SDL_InitSubsystem
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
@@ -1766,6 +1774,10 @@ EndProcedure
 
 Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
+EndProcedure
+
+Procedure.s SDLx_GetStringPropertyString(props.SDL_PropertiesID, name.s, default_value.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetStringProperty(props, name, default_value), #False))
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)

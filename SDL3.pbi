@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-16 03:24:54 UTC
+; Generated 2025-02-16 03:57:56 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1445,8 +1445,15 @@ PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 ;- - Configuration Variables
 
 ;- - Object Properties
-PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback, *userdata) ; returns bool
+PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, *name)
+;
+PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
+PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
+PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
+PrototypeC.l Proto_SDL_GetPropertyType(props.SDL_PropertiesID, name.p-utf8) ; returns SDL_PropertyType
+PrototypeC.i Proto_SDL_GetStringProperty(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Error Handling
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
@@ -1593,8 +1600,13 @@ Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 Global SDL_SetAppMetadata.Proto_SDL_SetAppMetadata
 Global SDL_SetAppMetadataProperty.Proto_SDL_SetAppMetadataProperty
 Global SDL_WasInit.Proto_SDL_WasInit
+Global SDL_CreateProperties.Proto_SDL_CreateProperties
+Global SDL_DestroyProperties.Proto_SDL_DestroyProperties
 Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
 Global SDL_GetGlobalProperties.Proto_SDL_GetGlobalProperties
+Global SDL_GetPropertyType.Proto_SDL_GetPropertyType
+Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
+Global SDL_SetStringProperty.Proto_SDL_SetStringProperty
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
@@ -1698,8 +1710,13 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetAppMetadata.a(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8)
   SDL_SetAppMetadataProperty.a(name.p-utf8, value.p-utf8)
   SDL_WasInit.l(flags.SDL_InitFlags)
-  SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback, *userdata)
+  SDL_CreateProperties.l()
+  SDL_DestroyProperties(props.SDL_PropertiesID)
+  SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata)
   SDL_GetGlobalProperties.l()
+  SDL_GetPropertyType.l(props.SDL_PropertiesID, name.p-utf8)
+  SDL_GetStringProperty.i(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8)
+  SDL_SetStringProperty.a(props.SDL_PropertiesID, name.p-utf8, value.p-utf8)
   SDL_GetError.i()
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
   SDL_DestroyWindow(*window.SDL_Window)
@@ -1882,6 +1899,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_CreateProperties = GetFunction(__SDLxLib, "SDL_CreateProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DestroyProperties = GetFunction(__SDLxLib, "SDL_DestroyProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DestroyProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroyProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_EnumerateProperties = GetFunction(__SDLxLib, "SDL_EnumerateProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_EnumerateProperties = #Null)
@@ -1893,6 +1924,27 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGlobalProperties = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGlobalProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetPropertyType = GetFunction(__SDLxLib, "SDL_GetPropertyType")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetPropertyType = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPropertyType'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetStringProperty = GetFunction(__SDLxLib, "SDL_GetStringProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetStringProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetStringProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetStringProperty = GetFunction(__SDLxLib, "SDL_SetStringProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetStringProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetStringProperty'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2565,6 +2617,10 @@ EndProcedure
 
 Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
+EndProcedure
+
+Procedure.s SDLx_GetStringPropertyString(props.SDL_PropertiesID, name.s, default_value.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetStringProperty(props, name, default_value), #False))
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
