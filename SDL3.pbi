@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-16 03:16:30 UTC
+; Generated 2025-02-16 03:24:54 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -301,6 +301,14 @@ Enumeration
   #SDL_FALSE = 0
   #SDL_TRUE  = 1
 EndEnumeration
+
+#SDL_PROP_APP_METADATA_NAME_STRING       = "SDL.app.metadata.name"
+#SDL_PROP_APP_METADATA_VERSION_STRING    = "SDL.app.metadata.version"
+#SDL_PROP_APP_METADATA_IDENTIFIER_STRING = "SDL.app.metadata.identifier"
+#SDL_PROP_APP_METADATA_CREATOR_STRING    = "SDL.app.metadata.creator"
+#SDL_PROP_APP_METADATA_COPYRIGHT_STRING  = "SDL.app.metadata.copyright"
+#SDL_PROP_APP_METADATA_URL_STRING        = "SDL.app.metadata.url"
+#SDL_PROP_APP_METADATA_TYPE_STRING       = "SDL.app.metadata.type"
 
 ;- - Configuration Variables
 
@@ -1425,10 +1433,13 @@ EndStructure
 PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
 ;- - Initialization and Shutdown
+PrototypeC.i Proto_SDL_GetAppMetadataProperty(name.p-utf8) ; returns const char *
 PrototypeC.a Proto_SDL_Init(flags.SDL_InitFlags) ; returns bool
 PrototypeC.a Proto_SDL_InitSubSystem(flags.SDL_InitFlags) ; returns bool
 PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.SDL_InitFlags)
+PrototypeC.a Proto_SDL_SetAppMetadata(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8) ; returns bool
+PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; returns bool
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
 ;- - Configuration Variables
@@ -1576,8 +1587,11 @@ Global __SDLx_Quit.Proto_SDL_Quit
 Global __SDLx_InitCallback = #Null
 
 Global SDL_GetVersion.Proto_SDL_GetVersion
+Global SDL_GetAppMetadataProperty.Proto_SDL_GetAppMetadataProperty
 Global SDL_InitSubSystem.Proto_SDL_InitSubSystem
 Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
+Global SDL_SetAppMetadata.Proto_SDL_SetAppMetadata
+Global SDL_SetAppMetadataProperty.Proto_SDL_SetAppMetadataProperty
 Global SDL_WasInit.Proto_SDL_WasInit
 Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
 Global SDL_GetGlobalProperties.Proto_SDL_GetGlobalProperties
@@ -1676,10 +1690,13 @@ CompilerIf (#SDLx_UseImport)
 ImportC #SDLx_ImportLibraryName
   
   SDL_GetVersion.l()
+  SDL_GetAppMetadataProperty.i(name.p-utf8)
   SDL_Init.a(flags.SDL_InitFlags)
   SDL_InitSubSystem.a(flags.SDL_InitFlags)
   SDL_Quit()
   SDL_QuitSubSystem(flags.SDL_InitFlags)
+  SDL_SetAppMetadata.a(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8)
+  SDL_SetAppMetadataProperty.a(name.p-utf8, value.p-utf8)
   SDL_WasInit.l(flags.SDL_InitFlags)
   SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback, *userdata)
   SDL_GetGlobalProperties.l()
@@ -1823,6 +1840,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetAppMetadataProperty = GetFunction(__SDLxLib, "SDL_GetAppMetadataProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetAppMetadataProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetAppMetadataProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_InitSubSystem = GetFunction(__SDLxLib, "SDL_InitSubSystem")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_InitSubSystem = #Null)
@@ -1834,6 +1858,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_QuitSubSystem = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_QuitSubSystem'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetAppMetadata = GetFunction(__SDLxLib, "SDL_SetAppMetadata")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetAppMetadata = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetAppMetadata'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetAppMetadataProperty = GetFunction(__SDLxLib, "SDL_SetAppMetadataProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetAppMetadataProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetAppMetadataProperty'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2523,6 +2561,10 @@ Procedure.s SDLx_PeekString(*strPtr, Free.i)
     EndIf
   EndIf
   ProcedureReturn (Result)
+EndProcedure
+
+Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)

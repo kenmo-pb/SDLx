@@ -304,6 +304,14 @@ Enumeration
   #SDL_TRUE  = 1
 EndEnumeration
 
+#SDL_PROP_APP_METADATA_NAME_STRING       = "SDL.app.metadata.name"
+#SDL_PROP_APP_METADATA_VERSION_STRING    = "SDL.app.metadata.version"
+#SDL_PROP_APP_METADATA_IDENTIFIER_STRING = "SDL.app.metadata.identifier"
+#SDL_PROP_APP_METADATA_CREATOR_STRING    = "SDL.app.metadata.creator"
+#SDL_PROP_APP_METADATA_COPYRIGHT_STRING  = "SDL.app.metadata.copyright"
+#SDL_PROP_APP_METADATA_URL_STRING        = "SDL.app.metadata.url"
+#SDL_PROP_APP_METADATA_TYPE_STRING       = "SDL.app.metadata.type"
+
 ;- - Configuration Variables
 
 ;- - Object Properties
@@ -1427,10 +1435,13 @@ EndStructure
 PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
 ;- - Initialization and Shutdown
+PrototypeC.i Proto_SDL_GetAppMetadataProperty(name.p-utf8) ; returns const char *
 PrototypeC.a Proto_SDL_Init(flags.SDL_InitFlags) ; returns bool
 PrototypeC.a Proto_SDL_InitSubSystem(flags.SDL_InitFlags) ; returns bool
 PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.SDL_InitFlags)
+PrototypeC.a Proto_SDL_SetAppMetadata(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8) ; returns bool
+PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; returns bool
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
 ;- - Configuration Variables
@@ -1581,6 +1592,7 @@ Global __SDLx_InitCallback = #Null
 
 ;% DELETESTART
 Global SDL_free.Proto_SDL_free
+Global SDL_GetAppMetadataProperty.Proto_SDL_GetAppMetadataProperty
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
@@ -1750,6 +1762,10 @@ Procedure.s SDLx_PeekString(*strPtr, Free.i)
     EndIf
   EndIf
   ProcedureReturn (Result)
+EndProcedure
+
+Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
