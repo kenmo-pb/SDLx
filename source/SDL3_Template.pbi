@@ -304,6 +304,8 @@ Enumeration
   #SDL_TRUE  = 1
 EndEnumeration
 
+;- - Configuration Variables
+
 ;- - Object Properties
 
 Enumeration ; SDL_PropertyType
@@ -314,6 +316,10 @@ Enumeration ; SDL_PropertyType
   #SDL_PROPERTY_TYPE_FLOAT
   #SDL_PROPERTY_TYPE_BOOLEAN
 EndEnumeration
+
+;- - Error Handling
+
+;- - Log Handling
 
 ;- - Display and Window Management
 
@@ -496,6 +502,10 @@ Macro SDL_DEFINE_PIXELFORMAT(type, order, layout, bits, bytes)
   ((1 << 28) | ((type) << 24) | ((order) << 20) | ((layout) << 16) | ((bits) << 8) | ((bytes) << 0))
 EndMacro
 
+;- - Blend modes
+
+;- - Rectangle Functions
+
 ;- - Surface Creation and Simple Drawing
 
 Enumeration ; SDL_FlipMode
@@ -503,6 +513,8 @@ Enumeration ; SDL_FlipMode
   #SDL_FLIP_HORIZONTAL
   #SDL_FLIP_VERTICAL
 EndEnumeration
+
+;- - Clipboard Handling
 
 ;- - Camera Support
 
@@ -1073,6 +1085,8 @@ Enumeration ; SDL_GamepadAxis
   #SDL_GAMEPAD_AXIS_COUNT
 EndEnumeration
 
+;- - Force Feedback Support
+
 ;- - Power Management Status
 
 Enumeration ; SDL_PowerState
@@ -1107,12 +1121,43 @@ EndEnumeration
 #SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT = $00000001
 #SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT = $00000002
 
+;- - Standard Library Functionality
+
+#SDL_MAX_SINT8 =  127
+#SDL_MIN_SINT8 = -128
+
+#SDL_MAX_UINT8 =  255
+#SDL_MIN_UINT8 =  0
+
+#SDL_MAX_SINT16 =  32767
+#SDL_MIN_SINT16 = -32768
+
+#SDL_MAX_UINT16 =  65535
+#SDL_MIN_UINT16 =  0
+
+#SDL_MAX_SINT32 =  2147483647
+#SDL_MIN_SINT32 = -2147483648
+
+#SDL_MAX_UINT32 =  4294967295
+#SDL_MIN_UINT32 =  0
+
+#SDL_MAX_SINT64 =  9223372036854775807
+#SDL_MIN_SINT64 = -9223372036854775808
+
+;#SDL_MAX_UINT64 =  18446744073709551615
+#SDL_MIN_UINT64 =  0
+
+#SDL_MAX_TIME = #SDL_MAX_SINT64
+#SDL_MIN_TIME = #SDL_MIN_SINT64
+
+CompilerIf (Defined (FLT_EPSILON, #PB_Constant))
+  #SDL_FLT_EPSILON = #FLT_EPSILON
+CompilerElse
+  #SDL_FLT_EPSILON = 1.1920928955078125e-07
+CompilerEndIf
 
 
 
-
-;-
-;- Helper Constants
 
 
 
@@ -1345,7 +1390,6 @@ Structure  SDL_DisplayMode Align #PB_Structure_AlignC
   refresh_rate_denominator.Sint32
   
   *internal.SDL_DisplayModeData
-
 EndStructure
 
 Structure SDL_Camera Align #PB_Structure_AlignC
@@ -1379,9 +1423,6 @@ EndStructure
 ;-
 ;- SDL3 Prototypes
 
-;- - Standard Include
-PrototypeC   Proto_SDL_free(*mem)
-
 ;- - Querying SDL Version
 PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
@@ -1392,12 +1433,16 @@ PrototypeC   Proto_SDL_Quit()
 PrototypeC   Proto_SDL_QuitSubSystem(flags.SDL_InitFlags)
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
+;- - Configuration Variables
+
 ;- - Object Properties
 PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback, *userdata) ; returns bool
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
 
 ;- - Error Handling
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
+
+;- - Log Handling
 
 ;- - Display and Window Management
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
@@ -1432,6 +1477,10 @@ PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixe
 
 ;- - Pixel Formats and Conversion Routines
 PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns const char *
+
+;- - Blend modes
+
+;- - Rectangle Functions
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
@@ -1471,6 +1520,8 @@ PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButt
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
+;- - Joystick Support
+
 ;- - Gamepad Support
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
 PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
@@ -1505,6 +1556,8 @@ PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
 
+;- - Standard Library Functionality
+PrototypeC   Proto_SDL_free(*mem)
 
 
 
