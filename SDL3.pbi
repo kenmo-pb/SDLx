@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-16 03:57:56 UTC
+; Generated 2025-02-18 05:04:49 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1032,6 +1032,12 @@ EndEnumeration
 #SDL_JOYSTICK_AXIS_MIN = -32768
 #SDL_JOYSTICK_AXIS_MAX =  32767
 
+#SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN = "SDL.joystick.cap.mono_led"
+#SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN = "SDL.joystick.cap.rgb_led"
+#SDL_PROP_JOYSTICK_CAP_PLAYER_LED_BOOLEAN = "SDL.joystick.cap.player_led"
+#SDL_PROP_JOYSTICK_CAP_RUMBLE_BOOLEAN = "SDL.joystick.cap.rumble"
+#SDL_PROP_JOYSTICK_CAP_TRIGGER_RUMBLE_BOOLEAN = "SDL.joystick.cap.trigger_rumble"
+
 ;- - Gamepad Support
 
 Enumeration ; SDL_GamepadType
@@ -1090,6 +1096,12 @@ Enumeration ; SDL_GamepadAxis
   #SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
   #SDL_GAMEPAD_AXIS_COUNT
 EndEnumeration
+
+#SDL_PROP_GAMEPAD_CAP_MONO_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_RGB_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_PLAYER_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_RUMBLE_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_TRIGGER_RUMBLE_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_TRIGGER_RUMBLE_BOOLEAN
 
 ;- - Force Feedback Support
 
@@ -1450,9 +1462,17 @@ PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, 
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
 PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
 PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
+PrototypeC.a Proto_SDL_GetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8) ; returns bool
+PrototypeC.f Proto_SDL_GetFloatProperty(props.SDL_PropertiesID, name.p-utf8, default_value.f) ; returns float
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
+PrototypeC.q Proto_SDL_GetNumberProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Sint64) ; returns Sint64
+PrototypeC.i Proto_SDL_GetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *default_value) ; returns void *
 PrototypeC.l Proto_SDL_GetPropertyType(props.SDL_PropertiesID, name.p-utf8) ; returns SDL_PropertyType
 PrototypeC.i Proto_SDL_GetStringProperty(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_SetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, value.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetFloatProperty(props.SDL_PropertiesID, name.p-utf8, value.f) ; returns bool
+PrototypeC.a Proto_SDL_SetNumberProperty(props.SDL_PropertiesID, name.p-utf8, value.Sint64) ; returns bool
+PrototypeC.a Proto_SDL_SetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *value) ; returns bool
 PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Error Handling
@@ -1537,6 +1557,7 @@ PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
 ;- - Joystick Support
+PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
 
 ;- - Gamepad Support
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
@@ -1603,9 +1624,17 @@ Global SDL_WasInit.Proto_SDL_WasInit
 Global SDL_CreateProperties.Proto_SDL_CreateProperties
 Global SDL_DestroyProperties.Proto_SDL_DestroyProperties
 Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
+Global SDL_GetBooleanProperty.Proto_SDL_GetBooleanProperty
+Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
 Global SDL_GetGlobalProperties.Proto_SDL_GetGlobalProperties
+Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
+Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
 Global SDL_GetPropertyType.Proto_SDL_GetPropertyType
 Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
+Global SDL_SetBooleanProperty.Proto_SDL_SetBooleanProperty
+Global SDL_SetFloatProperty.Proto_SDL_SetFloatProperty
+Global SDL_SetNumberProperty.Proto_SDL_SetNumberProperty
+Global SDL_SetPointerProperty.Proto_SDL_SetPointerProperty
 Global SDL_SetStringProperty.Proto_SDL_SetStringProperty
 Global SDL_GetError.Proto_SDL_GetError
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
@@ -1662,6 +1691,7 @@ Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+Global SDL_GetJoystickProperties.Proto_SDL_GetJoystickProperties
 Global SDL_AddGamepadMappingsFromFile.Proto_SDL_AddGamepadMappingsFromFile
 Global SDL_CloseGamepad.Proto_SDL_CloseGamepad
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
@@ -1713,9 +1743,17 @@ ImportC #SDLx_ImportLibraryName
   SDL_CreateProperties.l()
   SDL_DestroyProperties(props.SDL_PropertiesID)
   SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata)
+  SDL_GetBooleanProperty.a(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8)
+  SDL_GetFloatProperty.f(props.SDL_PropertiesID, name.p-utf8, default_value.f)
   SDL_GetGlobalProperties.l()
+  SDL_GetNumberProperty.q(props.SDL_PropertiesID, name.p-utf8, default_value.Sint64)
+  SDL_GetPointerProperty.i(props.SDL_PropertiesID, name.p-utf8, *default_value)
   SDL_GetPropertyType.l(props.SDL_PropertiesID, name.p-utf8)
   SDL_GetStringProperty.i(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8)
+  SDL_SetBooleanProperty.a(props.SDL_PropertiesID, name.p-utf8, value.Uint8)
+  SDL_SetFloatProperty.a(props.SDL_PropertiesID, name.p-utf8, value.f)
+  SDL_SetNumberProperty.a(props.SDL_PropertiesID, name.p-utf8, value.Sint64)
+  SDL_SetPointerProperty.a(props.SDL_PropertiesID, name.p-utf8, *value)
   SDL_SetStringProperty.a(props.SDL_PropertiesID, name.p-utf8, value.p-utf8)
   SDL_GetError.i()
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
@@ -1772,6 +1810,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
   SDL_HideCursor.a()
   SDL_ShowCursor.a()
+  SDL_GetJoystickProperties.l(*joystick.SDL_Joystick)
   SDL_AddGamepadMappingsFromFile.l(file.p-utf8)
   SDL_CloseGamepad(*gamepad.SDL_Gamepad)
   SDL_GetGamepadAxis.w(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
@@ -1920,10 +1959,38 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetBooleanProperty = GetFunction(__SDLxLib, "SDL_GetBooleanProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetBooleanProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetBooleanProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetFloatProperty = GetFunction(__SDLxLib, "SDL_GetFloatProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetFloatProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetFloatProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetGlobalProperties = GetFunction(__SDLxLib, "SDL_GetGlobalProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGlobalProperties = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGlobalProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetNumberProperty = GetFunction(__SDLxLib, "SDL_GetNumberProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetNumberProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetNumberProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetPointerProperty = GetFunction(__SDLxLib, "SDL_GetPointerProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetPointerProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetPointerProperty'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -1938,6 +2005,34 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetStringProperty = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_GetStringProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetBooleanProperty = GetFunction(__SDLxLib, "SDL_SetBooleanProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetBooleanProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetBooleanProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetFloatProperty = GetFunction(__SDLxLib, "SDL_SetFloatProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetFloatProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetFloatProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetNumberProperty = GetFunction(__SDLxLib, "SDL_SetNumberProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetNumberProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetNumberProperty'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetPointerProperty = GetFunction(__SDLxLib, "SDL_SetPointerProperty")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetPointerProperty = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetPointerProperty'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2333,6 +2428,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetJoystickProperties = GetFunction(__SDLxLib, "SDL_GetJoystickProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetJoystickProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetJoystickProperties'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_AddGamepadMappingsFromFile = GetFunction(__SDLxLib, "SDL_AddGamepadMappingsFromFile")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_AddGamepadMappingsFromFile = #Null)
@@ -2621,6 +2723,40 @@ EndProcedure
 
 Procedure.s SDLx_GetStringPropertyString(props.SDL_PropertiesID, name.s, default_value.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetStringProperty(props, name, default_value), #False))
+EndProcedure
+
+Procedure.s SDLx_GetPropertyStringRepresentation(props.SDL_PropertiesID, name.s, default_value.s = "")
+  Select (SDL_GetPropertyType(props, name))
+    Case (#SDL_PROPERTY_TYPE_POINTER)
+      ProcedureReturn ("$" + Hex(SDL_GetPointerProperty(props, name, #Null)))
+    Case (#SDL_PROPERTY_TYPE_STRING)
+      ProcedureReturn (SDLx_GetStringPropertyString(props, name, default_value))
+    Case (#SDL_PROPERTY_TYPE_NUMBER)
+      ProcedureReturn (Str(SDL_GetNumberProperty(props, name, 0)))
+    Case (#SDL_PROPERTY_TYPE_FLOAT)
+      ProcedureReturn (StrF(SDL_GetFloatProperty(props, name, 0.0)))
+    Case (#SDL_PROPERTY_TYPE_BOOLEAN)
+      If (SDL_GetBooleanProperty(props, name, #False))
+        ProcedureReturn ("true")
+      Else
+        ProcedureReturn ("false")
+      EndIf
+    Default
+      ProcedureReturn (default_value)
+  EndSelect
+EndProcedure
+
+Threaded _SDLx_PropertiesStringRepresentations.s = ""
+
+Procedure _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
+  Protected Name.s = PeekS(*name, -1, #PB_UTF8)
+  _SDLx_PropertiesStringRepresentations + Name + " = " + SDLx_GetPropertyStringRepresentation(props, name, "") + #LF$
+EndProcedure
+
+Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID)
+  _SDLx_PropertiesStringRepresentations = ""
+  SDL_EnumerateProperties(props, @_SDLx_GetPropertiesStringRepresentations(), #Null)
+  ProcedureReturn (_SDLx_PropertiesStringRepresentations)
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)

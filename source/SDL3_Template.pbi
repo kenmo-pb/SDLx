@@ -1034,6 +1034,12 @@ EndEnumeration
 #SDL_JOYSTICK_AXIS_MIN = -32768
 #SDL_JOYSTICK_AXIS_MAX =  32767
 
+#SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN = "SDL.joystick.cap.mono_led"
+#SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN = "SDL.joystick.cap.rgb_led"
+#SDL_PROP_JOYSTICK_CAP_PLAYER_LED_BOOLEAN = "SDL.joystick.cap.player_led"
+#SDL_PROP_JOYSTICK_CAP_RUMBLE_BOOLEAN = "SDL.joystick.cap.rumble"
+#SDL_PROP_JOYSTICK_CAP_TRIGGER_RUMBLE_BOOLEAN = "SDL.joystick.cap.trigger_rumble"
+
 ;- - Gamepad Support
 
 Enumeration ; SDL_GamepadType
@@ -1092,6 +1098,12 @@ Enumeration ; SDL_GamepadAxis
   #SDL_GAMEPAD_AXIS_RIGHT_TRIGGER
   #SDL_GAMEPAD_AXIS_COUNT
 EndEnumeration
+
+#SDL_PROP_GAMEPAD_CAP_MONO_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_MONO_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_RGB_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_RGB_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_PLAYER_LED_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_PLAYER_LED_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_RUMBLE_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_RUMBLE_BOOLEAN
+#SDL_PROP_GAMEPAD_CAP_TRIGGER_RUMBLE_BOOLEAN = #SDL_PROP_JOYSTICK_CAP_TRIGGER_RUMBLE_BOOLEAN
 
 ;- - Force Feedback Support
 
@@ -1452,9 +1464,17 @@ PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, 
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
 PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
 PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
+PrototypeC.a Proto_SDL_GetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8) ; returns bool
+PrototypeC.f Proto_SDL_GetFloatProperty(props.SDL_PropertiesID, name.p-utf8, default_value.f) ; returns float
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
+PrototypeC.q Proto_SDL_GetNumberProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Sint64) ; returns Sint64
+PrototypeC.i Proto_SDL_GetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *default_value) ; returns void *
 PrototypeC.l Proto_SDL_GetPropertyType(props.SDL_PropertiesID, name.p-utf8) ; returns SDL_PropertyType
 PrototypeC.i Proto_SDL_GetStringProperty(props.SDL_PropertiesID, name.p-utf8, default_value.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_SetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, value.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetFloatProperty(props.SDL_PropertiesID, name.p-utf8, value.f) ; returns bool
+PrototypeC.a Proto_SDL_SetNumberProperty(props.SDL_PropertiesID, name.p-utf8, value.Sint64) ; returns bool
+PrototypeC.a Proto_SDL_SetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *value) ; returns bool
 PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Error Handling
@@ -1539,6 +1559,7 @@ PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
 ;- - Joystick Support
+PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
 
 ;- - Gamepad Support
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
@@ -1599,13 +1620,19 @@ Global __SDLx_InitCallback = #Null
 
 ;% DELETESTART
 Global SDL_free.Proto_SDL_free
+Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
 Global SDL_GetAppMetadataProperty.Proto_SDL_GetAppMetadataProperty
+Global SDL_GetBooleanProperty.Proto_SDL_GetBooleanProperty
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetError.Proto_SDL_GetError
+Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
+Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
+Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
+Global SDL_GetPropertyType.Proto_SDL_GetPropertyType
 Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubsystem.Proto_SDL_InitSubsystem
@@ -1778,6 +1805,40 @@ EndProcedure
 
 Procedure.s SDLx_GetStringPropertyString(props.SDL_PropertiesID, name.s, default_value.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetStringProperty(props, name, default_value), #False))
+EndProcedure
+
+Procedure.s SDLx_GetPropertyStringRepresentation(props.SDL_PropertiesID, name.s, default_value.s = "")
+  Select (SDL_GetPropertyType(props, name))
+    Case (#SDL_PROPERTY_TYPE_POINTER)
+      ProcedureReturn ("$" + Hex(SDL_GetPointerProperty(props, name, #Null)))
+    Case (#SDL_PROPERTY_TYPE_STRING)
+      ProcedureReturn (SDLx_GetStringPropertyString(props, name, default_value))
+    Case (#SDL_PROPERTY_TYPE_NUMBER)
+      ProcedureReturn (Str(SDL_GetNumberProperty(props, name, 0)))
+    Case (#SDL_PROPERTY_TYPE_FLOAT)
+      ProcedureReturn (StrF(SDL_GetFloatProperty(props, name, 0.0)))
+    Case (#SDL_PROPERTY_TYPE_BOOLEAN)
+      If (SDL_GetBooleanProperty(props, name, #False))
+        ProcedureReturn ("true")
+      Else
+        ProcedureReturn ("false")
+      EndIf
+    Default
+      ProcedureReturn (default_value)
+  EndSelect
+EndProcedure
+
+Threaded _SDLx_PropertiesStringRepresentations.s = ""
+
+Procedure _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
+  Protected Name.s = PeekS(*name, -1, #PB_UTF8)
+  _SDLx_PropertiesStringRepresentations + Name + " = " + SDLx_GetPropertyStringRepresentation(props, name, "") + #LF$
+EndProcedure
+
+Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID)
+  _SDLx_PropertiesStringRepresentations = ""
+  SDL_EnumerateProperties(props, @_SDLx_GetPropertiesStringRepresentations(), #Null)
+  ProcedureReturn (_SDLx_PropertiesStringRepresentations)
 EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
