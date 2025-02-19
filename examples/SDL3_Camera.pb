@@ -143,13 +143,15 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
       SDL_ReleaseCameraFrame(*camera, *frame)
     EndIf
     
-    SDL_SetRenderDrawColor(*renderer, $99, $99, $99, #SDL_ALPHA_OPAQUE)
-    SDL_RenderClear(*renderer)
-    If (*texture)
-      ;SDL_RenderTexture(*renderer, *texture, #Null, @dstrect) ; draw texture exactly as-received
-      SDL_RenderTextureRotated(*renderer, *texture, #Null, @dstrect, 0.0, #Null, #SDL_FLIP_HORIZONTAL) ; draw horizontally mirrored, more intuitive for a webcam
+    If (*renderer)
+      SDL_SetRenderDrawColor(*renderer, $99, $99, $99, #SDL_ALPHA_OPAQUE)
+      SDL_RenderClear(*renderer)
+      If (*texture)
+        ;SDL_RenderTexture(*renderer, *texture, #Null, @dstrect) ; draw texture exactly as-received
+        SDL_RenderTextureRotated(*renderer, *texture, #Null, @dstrect, 0.0, #Null, #SDL_FLIP_HORIZONTAL) ; draw horizontally mirrored, more intuitive for a webcam
+      EndIf
+      SDL_RenderPresent(*renderer)
     EndIf
-    SDL_RenderPresent(*renderer)
     
     If ((Not *texture) And (ElapsedMilliseconds() - StartTime > 15*1000))
       ; time out if no camera frames received

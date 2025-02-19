@@ -68,32 +68,11 @@ CompilerEndIf
 
 ;- - Excluded SDL Categories
 
-CompilerIf (Not Defined(SDLx_ExcludePropertiesSupport, #PB_Constant))
-  #SDLx_ExcludePropertiesSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeWindowSupport, #PB_Constant))
-  #SDLx_ExcludeWindowSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeRendererSupport, #PB_Constant))
-  #SDLx_ExcludeRendererSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeSurfaceSupport, #PB_Constant))
-  #SDLx_ExcludeSurfaceSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeClipboardSupport, #PB_Constant))
-  #SDLx_ExcludeClipboardSupport = #True ; assumes you will use PB's Clipboard functions!
-CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeCameraSupport, #PB_Constant))
   #SDLx_ExcludeCameraSupport = #True ; assumes most applications aren't using webcams!
 CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeKeyboardSupport, #PB_Constant))
-  #SDLx_ExcludeKeyboardSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
-  #SDLx_ExcludeMouseSupport = #False
-CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
-  #SDLx_ExcludeJoystickSupport = #False
+CompilerIf (Not Defined(SDLx_ExcludeClipboardSupport, #PB_Constant))
+  #SDLx_ExcludeClipboardSupport = #True ; assumes you will use PB's Clipboard functions!
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeGamepadSupport, #PB_Constant))
   #SDLx_ExcludeGamepadSupport = #False
@@ -101,11 +80,35 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeHapticSupport, #PB_Constant))
   #SDLx_ExcludeHapticSupport = #True ; assumes most applications aren't using haptics!
 CompilerEndIf
-CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
-  #SDLx_ExcludePowerInfoSupport = #False
+CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
+  #SDLx_ExcludeJoystickSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeKeyboardSupport, #PB_Constant))
+  #SDLx_ExcludeKeyboardSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeLogSupport, #PB_Constant))
+  #SDLx_ExcludeLogSupport = #False
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeMessageBoxSupport, #PB_Constant))
   #SDLx_ExcludeMessageBoxSupport = #True ; assumes you will use PB's MessageRequester functions!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
+  #SDLx_ExcludeMouseSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
+  #SDLx_ExcludePowerInfoSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludePropertiesSupport, #PB_Constant))
+  #SDLx_ExcludePropertiesSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeRendererSupport, #PB_Constant))
+  #SDLx_ExcludeRendererSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeSurfaceSupport, #PB_Constant))
+  #SDLx_ExcludeSurfaceSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeWindowSupport, #PB_Constant))
+  #SDLx_ExcludeWindowSupport = #False
 CompilerEndIf
 
 
@@ -254,6 +257,12 @@ EndMacro
 Macro SDL_Keymod
   Uint16
 EndMacro
+Macro SDL_LogCategory
+  Sint32 ; enum
+EndMacro
+Macro SDL_LogPriority
+  Sint32 ; enum
+EndMacro
 Macro SDL_MessageBoxButtonFlags
   Uint32
 EndMacro
@@ -371,6 +380,43 @@ EndEnumeration
 ;- - Error Handling
 
 ;- - Log Handling
+
+Enumeration ; SDL_LogPriority
+  #SDL_LOG_PRIORITY_INVALID
+  #SDL_LOG_PRIORITY_TRACE
+  #SDL_LOG_PRIORITY_VERBOSE
+  #SDL_LOG_PRIORITY_DEBUG
+  #SDL_LOG_PRIORITY_INFO
+  #SDL_LOG_PRIORITY_WARN
+  #SDL_LOG_PRIORITY_ERROR
+  #SDL_LOG_PRIORITY_CRITICAL
+  #SDL_LOG_PRIORITY_COUNT
+EndEnumeration
+
+Enumeration ; SDL_LogCategory
+  #SDL_LOG_CATEGORY_APPLICATION
+  #SDL_LOG_CATEGORY_ERROR
+  #SDL_LOG_CATEGORY_ASSERT
+  #SDL_LOG_CATEGORY_SYSTEM
+  #SDL_LOG_CATEGORY_AUDIO
+  #SDL_LOG_CATEGORY_VIDEO
+  #SDL_LOG_CATEGORY_RENDER
+  #SDL_LOG_CATEGORY_INPUT
+  #SDL_LOG_CATEGORY_TEST
+  #SDL_LOG_CATEGORY_GPU
+  
+  #SDL_LOG_CATEGORY_RESERVED2
+  #SDL_LOG_CATEGORY_RESERVED3
+  #SDL_LOG_CATEGORY_RESERVED4
+  #SDL_LOG_CATEGORY_RESERVED5
+  #SDL_LOG_CATEGORY_RESERVED6
+  #SDL_LOG_CATEGORY_RESERVED7
+  #SDL_LOG_CATEGORY_RESERVED8
+  #SDL_LOG_CATEGORY_RESERVED9
+  #SDL_LOG_CATEGORY_RESERVED10
+  
+  #SDL_LOG_CATEGORY_CUSTOM
+EndEnumeration
 
 ;- - Display and Window Management
 
@@ -1488,6 +1534,7 @@ EndStructure
 
 ;- - Querying SDL Version
 ;% CATEGORY=
+PrototypeC.i Proto_SDL_GetRevision() ; returns const char *
 PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
 ;- - Initialization and Shutdown
@@ -1506,7 +1553,7 @@ PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 ;- - Object Properties
 ;% CATEGORY=PropertiesSupport
 PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, *name)
-;
+;;
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
 PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
 PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
@@ -1528,6 +1575,14 @@ PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, va
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
 ;- - Log Handling
+;% CATEGORY=LogSupport
+PrototypeC   SDL_LogOutputFunction(*userdata, category.Sint32, priority.SDL_LogPriority, *message)
+;;
+PrototypeC.i Proto_SDL_GetDefaultLogOutputFunction() ; returns SDL_LogOutputFunction *
+PrototypeC   Proto_SDL_SetLogOutputFunction(*callback.SDL_LogOutputFunction, *userdata)
+PrototypeC   Proto_SDL_SetLogPriorities(priority.SDL_LogPriority)
+PrototypeC   Proto_SDL_SetLogPriority(category.Sint32, priority.SDL_LogPriority)
+PrototypeC   Proto_SDL_ResetLogPriorities()
 
 ;- - Display and Window Management
 ;% CATEGORY=WindowSupport
@@ -1686,15 +1741,17 @@ Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
 Global SDL_GetAppMetadataProperty.Proto_SDL_GetAppMetadataProperty
 Global SDL_GetBooleanProperty.Proto_SDL_GetBooleanProperty
 Global SDL_GetCameraName.Proto_SDL_GetCameraName
+Global SDL_GetDefaultLogOutputFunction.Proto_SDL_GetDefaultLogOutputFunction
+Global SDL_GetError.Proto_SDL_GetError
+Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
-Global SDL_GetError.Proto_SDL_GetError
-Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
 Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
 Global SDL_GetPropertyType.Proto_SDL_GetPropertyType
+Global SDL_GetRevision.Proto_SDL_GetRevision
 Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
 Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubsystem.Proto_SDL_InitSubsystem
@@ -1702,6 +1759,7 @@ Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
 Global SDL_QuitSubsystem.Proto_SDL_QuitSubsystem
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
+Global SDL_SetLogOutputFunction.Proto_SDL_SetLogOutputFunction
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 ;% DELETEEND
 
@@ -1892,6 +1950,22 @@ Procedure.s SDLx_GetErrorString()
   ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
 EndProcedure
 
+CompilerIf (Not #SDLx_ExcludeLogSupport)
+Procedure _SDLx_LogToPBDebugger(*userdata, category.Sint32, priority.SDL_LogPriority, *message)
+  Debug SDLx_PeekString(*message, #False)
+EndProcedure
+CompilerEndIf
+
+Procedure SDLx_LogToPBDebugger(State.i)
+  CompilerIf (Not #SDLx_ExcludeLogSupport)
+    If (State)
+      SDL_SetLogOutputFunction(@_SDLx_LogToPBDebugger(), #Null)
+    Else
+      SDL_SetLogOutputFunction(SDL_GetDefaultLogOutputFunction(), #Null)
+    EndIf
+  CompilerEndIf
+EndProcedure
+
 CompilerIf (Not #SDLx_ExcludePropertiesSupport)
 
 Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
@@ -2007,6 +2081,10 @@ Procedure.s SDLx_CompiledVersionString()
   ProcedureReturn (Str(#SDL_MAJOR_VERSION) + "." + Str(#SDL_MINOR_VERSION) + "." + Str(#SDL_MICRO_VERSION))
 EndProcedure
 
+Procedure.s SDLx_GetRevisionString()
+  ProcedureReturn (SDLx_PeekString(SDL_GetRevision(), #False))
+EndProcedure
+
 Procedure.s SDLx_GetVersionString()
   Protected Result.s = ""
   Protected ver.i = SDL_GetVersion()
@@ -2037,6 +2115,15 @@ Procedure.a SDLx_InitLibrary(LibraryFile.s, flags.SDL_InitFlags)
   CompilerElse
     ProcedureReturn (SDL_Init(flags))
   CompilerEndIf
+EndProcedure
+
+Procedure.a SDLx_InitWithPostLoadPreInitCallback(flags.SDL_InitFlags, *Procedure, Library.s = "")
+  SDLx_SetPostLoadPreInitCallback(*Procedure)
+  If (Library)
+    ProcedureReturn (SDLx_InitLibrary(Library, flags))
+  Else
+    ProcedureReturn (SDL_Init(flags))
+  EndIf
 EndProcedure
 
 CompilerEndIf
