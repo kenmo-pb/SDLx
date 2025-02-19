@@ -9,6 +9,7 @@
 
 ;#SDLx_UseImport = #True
 ;#SDLx_DebugErrors = #True
+#SDLx_ExcludeHapticSupport = #False
 XIncludeFile "../SDL3.pbi"
 
 #WinW = 800

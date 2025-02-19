@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-18 05:04:49 UTC
+; Generated 2025-02-19 14:48:17 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -48,6 +48,7 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
 CompilerEndIf
+
 CompilerIf (#PB_Compiler_Debugger)
   #__SDLx_DebugErrors = #SDLx_DebugErrors
 CompilerElse
@@ -61,6 +62,48 @@ CompilerElse
   Macro __SDLx_Debug(_Message)
     ;
   EndMacro
+CompilerEndIf
+
+;- - Excluded SDL Categories
+
+CompilerIf (Not Defined(SDLx_ExcludePropertiesSupport, #PB_Constant))
+  #SDLx_ExcludePropertiesSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeWindowSupport, #PB_Constant))
+  #SDLx_ExcludeWindowSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeRendererSupport, #PB_Constant))
+  #SDLx_ExcludeRendererSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeSurfaceSupport, #PB_Constant))
+  #SDLx_ExcludeSurfaceSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeClipboardSupport, #PB_Constant))
+  #SDLx_ExcludeClipboardSupport = #True ; assumes you will use PB's Clipboard functions!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeCameraSupport, #PB_Constant))
+  #SDLx_ExcludeCameraSupport = #True ; assumes most applications aren't using webcams!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeKeyboardSupport, #PB_Constant))
+  #SDLx_ExcludeKeyboardSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
+  #SDLx_ExcludeMouseSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
+  #SDLx_ExcludeJoystickSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeGamepadSupport, #PB_Constant))
+  #SDLx_ExcludeGamepadSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeHapticSupport, #PB_Constant))
+  #SDLx_ExcludeHapticSupport = #True ; assumes most applications aren't using haptics!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
+  #SDLx_ExcludePowerInfoSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeMessageBoxSupport, #PB_Constant))
+  #SDLx_ExcludeMessageBoxSupport = #True ; assumes you will use PB's MessageRequester functions!
 CompilerEndIf
 
 
@@ -1740,6 +1783,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetAppMetadata.a(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8)
   SDL_SetAppMetadataProperty.a(name.p-utf8, value.p-utf8)
   SDL_WasInit.l(flags.SDL_InitFlags)
+  CompilerIf (Not #SDLx_ExcludePropertiesSupport)
   SDL_CreateProperties.l()
   SDL_DestroyProperties(props.SDL_PropertiesID)
   SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata)
@@ -1755,7 +1799,9 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetNumberProperty.a(props.SDL_PropertiesID, name.p-utf8, value.Sint64)
   SDL_SetPointerProperty.a(props.SDL_PropertiesID, name.p-utf8, *value)
   SDL_SetStringProperty.a(props.SDL_PropertiesID, name.p-utf8, value.p-utf8)
+  CompilerEndIf
   SDL_GetError.i()
+  CompilerIf (Not #SDLx_ExcludeWindowSupport)
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
   SDL_DestroyWindow(*window.SDL_Window)
   SDL_HideWindow.a(*window.SDL_Window)
@@ -1769,6 +1815,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetWindowPosition.a(*window.SDL_Window, x.Sint32, y.Sint32)
   SDL_SetWindowSize.a(*window.SDL_Window, w.Sint32, h.Sint32)
   SDL_ShowWindow.a(*window.SDL_Window)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeRendererSupport)
   SDL_CreateRenderer.i(*window.SDL_Window, name.p-utf8)
   SDL_CreateTexture.i(*renderer.SDL_Renderer, format.SDL_PixelFormat, access.SDL_TextureAccess, w.Sint32, h.Sint32)
   SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
@@ -1783,6 +1831,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetRenderDrawColor.a(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8)
   SDL_SetRenderLogicalPresentation.a(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation)
   SDL_UpdateTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
   SDL_GetPixelFormatName.i(format.SDL_PixelFormat)
   SDL_ConvertPixels.a(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32)
   SDL_DestroySurface(*surface.SDL_Surface)
@@ -1791,7 +1841,11 @@ ImportC #SDLx_ImportLibraryName
   SDL_LockSurface.a(*surface.SDL_Surface)
   SDL_SaveBMP.a(*surface.SDL_Surface, file.p-utf8)
   SDL_UnlockSurface(*surface.SDL_Surface)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeClipboardSupport)
   SDL_SetClipboardText.a(text.p-utf8)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeCameraSupport)
   SDL_AcquireCameraFrame.i(*camera.SDL_Camera, *timestampNS.QUAD)
   SDL_CloseCamera(*camera.SDL_Camera)
   SDL_GetCameraFormat.a(*camera.SDL_Camera, *spec.SDL_CameraSpec)
@@ -1802,15 +1856,23 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetNumCameraDrivers.l()
   SDL_OpenCamera.i(instance_id.SDL_CameraID, *spec.SDL_CameraSpec)
   SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
+  CompilerEndIf
   SDL_PeepEvents.l(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32)
   SDL_PollEvent.a(*event.SDL_Event)
   SDL_PumpEvents()
   SDL_PushEvent.a(*event.SDL_Event)
+  CompilerIf (Not #SDLx_ExcludeKeyboardSupport)
   SDL_GetKeyboardState.i(*numkeys.LONG)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeMouseSupport)
   SDL_GetMouseState.l(*x.FLOAT, *y.FLOAT)
   SDL_HideCursor.a()
   SDL_ShowCursor.a()
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeJoystickSupport)
   SDL_GetJoystickProperties.l(*joystick.SDL_Joystick)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeGamepadSupport)
   SDL_AddGamepadMappingsFromFile.l(file.p-utf8)
   SDL_CloseGamepad(*gamepad.SDL_Gamepad)
   SDL_GetGamepadAxis.w(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
@@ -1827,6 +1889,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenGamepad.i(instance_id.SDL_JoystickID)
   SDL_RumbleGamepad.a(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
   SDL_UpdateGamepads()
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeHapticSupport)
   SDL_CloseHaptic(*haptic.SDL_Haptic)
   SDL_GetHaptics.i(*count.LONG)
   SDL_InitHapticRumble.a(*haptic.SDL_Haptic)
@@ -1834,9 +1898,14 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenHapticFromJoystick.i(*joystick.SDL_Joystick)
   SDL_PlayHapticRumble.a(*haptic.SDL_Haptic, strength.f, length.Uint32)
   SDL_StopHapticRumble.a(*haptic.SDL_Haptic)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
   SDL_GetPowerInfo.l(*seconds.LONG, *percent.LONG)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeMessageBoxSupport)
   SDL_ShowSimpleMessageBox.a(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window)
   SDL_ShowMessageBox.a(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
+  CompilerEndIf
   SDL_free(*mem)
 
 EndImport
@@ -1866,6 +1935,33 @@ EndProcedure
 
 Procedure.a SDL_Init(flags.SDL_InitFlags)
   Protected Success.i = #False
+  
+  CompilerIf (#True) ; fail immediately if requested subsystems were excluded at compile-time...
+    CompilerIf (#SDLx_ExcludeCameraSupport)
+      If (flags & #SDL_INIT_CAMERA)
+        DebuggerWarning("SDL3 Camera subsystem requested, but #SDLx_ExcludeCameraSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeGamepadSupport)
+      If (flags & #SDL_INIT_GAMEPAD)
+        DebuggerWarning("SDL3 Gamepad subsystem requested, but #SDLx_ExcludeGamepadSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeHapticSupport)
+      If (flags & #SDL_INIT_HAPTIC)
+        DebuggerWarning("SDL3 Haptic subsystem requested, but #SDLx_ExcludeHapticSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeJoystickSupport)
+      If (flags & #SDL_INIT_JOYSTICK)
+        DebuggerWarning("SDL3 Joystick subsystem requested, but #SDLx_ExcludeJoystickSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+  CompilerEndIf
   
   If (__SDLxLib = #Null)
     If (__SDLx_DynamicLibPath = "")
@@ -1938,6 +2034,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludePropertiesSupport)
           SDL_CreateProperties = GetFunction(__SDLxLib, "SDL_CreateProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_CreateProperties = #Null)
@@ -2043,6 +2140,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
           SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetError = #Null)
@@ -2050,6 +2148,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeWindowSupport)
           SDL_CreateWindow = GetFunction(__SDLxLib, "SDL_CreateWindow")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_CreateWindow = #Null)
@@ -2141,6 +2240,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeRendererSupport)
           SDL_CreateRenderer = GetFunction(__SDLxLib, "SDL_CreateRenderer")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_CreateRenderer = #Null)
@@ -2239,6 +2340,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
           SDL_GetPixelFormatName = GetFunction(__SDLxLib, "SDL_GetPixelFormatName")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetPixelFormatName = #Null)
@@ -2295,6 +2398,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeClipboardSupport)
           SDL_SetClipboardText = GetFunction(__SDLxLib, "SDL_SetClipboardText")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetClipboardText = #Null)
@@ -2302,6 +2407,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeCameraSupport)
           SDL_AcquireCameraFrame = GetFunction(__SDLxLib, "SDL_AcquireCameraFrame")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_AcquireCameraFrame = #Null)
@@ -2372,6 +2479,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
           SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_PeepEvents = #Null)
@@ -2400,6 +2508,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeKeyboardSupport)
           SDL_GetKeyboardState = GetFunction(__SDLxLib, "SDL_GetKeyboardState")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetKeyboardState = #Null)
@@ -2407,6 +2516,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeMouseSupport)
           SDL_GetMouseState = GetFunction(__SDLxLib, "SDL_GetMouseState")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetMouseState = #Null)
@@ -2428,6 +2539,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeJoystickSupport)
           SDL_GetJoystickProperties = GetFunction(__SDLxLib, "SDL_GetJoystickProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetJoystickProperties = #Null)
@@ -2435,6 +2548,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeGamepadSupport)
           SDL_AddGamepadMappingsFromFile = GetFunction(__SDLxLib, "SDL_AddGamepadMappingsFromFile")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_AddGamepadMappingsFromFile = #Null)
@@ -2547,6 +2662,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeHapticSupport)
           SDL_CloseHaptic = GetFunction(__SDLxLib, "SDL_CloseHaptic")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_CloseHaptic = #Null)
@@ -2596,6 +2713,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
           SDL_GetPowerInfo = GetFunction(__SDLxLib, "SDL_GetPowerInfo")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetPowerInfo = #Null)
@@ -2603,6 +2722,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeMessageBoxSupport)
           SDL_ShowSimpleMessageBox = GetFunction(__SDLxLib, "SDL_ShowSimpleMessageBox")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_ShowSimpleMessageBox = #Null)
@@ -2616,6 +2737,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_ShowMessageBox'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
+          CompilerEndIf
           CompilerEndIf
           SDL_free = GetFunction(__SDLxLib, "SDL_free")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
@@ -2717,6 +2839,12 @@ Procedure.s SDLx_PeekString(*strPtr, Free.i)
   ProcedureReturn (Result)
 EndProcedure
 
+Procedure.s SDLx_GetErrorString()
+  ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
+EndProcedure
+
+CompilerIf (Not #SDLx_ExcludePropertiesSupport)
+
 Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
 EndProcedure
@@ -2759,9 +2887,17 @@ Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID)
   ProcedureReturn (_SDLx_PropertiesStringRepresentations)
 EndProcedure
 
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeCameraSupport)
+
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
 EndProcedure
+
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeGamepadSupport)
 
 Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))
@@ -2771,13 +2907,26 @@ Procedure.s SDLx_GetGamepadNameForIDString(instance_id.SDL_JoystickID)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadNameForID(instance_id), #False))
 EndProcedure
 
+Procedure.f SDLx_GetGamepadAxisFloat(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
+  Protected IntValue.i = SDL_GetGamepadAxis(*gamepad, axis)
+  If (IntValue < 0)
+    ProcedureReturn (IntValue / -#SDL_JOYSTICK_AXIS_MIN)
+  Else
+    ProcedureReturn (IntValue / #SDL_JOYSTICK_AXIS_MAX)
+  EndIf
+EndProcedure
+
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
+
 Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)
   ProcedureReturn (SDLx_PeekString(SDL_GetPixelFormatName(format), #False))
 EndProcedure
 
-Procedure.s SDLx_GetErrorString()
-  ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
-EndProcedure
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeRendererSupport)
 
 Procedure.a SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
   ProcedureReturn (SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue)))
@@ -2797,14 +2946,7 @@ Procedure SDLx_DrawRect(*renderer.SDL_Renderer, x.f, y.f, width.f, height.f, RGB
   SDL_RenderFillRect(*renderer, @frect)
 EndProcedure
 
-Procedure.f SDLx_GetGamepadAxisFloat(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
-  Protected IntValue.i = SDL_GetGamepadAxis(*gamepad, axis)
-  If (IntValue < 0)
-    ProcedureReturn (IntValue / -#SDL_JOYSTICK_AXIS_MIN)
-  Else
-    ProcedureReturn (IntValue / #SDL_JOYSTICK_AXIS_MAX)
-  EndIf
-EndProcedure
+CompilerEndIf
 
 Procedure.i SDLx_QuitRequested()
   ; SDL2 SDL_QuitRequested() C macro was officially removed in SDL3

@@ -3,6 +3,7 @@
 ; +------------+
 ; | 2024-09-23 : Creation (PureBasic 6.12)
 ; | 2024-10-05 : Added statically linked lib function imports
+; | 2025-02-19 : Added SDL function categories which can be selectively excluded by user
 
 ;-
 
@@ -18,6 +19,7 @@ Structure SDLFunctionStruct
   Name.s
   ReturnType.s
   ParamString.s
+  Category.s
 EndStructure
 
 Global NewList SDLFunction.SDLFunctionStruct()
@@ -59,13 +61,16 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
         
         NumStructs.i = 0
         Indentation.s = ""
+        PrevCategory.s = ""
+        Category.s = ""
         While (Not Eof(0))
           Line.s = ReadString(0)
           LineOut.s = Line
           SkipLine.i = #False
           
           If (Left(Line, 2) = ";%")
-            Command.s = UCase(Trim(StringField(Line, 2, "%")))
+            OrigCommand.s = Trim(StringField(Line, 2, "%"))
+            Command.s = UCase(OrigCommand)
             Select (Command)
               
               Case "MODIFY_DISCLAIMER"
@@ -95,19 +100,41 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
                 Next
               
               Case "STATIC_IMPORTS"
+                PrevCategory = ""
                 LineOut = ""
                 ForEach SDLFunction()
+                  If (SDLFunction()\Category <> PrevCategory)
+                    If (PrevCategory)
+                      LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                    EndIf
+                    If (SDLFunction()\Category)
+                      LineOut + Indentation + "CompilerIf (Not #SDLx_Exclude" + SDLFunction()\Category + ")" + #OutputFileEOL$
+                    EndIf
+                  EndIf
                   LineOut + Indentation + SDLFunction()\Name
                   If (SDLFunction()\ReturnType)
                     LineOut + "." + SDLFunction()\ReturnType
                   EndIf
                   LineOut + "(" + SDLFunction()\ParamString + ")"
                   LineOut + #OutputFileEOL$
+                  PrevCategory = SDLFunction()\Category
                 Next
+                If (PrevCategory)
+                  LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                EndIf
               
               Case "LOAD_DYNAMIC_FUNCTIONS"
+                PrevCategory = ""
                 LineOut = ""
                 ForEach SDLFunction()
+                  If (SDLFunction()\Category <> PrevCategory)
+                    If (PrevCategory)
+                      LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                    EndIf
+                    If (SDLFunction()\Category)
+                      LineOut + Indentation + "CompilerIf (Not #SDLx_Exclude" + SDLFunction()\Category + ")" + #OutputFileEOL$
+                    EndIf
+                  EndIf
                   Select (SDLFunction()\Name)
                     Case "SDL_Init", "SDL_Quit"
                       ; special cases - handled elsewhere - do not declare prototypes here
@@ -122,13 +149,19 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
                         LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
                       EndIf
                   EndSelect
+                  PrevCategory = SDLFunction()\Category
                 Next
+                If (PrevCategory)
+                  LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                EndIf
                 LineOut + Indentation
               
               Default
                 SkipLine = #True ; discard line, eg. comments in Template file
                 If (Left(Command, 7) = "INDENT=")
                   Indentation = Space(#IndentSpaces * Val(Trim(StringField(Command, 2, "="))))
+                ElseIf (Left(Command, 9) = "CATEGORY=")
+                  Category = Mid(OrigCommand, 10)
                 EndIf
                 
             EndSelect
@@ -143,6 +176,7 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
               SDLFunction()\Name = Trim(StringField(Mid(Line, 14), 1, "("))
               SDLFunction()\ReturnType = Trim(Mid(Line, 12, 1))
               SDLFunction()\ParamString = Trim(StringField(StringField(Line, 2, "("), 1, ")"))
+              SDLFunction()\Category = Category
               If (Left(SDLFunction()\Name, Len(#PrototypeNamePrefix)) = #PrototypeNamePrefix)
                 ; OK, keep it
                 SDLFunction()\Name = Mid(SDLFunction()\Name, 1 + Len(#PrototypeNamePrefix))

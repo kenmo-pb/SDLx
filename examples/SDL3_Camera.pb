@@ -9,6 +9,7 @@
 
 ;#SDLx_UseImport = #True
 ;#SDLx_DebugErrors = #True
+#SDLx_ExcludeCameraSupport = #False
 XIncludeFile "../SDL3.pbi"
 
 #WinH = 600

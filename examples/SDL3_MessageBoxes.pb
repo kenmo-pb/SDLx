@@ -7,6 +7,7 @@
 
 ;#SDLx_UseImport = #True
 ;#SDLx_DebugErrors = #True
+#SDLx_ExcludeMessageBoxSupport = #False
 XIncludeFile "../SDL3.pbi"
 
 If (SDL_Init(0))

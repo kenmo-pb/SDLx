@@ -50,6 +50,7 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
 CompilerEndIf
+
 CompilerIf (#PB_Compiler_Debugger)
   #__SDLx_DebugErrors = #SDLx_DebugErrors
 CompilerElse
@@ -63,6 +64,48 @@ CompilerElse
   Macro __SDLx_Debug(_Message)
     ;
   EndMacro
+CompilerEndIf
+
+;- - Excluded SDL Categories
+
+CompilerIf (Not Defined(SDLx_ExcludePropertiesSupport, #PB_Constant))
+  #SDLx_ExcludePropertiesSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeWindowSupport, #PB_Constant))
+  #SDLx_ExcludeWindowSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeRendererSupport, #PB_Constant))
+  #SDLx_ExcludeRendererSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeSurfaceSupport, #PB_Constant))
+  #SDLx_ExcludeSurfaceSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeClipboardSupport, #PB_Constant))
+  #SDLx_ExcludeClipboardSupport = #True ; assumes you will use PB's Clipboard functions!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeCameraSupport, #PB_Constant))
+  #SDLx_ExcludeCameraSupport = #True ; assumes most applications aren't using webcams!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeKeyboardSupport, #PB_Constant))
+  #SDLx_ExcludeKeyboardSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
+  #SDLx_ExcludeMouseSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
+  #SDLx_ExcludeJoystickSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeGamepadSupport, #PB_Constant))
+  #SDLx_ExcludeGamepadSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeHapticSupport, #PB_Constant))
+  #SDLx_ExcludeHapticSupport = #True ; assumes most applications aren't using haptics!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
+  #SDLx_ExcludePowerInfoSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeMessageBoxSupport, #PB_Constant))
+  #SDLx_ExcludeMessageBoxSupport = #True ; assumes you will use PB's MessageRequester functions!
 CompilerEndIf
 
 
@@ -1444,9 +1487,11 @@ EndStructure
 ;- SDL3 Prototypes
 
 ;- - Querying SDL Version
+;% CATEGORY=
 PrototypeC.l Proto_SDL_GetVersion() ; returns int
 
 ;- - Initialization and Shutdown
+;% CATEGORY=
 PrototypeC.i Proto_SDL_GetAppMetadataProperty(name.p-utf8) ; returns const char *
 PrototypeC.a Proto_SDL_Init(flags.SDL_InitFlags) ; returns bool
 PrototypeC.a Proto_SDL_InitSubSystem(flags.SDL_InitFlags) ; returns bool
@@ -1459,6 +1504,7 @@ PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 ;- - Configuration Variables
 
 ;- - Object Properties
+;% CATEGORY=PropertiesSupport
 PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, *name)
 ;
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
@@ -1478,11 +1524,13 @@ PrototypeC.a Proto_SDL_SetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *
 PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Error Handling
+;% CATEGORY=
 PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
 ;- - Log Handling
 
 ;- - Display and Window Management
+;% CATEGORY=WindowSupport
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC.a Proto_SDL_HideWindow(*window.SDL_Window) ; returns bool
@@ -1498,6 +1546,7 @@ PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; r
 PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
 ;- - 2D Accelerated Rendering
+;% CATEGORY=RendererSupport
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, name.p-utf8) ; returns SDL_Renderer *
 PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDL_PixelFormat, access.SDL_TextureAccess, w.Sint32, h.Sint32) ; returns SDL_Texture *
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns SDL_Texture *
@@ -1514,6 +1563,7 @@ PrototypeC.a Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.Si
 PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32) ; returns bool
 
 ;- - Pixel Formats and Conversion Routines
+;% CATEGORY=SurfaceSupport
 PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns const char *
 
 ;- - Blend modes
@@ -1521,6 +1571,7 @@ PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns cons
 ;- - Rectangle Functions
 
 ;- - Surface Creation and Simple Drawing
+;% CATEGORY=SurfaceSupport
 PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
 PrototypeC.a Proto_SDL_FlipSurface(*surface.SDL_Surface, flip.SDL_FlipMode) ; returns bool
@@ -1530,9 +1581,11 @@ PrototypeC.a Proto_SDL_SaveBMP(*surface.SDL_Surface, file.p-utf8) ; returns bool
 PrototypeC   Proto_SDL_UnlockSurface(*surface.SDL_Surface)
 
 ;- - Clipboard Handling
+;% CATEGORY=ClipboardSupport
 PrototypeC.a Proto_SDL_SetClipboardText(text.p-utf8) ; returns bool
 
 ;- - Camera Support
+;% CATEGORY=CameraSupport
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD) ; returns SDL_Surface *
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
 PrototypeC.a Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
@@ -1545,23 +1598,28 @@ PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
 ;- - Event Handling
+;% CATEGORY=
 PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
 PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
 PrototypeC   Proto_SDL_PumpEvents()
 PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
 
 ;- - Keyboard Support
+;% CATEGORY=KeyboardSupport
 PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns const bool *
 
 ;- - Mouse Support
+;% CATEGORY=MouseSupport
 PrototypeC.l Proto_SDL_GetMouseState(*x.FLOAT, *y.FLOAT) ; returns SDL_MouseButtonFlags
 PrototypeC.a Proto_SDL_HideCursor() ; returns bool
 PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
 ;- - Joystick Support
+;% CATEGORY=JoystickSupport
 PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
 
 ;- - Gamepad Support
+;% CATEGORY=GamepadSupport
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
 PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
 PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
@@ -1580,6 +1638,7 @@ PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.
 PrototypeC   Proto_SDL_UpdateGamepads()
 
 ;- - Force Feedback Support
+;% CATEGORY=HapticSupport
 PrototypeC   Proto_SDL_CloseHaptic(*haptic.SDL_Haptic)
 PrototypeC.i Proto_SDL_GetHaptics(*count.LONG) ; returns SDL_HapticID *
 PrototypeC.a Proto_SDL_InitHapticRumble(*haptic.SDL_Haptic) ; returns bool
@@ -1589,13 +1648,16 @@ PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.U
 PrototypeC.a Proto_SDL_StopHapticRumble(*haptic.SDL_Haptic) ; returns bool
 
 ;- - Power Management Status
+;% CATEGORY=PowerInfoSupport
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
 
 ;- - Message Boxes
+;% CATEGORY=MessageBoxSupport
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
 
 ;- - Standard Library Functionality
+;% CATEGORY=
 PrototypeC   Proto_SDL_free(*mem)
 
 
@@ -1682,6 +1744,33 @@ EndProcedure
 
 Procedure.a SDL_Init(flags.SDL_InitFlags)
   Protected Success.i = #False
+  
+  CompilerIf (#True) ; fail immediately if requested subsystems were excluded at compile-time...
+    CompilerIf (#SDLx_ExcludeCameraSupport)
+      If (flags & #SDL_INIT_CAMERA)
+        DebuggerWarning("SDL3 Camera subsystem requested, but #SDLx_ExcludeCameraSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeGamepadSupport)
+      If (flags & #SDL_INIT_GAMEPAD)
+        DebuggerWarning("SDL3 Gamepad subsystem requested, but #SDLx_ExcludeGamepadSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeHapticSupport)
+      If (flags & #SDL_INIT_HAPTIC)
+        DebuggerWarning("SDL3 Haptic subsystem requested, but #SDLx_ExcludeHapticSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+    CompilerIf (#SDLx_ExcludeJoystickSupport)
+      If (flags & #SDL_INIT_JOYSTICK)
+        DebuggerWarning("SDL3 Joystick subsystem requested, but #SDLx_ExcludeJoystickSupport is #True")
+        ProcedureReturn (#False)
+      EndIf
+    CompilerEndIf
+  CompilerEndIf
   
   If (__SDLxLib = #Null)
     If (__SDLx_DynamicLibPath = "")
@@ -1799,6 +1888,12 @@ Procedure.s SDLx_PeekString(*strPtr, Free.i)
   ProcedureReturn (Result)
 EndProcedure
 
+Procedure.s SDLx_GetErrorString()
+  ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
+EndProcedure
+
+CompilerIf (Not #SDLx_ExcludePropertiesSupport)
+
 Procedure.s SDLx_GetAppMetadataPropertyString(name.s)
   ProcedureReturn (SDLx_PeekString(SDL_GetAppMetadataProperty(name), #False))
 EndProcedure
@@ -1841,9 +1936,17 @@ Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID)
   ProcedureReturn (_SDLx_PropertiesStringRepresentations)
 EndProcedure
 
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeCameraSupport)
+
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
 EndProcedure
+
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeGamepadSupport)
 
 Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))
@@ -1853,13 +1956,26 @@ Procedure.s SDLx_GetGamepadNameForIDString(instance_id.SDL_JoystickID)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadNameForID(instance_id), #False))
 EndProcedure
 
+Procedure.f SDLx_GetGamepadAxisFloat(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
+  Protected IntValue.i = SDL_GetGamepadAxis(*gamepad, axis)
+  If (IntValue < 0)
+    ProcedureReturn (IntValue / -#SDL_JOYSTICK_AXIS_MIN)
+  Else
+    ProcedureReturn (IntValue / #SDL_JOYSTICK_AXIS_MAX)
+  EndIf
+EndProcedure
+
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
+
 Procedure.s SDLx_GetPixelFormatNameString(format.SDL_PixelFormat)
   ProcedureReturn (SDLx_PeekString(SDL_GetPixelFormatName(format), #False))
 EndProcedure
 
-Procedure.s SDLx_GetErrorString()
-  ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
-EndProcedure
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeRendererSupport)
 
 Procedure.a SDLx_SetRenderDrawRGBAValue(*renderer.SDL_Renderer, RGBAValue.i)
   ProcedureReturn (SDL_SetRenderDrawColor(*renderer, Red(RGBAValue), Green(RGBAValue), Blue(RGBAValue), Alpha(RGBAValue)))
@@ -1879,14 +1995,7 @@ Procedure SDLx_DrawRect(*renderer.SDL_Renderer, x.f, y.f, width.f, height.f, RGB
   SDL_RenderFillRect(*renderer, @frect)
 EndProcedure
 
-Procedure.f SDLx_GetGamepadAxisFloat(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
-  Protected IntValue.i = SDL_GetGamepadAxis(*gamepad, axis)
-  If (IntValue < 0)
-    ProcedureReturn (IntValue / -#SDL_JOYSTICK_AXIS_MIN)
-  Else
-    ProcedureReturn (IntValue / #SDL_JOYSTICK_AXIS_MAX)
-  EndIf
-EndProcedure
+CompilerEndIf
 
 Procedure.i SDLx_QuitRequested()
   ; SDL2 SDL_QuitRequested() C macro was officially removed in SDL3
