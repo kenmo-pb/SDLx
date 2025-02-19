@@ -80,6 +80,9 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeHapticSupport, #PB_Constant))
   #SDLx_ExcludeHapticSupport = #True ; assumes most applications aren't using haptics!
 CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeHintSupport, #PB_Constant))
+  #SDLx_ExcludeHintSupport = #False
+CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
   #SDLx_ExcludeJoystickSupport = #False
 CompilerEndIf
@@ -1549,6 +1552,10 @@ PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; retur
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
 ;- - Configuration Variables
+;% CATEGORY=HintSupport
+PrototypeC.i Proto_SDL_GetHint(name.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_GetHintBoolean(name.p-utf8, default_value.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetHint(name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Object Properties
 ;% CATEGORY=PropertiesSupport
@@ -1747,6 +1754,7 @@ Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
+Global SDL_GetHint.Proto_SDL_GetHint
 Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
@@ -1965,6 +1973,14 @@ Procedure SDLx_LogToPBDebugger(State.i)
     EndIf
   CompilerEndIf
 EndProcedure
+
+CompilerIf (Not #SDLx_ExcludeHintSupport)
+
+Procedure.s SDLx_GetHintString(name.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetHint(name), #False))
+EndProcedure
+
+CompilerEndIf
 
 CompilerIf (Not #SDLx_ExcludePropertiesSupport)
 

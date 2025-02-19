@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-19 19:06:36 UTC
+; Generated 2025-02-19 19:17:15 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -77,6 +77,9 @@ CompilerIf (Not Defined(SDLx_ExcludeGamepadSupport, #PB_Constant))
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeHapticSupport, #PB_Constant))
   #SDLx_ExcludeHapticSupport = #True ; assumes most applications aren't using haptics!
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeHintSupport, #PB_Constant))
+  #SDLx_ExcludeHintSupport = #False
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeJoystickSupport, #PB_Constant))
   #SDLx_ExcludeJoystickSupport = #False
@@ -1545,6 +1548,9 @@ PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; retur
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
 ;- - Configuration Variables
+PrototypeC.i Proto_SDL_GetHint(name.p-utf8) ; returns const char *
+PrototypeC.a Proto_SDL_GetHintBoolean(name.p-utf8, default_value.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetHint(name.p-utf8, value.p-utf8) ; returns bool
 
 ;- - Object Properties
 PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, *name)
@@ -1719,6 +1725,9 @@ Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 Global SDL_SetAppMetadata.Proto_SDL_SetAppMetadata
 Global SDL_SetAppMetadataProperty.Proto_SDL_SetAppMetadataProperty
 Global SDL_WasInit.Proto_SDL_WasInit
+Global SDL_GetHint.Proto_SDL_GetHint
+Global SDL_GetHintBoolean.Proto_SDL_GetHintBoolean
+Global SDL_SetHint.Proto_SDL_SetHint
 Global SDL_CreateProperties.Proto_SDL_CreateProperties
 Global SDL_DestroyProperties.Proto_SDL_DestroyProperties
 Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
@@ -1844,6 +1853,11 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetAppMetadata.a(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8)
   SDL_SetAppMetadataProperty.a(name.p-utf8, value.p-utf8)
   SDL_WasInit.l(flags.SDL_InitFlags)
+  CompilerIf (Not #SDLx_ExcludeHintSupport)
+  SDL_GetHint.i(name.p-utf8)
+  SDL_GetHintBoolean.a(name.p-utf8, default_value.Uint8)
+  SDL_SetHint.a(name.p-utf8, value.p-utf8)
+  CompilerEndIf
   CompilerIf (Not #SDLx_ExcludePropertiesSupport)
   SDL_CreateProperties.l()
   SDL_DestroyProperties(props.SDL_PropertiesID)
@@ -2108,6 +2122,29 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_WasInit'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeHintSupport)
+          SDL_GetHint = GetFunction(__SDLxLib, "SDL_GetHint")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetHint = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetHint'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetHintBoolean = GetFunction(__SDLxLib, "SDL_GetHintBoolean")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetHintBoolean = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetHintBoolean'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetHint = GetFunction(__SDLxLib, "SDL_SetHint")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetHint = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetHint'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           CompilerEndIf
           CompilerIf (Not #SDLx_ExcludePropertiesSupport)
           SDL_CreateProperties = GetFunction(__SDLxLib, "SDL_CreateProperties")
@@ -2970,6 +3007,14 @@ Procedure SDLx_LogToPBDebugger(State.i)
     EndIf
   CompilerEndIf
 EndProcedure
+
+CompilerIf (Not #SDLx_ExcludeHintSupport)
+
+Procedure.s SDLx_GetHintString(name.s)
+  ProcedureReturn (SDLx_PeekString(SDL_GetHint(name), #False))
+EndProcedure
+
+CompilerEndIf
 
 CompilerIf (Not #SDLx_ExcludePropertiesSupport)
 
