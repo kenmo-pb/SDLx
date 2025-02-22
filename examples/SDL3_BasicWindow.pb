@@ -18,7 +18,7 @@ XIncludeFile "../SDL3.pbi"
 If (SDL_Init(#SDL_INIT_VIDEO))
   
   ; Open a basic window...
-  *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
+  *window = SDLx_CreateWindowCentered(#PB_Compiler_Filename, #WinW, #WinH, #SDL_WINDOW_HIDDEN)
   If (*window)
     *renderer = SDL_CreateRenderer(*window, #Null$)
     If (*renderer)

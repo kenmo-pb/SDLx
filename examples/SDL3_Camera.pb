@@ -51,7 +51,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
       If (framerate >= 20.0) And (Not *targetspec)
         *targetspec = *spec
       EndIf
-      Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps"
+      Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps (" + StringField(SDLx_GetPixelFormatNameString(*spec\format), 3, "_") + ")"
     Next i
     Debug ""
   EndIf
@@ -120,7 +120,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
             ;Debug SDLx_GetPixelFormatNameString(*targetspec\format)
           EndIf
         EndIf
-        *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
+        *window = SDLx_CreateWindowCentered(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         If (*window)
           *renderer = SDL_CreateRenderer(*window, #Null$)
           If (*renderer)

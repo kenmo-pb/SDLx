@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-19 19:17:15 UTC
+; Generated 2025-02-22 20:30:11 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -448,6 +448,55 @@ Enumeration ; SDL_WindowFlags for SDL_CreateWindow()
   #SDL_WINDOW_TRANSPARENT         = $04000000
   #SDL_WINDOW_NOT_FOCUSABLE       = $08000000
 EndEnumeration
+
+#SDL_PROP_WINDOW_CREATE_ALWAYS_ON_TOP_BOOLEAN = "SDL.window.create.always_on_top"
+#SDL_PROP_WINDOW_CREATE_BORDERLESS_BOOLEAN = "SDL.window.create.borderless"
+#SDL_PROP_WINDOW_CREATE_FOCUSABLE_BOOLEAN = "SDL.window.create.focusable"
+#SDL_PROP_WINDOW_CREATE_EXTERNAL_GRAPHICS_CONTEXT_BOOLEAN = "SDL.window.create.external_graphics_context"
+#SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER = "SDL.window.create.flags"
+#SDL_PROP_WINDOW_CREATE_FULLSCREEN_BOOLEAN = "SDL.window.create.fullscreen"
+#SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER = "SDL.window.create.height"
+#SDL_PROP_WINDOW_CREATE_HIDDEN_BOOLEAN = "SDL.window.create.hidden"
+#SDL_PROP_WINDOW_CREATE_HIGH_PIXEL_DENSITY_BOOLEAN = "SDL.window.create.high_pixel_density"
+#SDL_PROP_WINDOW_CREATE_MAXIMIZED_BOOLEAN = "SDL.window.create.maximized"
+#SDL_PROP_WINDOW_CREATE_MENU_BOOLEAN = "SDL.window.create.menu"
+#SDL_PROP_WINDOW_CREATE_METAL_BOOLEAN = "SDL.window.create.metal"
+#SDL_PROP_WINDOW_CREATE_MINIMIZED_BOOLEAN = "SDL.window.create.minimized"
+#SDL_PROP_WINDOW_CREATE_MODAL_BOOLEAN = "SDL.window.create.modal"
+#SDL_PROP_WINDOW_CREATE_MOUSE_GRABBED_BOOLEAN = "SDL.window.create.mouse_grabbed"
+#SDL_PROP_WINDOW_CREATE_OPENGL_BOOLEAN = "SDL.window.create.opengl"
+#SDL_PROP_WINDOW_CREATE_PARENT_POINTER = "SDL.window.create.parent"
+#SDL_PROP_WINDOW_CREATE_RESIZABLE_BOOLEAN = "SDL.window.create.resizable"
+#SDL_PROP_WINDOW_CREATE_TITLE_STRING = "SDL.window.create.title"
+#SDL_PROP_WINDOW_CREATE_TRANSPARENT_BOOLEAN = "SDL.window.create.transparent"
+#SDL_PROP_WINDOW_CREATE_TOOLTIP_BOOLEAN = "SDL.window.create.tooltip"
+#SDL_PROP_WINDOW_CREATE_UTILITY_BOOLEAN = "SDL.window.create.utility"
+#SDL_PROP_WINDOW_CREATE_VULKAN_BOOLEAN = "SDL.window.create.vulkan"
+#SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER = "SDL.window.create.width"
+#SDL_PROP_WINDOW_CREATE_X_NUMBER = "SDL.window.create.x"
+#SDL_PROP_WINDOW_CREATE_Y_NUMBER = "SDL.window.create.y"
+#SDL_PROP_WINDOW_CREATE_COCOA_WINDOW_POINTER = "SDL.window.create.cocoa.window"
+#SDL_PROP_WINDOW_CREATE_COCOA_VIEW_POINTER = "SDL.window.create.cocoa.view"
+#SDL_PROP_WINDOW_CREATE_WAYLAND_SURFACE_ROLE_CUSTOM_BOOLEAN = "SDL.window.create.wayland.surface_role_custom"
+#SDL_PROP_WINDOW_CREATE_WAYLAND_CREATE_EGL_WINDOW_BOOLEAN = "SDL.window.create.wayland.create_egl_window"
+#SDL_PROP_WINDOW_CREATE_WAYLAND_WL_SURFACE_POINTER = "SDL.window.create.wayland.wl_surface"
+#SDL_PROP_WINDOW_CREATE_WIN32_HWND_POINTER = "SDL.window.create.win32.hwnd"
+#SDL_PROP_WINDOW_CREATE_WIN32_PIXEL_FORMAT_HWND_POINTER = "SDL.window.create.win32.pixel_format_hwnd"
+#SDL_PROP_WINDOW_CREATE_X11_WINDOW_NUMBER = "SDL.window.create.x11.window"
+
+#SDL_WINDOWPOS_UNDEFINED_MASK = $1FFF0000
+#SDL_WINDOWPOS_CENTERED_MASK  = $2FFF0000
+
+Macro SDL_WINDOWPOS_UNDEFINED_DISPLAY(X)
+  (#SDL_WINDOWPOS_UNDEFINED_MASK|(X))
+EndMacro
+Macro SDL_WINDOWPOS_CENTERED_DISPLAY(X)
+  (#SDL_WINDOWPOS_CENTERED_MASK|(X))
+EndMacro
+
+#SDL_WINDOWPOS_UNDEFINED = #SDL_WINDOWPOS_UNDEFINED_MASK ; SDL_WINDOWPOS_UNDEFINED_DISPLAY(0)
+#SDL_WINDOWPOS_CENTERED  = #SDL_WINDOWPOS_CENTERED_MASK  ; SDL_WINDOWPOS_CENTERED_DISPLAY(0)
+
 
 ;- - 2D Accelerated Rendering
 
@@ -1585,6 +1634,7 @@ PrototypeC   Proto_SDL_ResetLogPriorities()
 
 ;- - Display and Window Management
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
+PrototypeC.i Proto_SDL_CreateWindowWithProperties(props.SDL_PropertiesID) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC.a Proto_SDL_HideWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_MaximizeWindow(*window.SDL_Window) ; returns bool
@@ -1750,6 +1800,7 @@ Global SDL_SetLogPriorities.Proto_SDL_SetLogPriorities
 Global SDL_SetLogPriority.Proto_SDL_SetLogPriority
 Global SDL_ResetLogPriorities.Proto_SDL_ResetLogPriorities
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
+Global SDL_CreateWindowWithProperties.Proto_SDL_CreateWindowWithProperties
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
 Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_MaximizeWindow.Proto_SDL_MaximizeWindow
@@ -1885,6 +1936,7 @@ ImportC #SDLx_ImportLibraryName
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeWindowSupport)
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
+  SDL_CreateWindowWithProperties.i(props.SDL_PropertiesID)
   SDL_DestroyWindow(*window.SDL_Window)
   SDL_HideWindow.a(*window.SDL_Window)
   SDL_MaximizeWindow.a(*window.SDL_Window)
@@ -2302,6 +2354,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_CreateWindow = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateWindow'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_CreateWindowWithProperties = GetFunction(__SDLxLib, "SDL_CreateWindowWithProperties")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_CreateWindowWithProperties = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_CreateWindowWithProperties'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2990,6 +3049,22 @@ EndProcedure
 
 Procedure.s SDLx_GetErrorString()
   ProcedureReturn (SDLx_PeekString(SDL_GetError(), #False))
+EndProcedure
+
+Procedure.i SDLx_CreateWindowCentered(title.s, w.Sint32, h.Sint32, flags.SDL_WindowFlags, displayID.SDL_DisplayID = 0)
+  Protected *window.SDL_Window = #Null
+  Protected props.SDL_PropertiesID = SDL_CreateProperties()
+  If (props)
+    SDL_SetStringProperty(props, #SDL_PROP_WINDOW_CREATE_TITLE_STRING, title)
+    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, w)
+    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, h)
+    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, flags)
+    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_X_NUMBER, #SDL_WINDOWPOS_CENTERED)
+    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_Y_NUMBER, #SDL_WINDOWPOS_CENTERED)
+    *window = SDL_CreateWindowWithProperties(props)
+    SDL_DestroyProperties(props)
+  EndIf
+  ProcedureReturn (*window)
 EndProcedure
 
 CompilerIf (Not #SDLx_ExcludeLogSupport)
