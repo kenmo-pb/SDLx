@@ -1728,7 +1728,14 @@ PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 
 ;- - Joystick Support
 ;% CATEGORY=JoystickSupport
+PrototypeC   Proto_SDL_CloseJoystick(*joystick.SDL_Joystick)
+PrototypeC.i Proto_SDL_GetJoystickName(*joystick.SDL_Joystick) ; returns const char *
+PrototypeC.i Proto_SDL_GetJoystickNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
+PrototypeC.i Proto_SDL_GetJoysticks(*count.LONG) ; returns SDL_JoystickID *
+PrototypeC.a Proto_SDL_HasJoystick() ; returns bool
+PrototypeC.i Proto_SDL_OpenJoystick(instance_id.SDL_JoystickID) ; returns SDL_Joystick *
+PrototypeC.a Proto_SDL_RumbleJoystick(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
 
 ;- - Gamepad Support
 ;% CATEGORY=GamepadSupport
@@ -1754,6 +1761,7 @@ PrototypeC   Proto_SDL_UpdateGamepads()
 PrototypeC   Proto_SDL_CloseHaptic(*haptic.SDL_Haptic)
 PrototypeC.i Proto_SDL_GetHaptics(*count.LONG) ; returns SDL_HapticID *
 PrototypeC.a Proto_SDL_InitHapticRumble(*haptic.SDL_Haptic) ; returns bool
+PrototypeC.a Proto_SDL_IsJoystickHaptic(*joystick.SDL_Joystick) ; returns bool
 PrototypeC.i Proto_SDL_OpenHaptic(instance_id.SDL_HapticID) ; returns SDL_Haptic *
 PrototypeC.i Proto_SDL_OpenHapticFromJoystick(*joystick.SDL_Joystick) ; returns SDL_Haptic *
 PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.Uint32) ; returns bool
@@ -1808,6 +1816,8 @@ Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetHint.Proto_SDL_GetHint
+Global SDL_GetJoystickName.Proto_SDL_GetGamepadName
+Global SDL_GetJoystickNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
@@ -2091,9 +2101,12 @@ Procedure _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_Properti
   _SDLx_PropertiesStringRepresentations + Name + " = " + SDLx_GetPropertyStringRepresentation(props, name, "") + #LF$
 EndProcedure
 
-Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID)
+Procedure.s SDLx_GetPropertiesStringRepresentations(props.SDL_PropertiesID, default_string.s = "")
   _SDLx_PropertiesStringRepresentations = ""
   SDL_EnumerateProperties(props, @_SDLx_GetPropertiesStringRepresentations(), #Null)
+  If (_SDLx_PropertiesStringRepresentations = "")
+    _SDLx_PropertiesStringRepresentations = default_string
+  EndIf
   ProcedureReturn (_SDLx_PropertiesStringRepresentations)
 EndProcedure
 
@@ -2103,6 +2116,18 @@ CompilerIf (Not #SDLx_ExcludeCameraSupport)
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
+EndProcedure
+
+CompilerEndIf
+
+CompilerIf (Not #SDLx_ExcludeJoystickSupport)
+
+Procedure.s SDLx_GetJoystickNameString(*joystick.SDL_Joystick)
+  ProcedureReturn (SDLx_PeekString(SDL_GetJoystickName(*joystick), #False))
+EndProcedure
+
+Procedure.s SDLx_GetJoystickNameForIDString(instance_id.SDL_JoystickID)
+  ProcedureReturn (SDLx_PeekString(SDL_GetJoystickNameForID(instance_id), #False))
 EndProcedure
 
 CompilerEndIf
