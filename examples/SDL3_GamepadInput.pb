@@ -1,6 +1,6 @@
-﻿; +-----------------+
-; | SDL3_Gamepad.pb |
-; +-----------------+
+﻿; +----------------------+
+; | SDL3_GamepadInput.pb |
+; +----------------------+
 ; | https://wiki.libsdl.org/SDL3/CategoryGamepad
 ; | https://wiki.libsdl.org/SDL3/CategoryJoystick
 
