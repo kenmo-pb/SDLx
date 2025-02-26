@@ -1806,6 +1806,7 @@ PrototypeC.a Proto_SDL_RumbleJoystick(*joystick.SDL_Joystick, low_frequency_rumb
 
 ;- - Gamepad Support
 ;% CATEGORY=GamepadSupport
+PrototypeC.l Proto_SDL_AddGamepadMapping(mapping.p-utf8) ; returns int
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
 PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
 PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
@@ -1814,6 +1815,7 @@ PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_Joystick
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
+PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
 PrototypeC.l Proto_SDL_GetGamepadProperties(*gamepad.SDL_Gamepad) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
@@ -1821,6 +1823,7 @@ PrototypeC.a Proto_SDL_HasGamepad() ; returns bool
 PrototypeC.a Proto_SDL_IsGamepad(instance_id.SDL_JoystickID) ; returns bool
 PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gamepad *
 PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC.a Proto_SDL_SetGamepadPlayerIndex(*gamepad.SDL_Gamepad, player_index.Sint32) ; returns bool
 PrototypeC   Proto_SDL_UpdateGamepads()
 
 ;- - Force Feedback Support

@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-26 17:20:15 UTC
+; Generated 2025-02-26 19:07:37 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1782,6 +1782,7 @@ PrototypeC.i Proto_SDL_OpenJoystick(instance_id.SDL_JoystickID) ; returns SDL_Jo
 PrototypeC.a Proto_SDL_RumbleJoystick(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
 
 ;- - Gamepad Support
+PrototypeC.l Proto_SDL_AddGamepadMapping(mapping.p-utf8) ; returns int
 PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
 PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
 PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
@@ -1790,6 +1791,7 @@ PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_Joystick
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
+PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
 PrototypeC.l Proto_SDL_GetGamepadProperties(*gamepad.SDL_Gamepad) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
@@ -1797,6 +1799,7 @@ PrototypeC.a Proto_SDL_HasGamepad() ; returns bool
 PrototypeC.a Proto_SDL_IsGamepad(instance_id.SDL_JoystickID) ; returns bool
 PrototypeC.i Proto_SDL_OpenGamepad(instance_id.SDL_JoystickID) ; returns SDL_Gamepad *
 PrototypeC.a Proto_SDL_RumbleGamepad(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC.a Proto_SDL_SetGamepadPlayerIndex(*gamepad.SDL_Gamepad, player_index.Sint32) ; returns bool
 PrototypeC   Proto_SDL_UpdateGamepads()
 
 ;- - Force Feedback Support
@@ -1938,6 +1941,7 @@ Global SDL_GetJoysticks.Proto_SDL_GetJoysticks
 Global SDL_HasJoystick.Proto_SDL_HasJoystick
 Global SDL_OpenJoystick.Proto_SDL_OpenJoystick
 Global SDL_RumbleJoystick.Proto_SDL_RumbleJoystick
+Global SDL_AddGamepadMapping.Proto_SDL_AddGamepadMapping
 Global SDL_AddGamepadMappingsFromFile.Proto_SDL_AddGamepadMappingsFromFile
 Global SDL_CloseGamepad.Proto_SDL_CloseGamepad
 Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
@@ -1946,6 +1950,7 @@ Global SDL_GetGamepadID.Proto_SDL_GetGamepadID
 Global SDL_GetGamepadJoystick.Proto_SDL_GetGamepadJoystick
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
+Global SDL_GetGamepadPlayerIndex.Proto_SDL_GetGamepadPlayerIndex
 Global SDL_GetGamepadProperties.Proto_SDL_GetGamepadProperties
 Global SDL_GetGamepads.Proto_SDL_GetGamepads
 Global SDL_GetGamepadType.Proto_SDL_GetGamepadType
@@ -1953,6 +1958,7 @@ Global SDL_HasGamepad.Proto_SDL_HasGamepad
 Global SDL_IsGamepad.Proto_SDL_IsGamepad
 Global SDL_OpenGamepad.Proto_SDL_OpenGamepad
 Global SDL_RumbleGamepad.Proto_SDL_RumbleGamepad
+Global SDL_SetGamepadPlayerIndex.Proto_SDL_SetGamepadPlayerIndex
 Global SDL_UpdateGamepads.Proto_SDL_UpdateGamepads
 Global SDL_CloseHaptic.Proto_SDL_CloseHaptic
 Global SDL_GetHaptics.Proto_SDL_GetHaptics
@@ -2104,6 +2110,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_RumbleJoystick.a(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeGamepadSupport)
+  SDL_AddGamepadMapping.l(mapping.p-utf8)
   SDL_AddGamepadMappingsFromFile.l(file.p-utf8)
   SDL_CloseGamepad(*gamepad.SDL_Gamepad)
   SDL_GetGamepadAxis.w(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis)
@@ -2112,6 +2119,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetGamepadJoystick.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadName.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadNameForID.i(instance_id.SDL_JoystickID)
+  SDL_GetGamepadPlayerIndex.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepadProperties.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepads.i(*count.LONG)
   SDL_GetGamepadType.l(*gamepad.SDL_Gamepad)
@@ -2119,6 +2127,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_IsGamepad.a(instance_id.SDL_JoystickID)
   SDL_OpenGamepad.i(instance_id.SDL_JoystickID)
   SDL_RumbleGamepad.a(*gamepad.SDL_Gamepad, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
+  SDL_SetGamepadPlayerIndex.a(*gamepad.SDL_Gamepad, player_index.Sint32)
   SDL_UpdateGamepads()
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeHapticSupport)
@@ -2947,6 +2956,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerEndIf
           CompilerEndIf
           CompilerIf (Not #SDLx_ExcludeGamepadSupport)
+          SDL_AddGamepadMapping = GetFunction(__SDLxLib, "SDL_AddGamepadMapping")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_AddGamepadMapping = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_AddGamepadMapping'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_AddGamepadMappingsFromFile = GetFunction(__SDLxLib, "SDL_AddGamepadMappingsFromFile")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_AddGamepadMappingsFromFile = #Null)
@@ -3003,6 +3019,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetGamepadPlayerIndex = GetFunction(__SDLxLib, "SDL_GetGamepadPlayerIndex")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadPlayerIndex = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadPlayerIndex'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetGamepadProperties = GetFunction(__SDLxLib, "SDL_GetGamepadProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGamepadProperties = #Null)
@@ -3049,6 +3072,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_RumbleGamepad = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_RumbleGamepad'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetGamepadPlayerIndex = GetFunction(__SDLxLib, "SDL_SetGamepadPlayerIndex")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetGamepadPlayerIndex = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetGamepadPlayerIndex'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
