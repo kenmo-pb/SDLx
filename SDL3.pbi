@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-26 14:05:05 UTC
+; Generated 2025-02-26 14:09:48 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1332,6 +1332,24 @@ Structure  SDL_CommonEvent Align #PB_Structure_AlignC
   timestamp.Uint64
 EndStructure
 
+Structure  SDL_DisplayEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  displayID.SDL_DisplayID
+  data1.Sint32
+  data2.Sint32
+EndStructure
+
+Structure  SDL_WindowEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  data1.Sint32
+  data2.Sint32
+EndStructure
+
 Structure  SDL_KeyboardEvent Align #PB_Structure_AlignC
   type.SDL_EventType
   reserved.Uint32
@@ -1435,6 +1453,16 @@ Structure  SDL_QuitEvent Align #PB_Structure_AlignC
   timestamp.Uint64
 EndStructure
 
+Structure  SDL_UserEvent Align #PB_Structure_AlignC
+  type.Uint32 ; "SDL_EVENT_USER through SDL_EVENT_LAST-1, Uint32 because these are not in the SDL_EventType enumeration"
+  reserved.Uint32
+  timestamp.Uint64
+  windowID.SDL_WindowID
+  code.Sint32
+  *data1
+  *data2
+EndStructure
+
 Structure  SDL_ClipboardEvent Align #PB_Structure_AlignC
   type.SDL_EventType
   reserved.Uint32
@@ -1448,8 +1476,8 @@ Structure  SDL_Event Align #PB_Structure_AlignC
   StructureUnion
     type.Uint32
     common.SDL_CommonEvent
-    ;display.SDL_DisplayEvent
-    ;window.SDL_WindowEvent
+    display.SDL_DisplayEvent
+    window.SDL_WindowEvent
     ;kdevice.SDL_KeyboardDeviceEvent
     key.SDL_KeyboardEvent
     ;edit.SDL_TextEditingEvent
@@ -1474,7 +1502,7 @@ Structure  SDL_Event Align #PB_Structure_AlignC
     cdevice.SDL_CameraDeviceEvent
     ;sensor.SDL_SensorEvent
     quit.SDL_QuitEvent
-    ;user.SDL_UserEvent
+    user.SDL_UserEvent
     ;tfinger.SDL_TouchFingerEvent
     ;pproximity.SDL_PenProximityEvent
     ;ptouch.SDL_PenTouchEvent
