@@ -27,6 +27,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   If ((*devices = #Null) Or (devcount = 0))
     Debug "No camera device could be found!"
     SDL_free(*devices)
+    SDL_Quit()
     End
   EndIf
   
@@ -61,6 +62,8 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   *camera = SDL_OpenCamera(firstID, *targetspec)
   If (Not *camera)
     Debug "Could not open camera!"
+    Debug "SDL Error: " + SDLx_GetErrorString()
+    SDL_Quit()
     End
   EndIf
   

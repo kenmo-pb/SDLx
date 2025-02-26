@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-26 14:09:48 UTC
+; Generated 2025-02-26 17:20:15 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1756,6 +1756,8 @@ PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
 ;- - Event Handling
+PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
+PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
 PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
 PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
 PrototypeC   Proto_SDL_PumpEvents()
@@ -1918,6 +1920,8 @@ Global SDL_GetCurrentCameraDriver.Proto_SDL_GetCurrentCameraDriver
 Global SDL_GetNumCameraDrivers.Proto_SDL_GetNumCameraDrivers
 Global SDL_OpenCamera.Proto_SDL_OpenCamera
 Global SDL_ReleaseCameraFrame.Proto_SDL_ReleaseCameraFrame
+Global SDL_FlushEvent.Proto_SDL_FlushEvent
+Global SDL_FlushEvents.Proto_SDL_FlushEvents
 Global SDL_PeepEvents.Proto_SDL_PeepEvents
 Global SDL_PollEvent.Proto_SDL_PollEvent
 Global SDL_PumpEvents.Proto_SDL_PumpEvents
@@ -2075,6 +2079,8 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenCamera.i(instance_id.SDL_CameraID, *spec.SDL_CameraSpec)
   SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
   CompilerEndIf
+  SDL_FlushEvent(type.Uint32)
+  SDL_FlushEvents(minType.Uint32, maxType.Uint32)
   SDL_PeepEvents.l(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32)
   SDL_PollEvent.a(*event.SDL_Event)
   SDL_PumpEvents()
@@ -2807,6 +2813,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          CompilerEndIf
+          SDL_FlushEvent = GetFunction(__SDLxLib, "SDL_FlushEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_FlushEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_FlushEvents = GetFunction(__SDLxLib, "SDL_FlushEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_FlushEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
           CompilerEndIf
           SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)

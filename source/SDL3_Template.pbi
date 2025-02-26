@@ -1776,6 +1776,8 @@ PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface
 
 ;- - Event Handling
 ;% CATEGORY=
+PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
+PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
 PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
 PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
 PrototypeC   Proto_SDL_PumpEvents()
