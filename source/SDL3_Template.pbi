@@ -162,6 +162,11 @@ CompilerIf (Not Defined(SDLx_AssertAllFunctionLoads, #PB_Constant))
   #SDLx_AssertAllFunctionLoads = #PB_Compiler_Debugger
 CompilerEndIf
 
+;% DELETESTART
+CompilerIf (#PB_Compiler_IsMainFile)
+  #SDLx_IncludeHelperProcedures = #False
+CompilerEndIf
+;% DELETEEND
 CompilerIf (Not Defined(SDLx_IncludeHelperProcedures, #PB_Constant))
   #SDLx_IncludeHelperProcedures = #True
 CompilerEndIf
@@ -1801,39 +1806,9 @@ Global __SDLx_InitCallback = #Null
 ;% DECLARE_DYNAMIC_PROTOTYPES
 
 ;% DELETESTART
-Global SDL_free.Proto_SDL_free
-Global SDL_CreateProperties.Proto_SDL_CreateProperties
-Global SDL_CreateWindowWithProperties.Proto_SDL_CreateWindowWithProperties
-Global SDL_DestroyProperties.Proto_SDL_DestroyProperties
-Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
-Global SDL_GetAppMetadataProperty.Proto_SDL_GetAppMetadataProperty
-Global SDL_GetBooleanProperty.Proto_SDL_GetBooleanProperty
-Global SDL_GetCameraName.Proto_SDL_GetCameraName
-Global SDL_GetDefaultLogOutputFunction.Proto_SDL_GetDefaultLogOutputFunction
-Global SDL_GetError.Proto_SDL_GetError
-Global SDL_GetFloatProperty.Proto_SDL_GetFloatProperty
-Global SDL_GetGamepadAxis.Proto_SDL_GetGamepadAxis
-Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
-Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
-Global SDL_GetHint.Proto_SDL_GetHint
-Global SDL_GetJoystickName.Proto_SDL_GetGamepadName
-Global SDL_GetJoystickNameForID.Proto_SDL_GetGamepadNameForID
-Global SDL_GetNumberProperty.Proto_SDL_GetNumberProperty
-Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
-Global SDL_GetPointerProperty.Proto_SDL_GetPointerProperty
-Global SDL_GetPropertyType.Proto_SDL_GetPropertyType
-Global SDL_GetRevision.Proto_SDL_GetRevision
-Global SDL_GetStringProperty.Proto_SDL_GetStringProperty
-Global SDL_GetVersion.Proto_SDL_GetVersion
 Global SDL_InitSubsystem.Proto_SDL_InitSubsystem
-Global SDL_PeepEvents.Proto_SDL_PeepEvents
-Global SDL_PumpEvents.Proto_SDL_PumpEvents
 Global SDL_QuitSubsystem.Proto_SDL_QuitSubsystem
-Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
-Global SDL_SetLogOutputFunction.Proto_SDL_SetLogOutputFunction
-Global SDL_SetNumberProperty.Proto_SDL_SetNumberProperty
-Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
-Global SDL_SetStringProperty.Proto_SDL_SetStringProperty
+Global SDL_GetVersion.Proto_SDL_GetVersion
 ;% DELETEEND
 
 CompilerEndIf
