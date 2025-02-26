@@ -217,6 +217,9 @@ EndMacro
 Macro SDL_CameraID
   Sint32
 EndMacro
+Macro SDL_CameraPosition
+  Sint32 ; enum
+EndMacro
 Macro SDL_Colorspace
   Sint32 ; enum
 EndMacro
@@ -1705,11 +1708,15 @@ PrototypeC.a Proto_SDL_SetClipboardText(text.p-utf8) ; returns bool
 ;% CATEGORY=CameraSupport
 PrototypeC.i Proto_SDL_AcquireCameraFrame(*camera.SDL_Camera, *timestampNS.QUAD) ; returns SDL_Surface *
 PrototypeC   Proto_SDL_CloseCamera(*camera.SDL_Camera)
+PrototypeC.i Proto_SDL_GetCameraDriver(index.Sint32) ; returns const char *
 PrototypeC.a Proto_SDL_GetCameraFormat(*camera.SDL_Camera, *spec.SDL_CameraSpec) ; returns bool
 PrototypeC.i Proto_SDL_GetCameraName(instance_id.SDL_CameraID) ; returns const char *
 PrototypeC.l Proto_SDL_GetCameraPermissionState(*camera.SDL_Camera) ; returns int
-PrototypeC.i Proto_SDL_GetCameraSupportedFormats(devid.SDL_CameraID, *count.LONG) ; returns SDL_CameraSpec **
+PrototypeC.l Proto_SDL_GetCameraPosition(instance_id.SDL_CameraID) ; returns SDL_CameraPosition
+PrototypeC.l Proto_SDL_GetCameraProperties(*camera.SDL_Camera) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetCameras(*count.LONG) ; returns SDL_CameraID *
+PrototypeC.i Proto_SDL_GetCameraSupportedFormats(devid.SDL_CameraID, *count.LONG) ; returns SDL_CameraSpec **
+PrototypeC.i Proto_SDL_GetCurrentCameraDriver() ; returns const char *
 PrototypeC.l Proto_SDL_GetNumCameraDrivers() ; returns int
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec) ; returns SDL_Camera *
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
@@ -2088,6 +2095,14 @@ EndProcedure
 CompilerEndIf
 
 CompilerIf (Not #SDLx_ExcludeCameraSupport)
+
+Procedure.s SDLx_GetCameraDriverString(index.Sint32)
+  ProcedureReturn (SDLx_PeekString(SDL_GetCameraDriver(index), #False))
+EndProcedure
+
+Procedure.s SDLx_GetCurrentCameraDriverString()
+  ProcedureReturn (SDLx_PeekString(SDL_GetCurrentCameraDriver(), #False))
+EndProcedure
 
 Procedure.s SDLx_GetCameraNameString(instance_id.SDL_CameraID)
   ProcedureReturn (SDLx_PeekString(SDL_GetCameraName(instance_id), #False))
