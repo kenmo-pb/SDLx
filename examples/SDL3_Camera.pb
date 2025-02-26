@@ -48,10 +48,12 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     For i = 0 To numformats - 1
       *spec.SDL_CameraSpec = PeekI(*formats + i * SizeOf(INTEGER))
       framerate.d = 1.0 * *spec\framerate_numerator / *spec\framerate_denominator
+      SpecString.s = Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps (" + StringField(SDLx_GetPixelFormatNameString(*spec\format), 3, "_") + ")"
+      Debug "  " + SpecString
       If (framerate >= 20.0) And (Not *targetspec)
         *targetspec = *spec
+        TargetSpecString.s = SpecString
       EndIf
-      Debug "  " + Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps (" + StringField(SDLx_GetPixelFormatNameString(*spec\format), 3, "_") + ")"
     Next i
     Debug ""
   EndIf
@@ -61,6 +63,10 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
     Debug "Could not open camera!"
     End
   EndIf
+  
+  Debug "Requested format: " + TargetSpecString
+  Debug "Camera driver: " + SDLx_GetCurrentCameraDriverString()
+  Debug ""
   
   event.SDL_Event
   dstrect.SDL_FRect
