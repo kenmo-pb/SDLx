@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-26 13:55:03 UTC
+; Generated 2025-02-26 14:05:05 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1386,6 +1386,31 @@ Structure  SDL_MouseWheelEvent Align #PB_Structure_AlignC
   mouse_y.f
 EndStructure
 
+Structure SDL_JoyDeviceEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+EndStructure
+
+Structure SDL_JoyButtonEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+  button.Uint8
+  down.Uint8
+  padding1.Uint8
+  padding2.Uint8
+EndStructure
+
+Structure SDL_GamepadDeviceEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+EndStructure
+
 Structure  SDL_GamepadButtonEvent Align #PB_Structure_AlignC
   type.SDL_EventType
   reserved.Uint32
@@ -1434,13 +1459,13 @@ Structure  SDL_Event Align #PB_Structure_AlignC
     motion.SDL_MouseMotionEvent
     button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
-    ;jdevice.SDL_JoyDeviceEvent
+    jdevice.SDL_JoyDeviceEvent
     ;jaxis.SDL_JoyAxisEvent
     ;jball.SDL_JoyBallEvent
     ;jhat.SDL_JoyHatEvent
-    ;jbutton.SDL_JoyButtonEvent
+    jbutton.SDL_JoyButtonEvent
     ;jbattery.SDL_JoyBatteryEvent
-    ;gdevice.SDL_GamepadDeviceEvent
+    gdevice.SDL_GamepadDeviceEvent
     ;gaxis.SDL_GamepadAxisEvent
     gbutton.SDL_GamepadButtonEvent
     ;gtouchpad.SDL_GamepadTouchpadEvent

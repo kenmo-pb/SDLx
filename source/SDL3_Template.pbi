@@ -1393,6 +1393,31 @@ Structure  SDL_MouseWheelEvent Align #PB_Structure_AlignC
   mouse_y.f
 EndStructure
 
+Structure SDL_JoyDeviceEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+EndStructure
+
+Structure SDL_JoyButtonEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+  button.Uint8
+  down.Uint8
+  padding1.Uint8
+  padding2.Uint8
+EndStructure
+
+Structure SDL_GamepadDeviceEvent Align #PB_Structure_AlignC
+  type.SDL_EventType
+  reserved.Uint32
+  timestamp.Uint64
+  which.SDL_JoystickID
+EndStructure
+
 Structure  SDL_GamepadButtonEvent Align #PB_Structure_AlignC
   type.SDL_EventType
   reserved.Uint32
@@ -1441,13 +1466,13 @@ Structure  SDL_Event Align #PB_Structure_AlignC
     motion.SDL_MouseMotionEvent
     button.SDL_MouseButtonEvent
     wheel.SDL_MouseWheelEvent
-    ;jdevice.SDL_JoyDeviceEvent
+    jdevice.SDL_JoyDeviceEvent
     ;jaxis.SDL_JoyAxisEvent
     ;jball.SDL_JoyBallEvent
     ;jhat.SDL_JoyHatEvent
-    ;jbutton.SDL_JoyButtonEvent
+    jbutton.SDL_JoyButtonEvent
     ;jbattery.SDL_JoyBatteryEvent
-    ;gdevice.SDL_GamepadDeviceEvent
+    gdevice.SDL_GamepadDeviceEvent
     ;gaxis.SDL_GamepadAxisEvent
     gbutton.SDL_GamepadButtonEvent
     ;gtouchpad.SDL_GamepadTouchpadEvent
