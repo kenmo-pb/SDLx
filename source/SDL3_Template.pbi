@@ -1800,6 +1800,7 @@ PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 PrototypeC   Proto_SDL_CloseJoystick(*joystick.SDL_Joystick)
 PrototypeC.i Proto_SDL_GetJoystickName(*joystick.SDL_Joystick) ; returns const char *
 PrototypeC.i Proto_SDL_GetJoystickNameForID(instance_id.SDL_JoystickID) ; returns const char *
+PrototypeC.l Proto_SDL_GetJoystickPowerInfo(*joystick.SDL_Joystick, *percent.LONG) ; returns SDL_PowerState
 PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetJoysticks(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.a Proto_SDL_HasJoystick() ; returns bool
@@ -1818,6 +1819,7 @@ PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Jo
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
+PrototypeC.l Proto_SDL_GetGamepadPowerInfo(*gamepad.SDL_Gamepad, *percent.LONG) ; returns SDL_PowerState
 PrototypeC.l Proto_SDL_GetGamepadProperties(*gamepad.SDL_Gamepad) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType

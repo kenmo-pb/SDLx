@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-03-03 14:48:18 UTC
+; Generated 2025-03-03 19:10:33 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1777,6 +1777,7 @@ PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 PrototypeC   Proto_SDL_CloseJoystick(*joystick.SDL_Joystick)
 PrototypeC.i Proto_SDL_GetJoystickName(*joystick.SDL_Joystick) ; returns const char *
 PrototypeC.i Proto_SDL_GetJoystickNameForID(instance_id.SDL_JoystickID) ; returns const char *
+PrototypeC.l Proto_SDL_GetJoystickPowerInfo(*joystick.SDL_Joystick, *percent.LONG) ; returns SDL_PowerState
 PrototypeC.l Proto_SDL_GetJoystickProperties(*joystick.SDL_Joystick) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetJoysticks(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.a Proto_SDL_HasJoystick() ; returns bool
@@ -1794,6 +1795,7 @@ PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Jo
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
+PrototypeC.l Proto_SDL_GetGamepadPowerInfo(*gamepad.SDL_Gamepad, *percent.LONG) ; returns SDL_PowerState
 PrototypeC.l Proto_SDL_GetGamepadProperties(*gamepad.SDL_Gamepad) ; returns SDL_PropertiesID
 PrototypeC.i Proto_SDL_GetGamepads(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.l Proto_SDL_GetGamepadType(*gamepad.SDL_Gamepad) ; returns SDL_GamepadType
@@ -1940,6 +1942,7 @@ Global SDL_ShowCursor.Proto_SDL_ShowCursor
 Global SDL_CloseJoystick.Proto_SDL_CloseJoystick
 Global SDL_GetJoystickName.Proto_SDL_GetJoystickName
 Global SDL_GetJoystickNameForID.Proto_SDL_GetJoystickNameForID
+Global SDL_GetJoystickPowerInfo.Proto_SDL_GetJoystickPowerInfo
 Global SDL_GetJoystickProperties.Proto_SDL_GetJoystickProperties
 Global SDL_GetJoysticks.Proto_SDL_GetJoysticks
 Global SDL_HasJoystick.Proto_SDL_HasJoystick
@@ -1955,6 +1958,7 @@ Global SDL_GetGamepadJoystick.Proto_SDL_GetGamepadJoystick
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetGamepadPlayerIndex.Proto_SDL_GetGamepadPlayerIndex
+Global SDL_GetGamepadPowerInfo.Proto_SDL_GetGamepadPowerInfo
 Global SDL_GetGamepadProperties.Proto_SDL_GetGamepadProperties
 Global SDL_GetGamepads.Proto_SDL_GetGamepads
 Global SDL_GetGamepadType.Proto_SDL_GetGamepadType
@@ -2109,6 +2113,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_CloseJoystick(*joystick.SDL_Joystick)
   SDL_GetJoystickName.i(*joystick.SDL_Joystick)
   SDL_GetJoystickNameForID.i(instance_id.SDL_JoystickID)
+  SDL_GetJoystickPowerInfo.l(*joystick.SDL_Joystick, *percent.LONG)
   SDL_GetJoystickProperties.l(*joystick.SDL_Joystick)
   SDL_GetJoysticks.i(*count.LONG)
   SDL_HasJoystick.a()
@@ -2126,6 +2131,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetGamepadName.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadNameForID.i(instance_id.SDL_JoystickID)
   SDL_GetGamepadPlayerIndex.l(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadPowerInfo.l(*gamepad.SDL_Gamepad, *percent.LONG)
   SDL_GetGamepadProperties.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepads.i(*count.LONG)
   SDL_GetGamepadType.l(*gamepad.SDL_Gamepad)
@@ -2939,6 +2945,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetJoystickPowerInfo = GetFunction(__SDLxLib, "SDL_GetJoystickPowerInfo")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetJoystickPowerInfo = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetJoystickPowerInfo'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetJoystickProperties = GetFunction(__SDLxLib, "SDL_GetJoystickProperties")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetJoystickProperties = #Null)
@@ -3043,6 +3056,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGamepadPlayerIndex = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadPlayerIndex'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetGamepadPowerInfo = GetFunction(__SDLxLib, "SDL_GetGamepadPowerInfo")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadPowerInfo = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadPowerInfo'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf

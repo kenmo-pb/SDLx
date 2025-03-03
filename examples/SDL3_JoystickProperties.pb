@@ -38,6 +38,23 @@ If (SDL_Init(#SDL_INIT_JOYSTICK | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
         
         Debug "GetJoystickName() = " + #DQUOTE$ + SDLx_GetJoystickNameString(*joystick) + #DQUOTE$
         
+        percent.l
+        state.l = SDL_GetJoystickPowerInfo(*joystick, @percent)
+        Select (state)
+          Case #SDL_POWERSTATE_NO_BATTERY
+            Debug "Wired"
+          Case #SDL_POWERSTATE_ON_BATTERY, #SDL_POWERSTATE_CHARGING, #SDL_POWERSTATE_CHARGED
+            If (percent > 0)
+              Debug "Wireless (" + Str(percent) + "%)"
+            Else
+              Debug "Wireless"
+            EndIf
+          Case #SDL_POWERSTATE_ERROR
+            Debug "PowerInfo Error"
+          Default
+            Debug "PowerInfo Unknown"
+        EndSelect
+        
         Debug "IsJoystickHaptic() = " + Str(SDL_IsJoystickHaptic(*joystick))
         
         Debug "RumbleJoystick() = " + Str(SDL_RumbleJoystick(*joystick, #RumbleStrength, #RumbleStrength, #RumbleMS))
@@ -60,6 +77,22 @@ If (SDL_Init(#SDL_INIT_JOYSTICK | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
             Debug "OpenGamepad() OK"
             
             Debug "GetGamepadName() = " + #DQUOTE$ + SDLx_GetGamepadNameString(*gamepad) + #DQUOTE$
+            
+            state.l = SDL_GetGamepadPowerInfo(*gamepad, @percent)
+            Select (state)
+              Case #SDL_POWERSTATE_NO_BATTERY
+                Debug "Wired"
+              Case #SDL_POWERSTATE_ON_BATTERY, #SDL_POWERSTATE_CHARGING, #SDL_POWERSTATE_CHARGED
+                If (percent > 0)
+                  Debug "Wireless (" + Str(percent) + "%)"
+                Else
+                  Debug "Wireless"
+                EndIf
+              Case #SDL_POWERSTATE_ERROR
+                Debug "PowerInfo Error"
+              Default
+                Debug "PowerInfo Unknown"
+            EndSelect
             
             Debug "RumbleGamepad() = " + Str(SDL_RumbleGamepad(*gamepad, #RumbleStrength, #RumbleStrength, #RumbleMS))
             Delay(2 * #RumbleMS)
