@@ -1746,7 +1746,9 @@ PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns cons
 ;- - Surface Creation and Simple Drawing
 ;% CATEGORY=SurfaceSupport
 PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
+PrototypeC.i Proto_SDL_ConvertSurface(*surface.SDL_Surface, format.SDL_PixelFormat) ; returns SDL_Surface *
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_DuplicateSurface(*surface.SDL_Surface) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_FlipSurface(*surface.SDL_Surface, flip.SDL_FlipMode) ; returns bool
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_LockSurface(*surface.SDL_Surface) ; returns bool

@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-02-26 19:07:37 UTC
+; Generated 2025-03-03 14:48:18 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1729,7 +1729,9 @@ PrototypeC.i Proto_SDL_GetPixelFormatName(format.SDL_PixelFormat) ; returns cons
 
 ;- - Surface Creation and Simple Drawing
 PrototypeC.a Proto_SDL_ConvertPixels(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32) ; returns bool
+PrototypeC.i Proto_SDL_ConvertSurface(*surface.SDL_Surface, format.SDL_PixelFormat) ; returns SDL_Surface *
 PrototypeC   Proto_SDL_DestroySurface(*surface.SDL_Surface)
+PrototypeC.i Proto_SDL_DuplicateSurface(*surface.SDL_Surface) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_FlipSurface(*surface.SDL_Surface, flip.SDL_FlipMode) ; returns bool
 PrototypeC.i Proto_SDL_LoadBMP(file.p-utf8) ; returns SDL_Surface *
 PrototypeC.a Proto_SDL_LockSurface(*surface.SDL_Surface) ; returns bool
@@ -1902,7 +1904,9 @@ Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_ConvertPixels.Proto_SDL_ConvertPixels
+Global SDL_ConvertSurface.Proto_SDL_ConvertSurface
 Global SDL_DestroySurface.Proto_SDL_DestroySurface
+Global SDL_DuplicateSurface.Proto_SDL_DuplicateSurface
 Global SDL_FlipSurface.Proto_SDL_FlipSurface
 Global SDL_LoadBMP.Proto_SDL_LoadBMP
 Global SDL_LockSurface.Proto_SDL_LockSurface
@@ -2059,7 +2063,9 @@ ImportC #SDLx_ImportLibraryName
   CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
   SDL_GetPixelFormatName.i(format.SDL_PixelFormat)
   SDL_ConvertPixels.a(width.Sint32, height.Sint32, src_format.SDL_PixelFormat, *src, src_pitch.Sint32, dst_format.SDL_PixelFormat, *dst, dst_pitch.Sint32)
+  SDL_ConvertSurface.i(*surface.SDL_Surface, format.SDL_PixelFormat)
   SDL_DestroySurface(*surface.SDL_Surface)
+  SDL_DuplicateSurface.i(*surface.SDL_Surface)
   SDL_FlipSurface.a(*surface.SDL_Surface, flip.SDL_FlipMode)
   SDL_LoadBMP.i(file.p-utf8)
   SDL_LockSurface.a(*surface.SDL_Surface)
@@ -2671,10 +2677,24 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_ConvertSurface = GetFunction(__SDLxLib, "SDL_ConvertSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_ConvertSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_ConvertSurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_DestroySurface = GetFunction(__SDLxLib, "SDL_DestroySurface")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_DestroySurface = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_DestroySurface'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_DuplicateSurface = GetFunction(__SDLxLib, "SDL_DuplicateSurface")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_DuplicateSurface = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_DuplicateSurface'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
