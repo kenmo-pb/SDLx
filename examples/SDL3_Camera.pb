@@ -12,7 +12,12 @@
 #SDLx_ExcludeCameraSupport = #False
 XIncludeFile "../SDL3.pbi"
 
+#Fullscreen = #False
 #WinH = 600
+
+CompilerIf (#Fullscreen)
+  DisableDebugger
+CompilerEndIf
 
 If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
   
@@ -51,7 +56,7 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
       framerate.d = 1.0 * *spec\framerate_numerator / *spec\framerate_denominator
       SpecString.s = Str(*spec\width) + "x" + Str(*spec\height) + " @ " + Str(framerate) + " fps (" + StringField(SDLx_GetPixelFormatNameString(*spec\format), 3, "_") + ")"
       Debug "  " + SpecString
-      If (framerate >= 20.0) And (Not *targetspec)
+      If (Not *targetspec)
         *targetspec = *spec
         TargetSpecString.s = SpecString
       EndIf
@@ -124,12 +129,11 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
         SaveNextFrame = #False
       EndIf
       If (Not *texture)
-        If (*targetspec)
-          If (SDL_GetCameraFormat(*camera, *targetspec))
-            ;Debug SDLx_GetPixelFormatNameString(*targetspec\format)
-          EndIf
+        If (#Fullscreen)
+          *window = SDL_CreateWindow(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, #SDL_WINDOW_RESIZABLE | #SDL_WINDOW_FULLSCREEN)
+        Else
+          *window = SDLx_CreateWindowCentered(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         EndIf
-        *window = SDLx_CreateWindowCentered(#PB_Compiler_Filename, #WinH * *frame\w / *frame\h, #WinH, 0)
         If (*window)
           *renderer = SDL_CreateRenderer(*window, #Null$)
           If (*renderer)
@@ -142,7 +146,10 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_CAMERA))
             EndIf
             dstrect\w = *frame\w
             dstrect\h = *frame\h
-            SDL_SetRenderLogicalPresentation(*renderer, *frame\w, *frame\h, #SDL_LOGICAL_PRESENTATION_STRETCH)
+            SDL_SetRenderLogicalPresentation(*renderer, *frame\w, *frame\h, #SDL_LOGICAL_PRESENTATION_OVERSCAN)
+            If (#Fullscreen)
+              SDL_HideCursor()
+            EndIf
           EndIf
         EndIf
       EndIf
