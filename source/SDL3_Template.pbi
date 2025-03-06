@@ -1806,6 +1806,7 @@ PrototypeC.i Proto_SDL_GetJoysticks(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.a Proto_SDL_HasJoystick() ; returns bool
 PrototypeC.i Proto_SDL_OpenJoystick(instance_id.SDL_JoystickID) ; returns SDL_Joystick *
 PrototypeC.a Proto_SDL_RumbleJoystick(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC   Proto_SDL_UpdateJoysticks()
 
 ;- - Gamepad Support
 ;% CATEGORY=GamepadSupport

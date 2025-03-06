@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-03-03 19:10:33 UTC
+; Generated 2025-03-06 00:09:22 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1783,6 +1783,7 @@ PrototypeC.i Proto_SDL_GetJoysticks(*count.LONG) ; returns SDL_JoystickID *
 PrototypeC.a Proto_SDL_HasJoystick() ; returns bool
 PrototypeC.i Proto_SDL_OpenJoystick(instance_id.SDL_JoystickID) ; returns SDL_Joystick *
 PrototypeC.a Proto_SDL_RumbleJoystick(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32) ; returns bool
+PrototypeC   Proto_SDL_UpdateJoysticks()
 
 ;- - Gamepad Support
 PrototypeC.l Proto_SDL_AddGamepadMapping(mapping.p-utf8) ; returns int
@@ -1948,6 +1949,7 @@ Global SDL_GetJoysticks.Proto_SDL_GetJoysticks
 Global SDL_HasJoystick.Proto_SDL_HasJoystick
 Global SDL_OpenJoystick.Proto_SDL_OpenJoystick
 Global SDL_RumbleJoystick.Proto_SDL_RumbleJoystick
+Global SDL_UpdateJoysticks.Proto_SDL_UpdateJoysticks
 Global SDL_AddGamepadMapping.Proto_SDL_AddGamepadMapping
 Global SDL_AddGamepadMappingsFromFile.Proto_SDL_AddGamepadMappingsFromFile
 Global SDL_CloseGamepad.Proto_SDL_CloseGamepad
@@ -2119,6 +2121,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_HasJoystick.a()
   SDL_OpenJoystick.i(instance_id.SDL_JoystickID)
   SDL_RumbleJoystick.a(*joystick.SDL_Joystick, low_frequency_rumble.Uint16, high_frequency_rumble.Uint16, duration_ms.Uint32)
+  SDL_UpdateJoysticks()
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeGamepadSupport)
   SDL_AddGamepadMapping.l(mapping.p-utf8)
@@ -2984,6 +2987,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_RumbleJoystick = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_RumbleJoystick'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_UpdateJoysticks = GetFunction(__SDLxLib, "SDL_UpdateJoysticks")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_UpdateJoysticks = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_UpdateJoysticks'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
