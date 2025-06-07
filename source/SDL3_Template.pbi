@@ -2390,7 +2390,7 @@ EndProcedure
 
 Threaded _SDLx_PropertiesStringRepresentations.s = ""
 
-Procedure _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
+ProcedureC _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
   Protected Name.s = PeekS(*name, -1, #PB_UTF8)
   _SDLx_PropertiesStringRepresentations + Name + " = " + SDLx_GetPropertyStringRepresentation(props, name, "") + #LF$
 EndProcedure

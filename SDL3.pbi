@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-03-07 00:58:54 UTC
+; Generated 2025-06-07 17:43:55 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -3658,7 +3658,7 @@ EndProcedure
 
 Threaded _SDLx_PropertiesStringRepresentations.s = ""
 
-Procedure _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
+ProcedureC _SDLx_GetPropertiesStringRepresentations(*userdata, props.SDL_PropertiesID, *name)
   Protected Name.s = PeekS(*name, -1, #PB_UTF8)
   _SDLx_PropertiesStringRepresentations + Name + " = " + SDLx_GetPropertyStringRepresentation(props, name, "") + #LF$
 EndProcedure
