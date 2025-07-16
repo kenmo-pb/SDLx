@@ -2068,6 +2068,7 @@ PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_Gamepad
 PrototypeC.l Proto_SDL_GetGamepadConnectionState(*gamepad.SDL_Gamepad) ; returns SDL_JoystickConnectionState
 PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
+PrototypeC.i Proto_SDL_GetGamepadMapping(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
@@ -2437,6 +2438,10 @@ EndProcedure
 CompilerEndIf
 
 CompilerIf (Not #SDLx_ExcludeGamepadSupport)
+
+Procedure.s SDLx_GetGamepadMappingString(*gamepad.SDL_Gamepad)
+  ProcedureReturn (SDLx_PeekString(SDL_GetGamepadMapping(*gamepad), #True))
+EndProcedure
 
 Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))

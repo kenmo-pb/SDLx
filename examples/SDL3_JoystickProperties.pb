@@ -89,6 +89,8 @@ If (SDL_Init(#SDL_INIT_JOYSTICK | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
             
             Debug "GetGamepadName() = " + #DQUOTE$ + SDLx_GetGamepadNameString(*gamepad) + #DQUOTE$
             
+            Debug "Mapping = " + SDLx_GetGamepadMappingString(*gamepad)
+            
             Select (SDL_GetGamepadConnectionState(*gamepad))
               Case #SDL_JOYSTICK_CONNECTION_WIRED
                 Debug "ConnectionState Wired"

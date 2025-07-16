@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-07-16 00:31:12 UTC
+; Generated 2025-07-16 02:37:25 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -2044,6 +2044,7 @@ PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_Gamepad
 PrototypeC.l Proto_SDL_GetGamepadConnectionState(*gamepad.SDL_Gamepad) ; returns SDL_JoystickConnectionState
 PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
+PrototypeC.i Proto_SDL_GetGamepadMapping(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
 PrototypeC.i Proto_SDL_GetGamepadNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetGamepadPlayerIndex(*gamepad.SDL_Gamepad) ; returns int
@@ -2211,6 +2212,7 @@ Global SDL_GetGamepadButton.Proto_SDL_GetGamepadButton
 Global SDL_GetGamepadConnectionState.Proto_SDL_GetGamepadConnectionState
 Global SDL_GetGamepadID.Proto_SDL_GetGamepadID
 Global SDL_GetGamepadJoystick.Proto_SDL_GetGamepadJoystick
+Global SDL_GetGamepadMapping.Proto_SDL_GetGamepadMapping
 Global SDL_GetGamepadName.Proto_SDL_GetGamepadName
 Global SDL_GetGamepadNameForID.Proto_SDL_GetGamepadNameForID
 Global SDL_GetGamepadPlayerIndex.Proto_SDL_GetGamepadPlayerIndex
@@ -2388,6 +2390,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_GetGamepadConnectionState.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepadID.l(*gamepad.SDL_Gamepad)
   SDL_GetGamepadJoystick.i(*gamepad.SDL_Gamepad)
+  SDL_GetGamepadMapping.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadName.i(*gamepad.SDL_Gamepad)
   SDL_GetGamepadNameForID.i(instance_id.SDL_JoystickID)
   SDL_GetGamepadPlayerIndex.l(*gamepad.SDL_Gamepad)
@@ -3326,6 +3329,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetGamepadMapping = GetFunction(__SDLxLib, "SDL_GetGamepadMapping")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetGamepadMapping = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetGamepadMapping'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_GetGamepadName = GetFunction(__SDLxLib, "SDL_GetGamepadName")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_GetGamepadName = #Null)
@@ -3723,6 +3733,10 @@ EndProcedure
 CompilerEndIf
 
 CompilerIf (Not #SDLx_ExcludeGamepadSupport)
+
+Procedure.s SDLx_GetGamepadMappingString(*gamepad.SDL_Gamepad)
+  ProcedureReturn (SDLx_PeekString(SDL_GetGamepadMapping(*gamepad), #True))
+EndProcedure
 
 Procedure.s SDLx_GetGamepadNameString(*gamepad.SDL_Gamepad)
   ProcedureReturn (SDLx_PeekString(SDL_GetGamepadName(*gamepad), #False))

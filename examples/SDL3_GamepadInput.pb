@@ -97,6 +97,8 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
                 Else
                   Debug "Start! (No rumble)"
                 EndIf
+              Case #SDL_GAMEPAD_BUTTON_GUIDE
+                Debug "Guide"
               Case #SDL_GAMEPAD_BUTTON_MISC1
                 Debug "Misc 1"
               Case #SDL_GAMEPAD_BUTTON_MISC2
