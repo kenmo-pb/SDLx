@@ -89,14 +89,37 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
             EndSelect
           
           ElseIf (event\type = #SDL_EVENT_GAMEPAD_BUTTON_DOWN)
-            If (event\gbutton\button = #SDL_GAMEPAD_BUTTON_START)
-              If (HasRumble)
-                Debug "Start! Rumble!"
-                SDL_RumbleGamepad(*gamepad, $8000, $8000, 250)
-              Else
-                Debug "Start! (No rumble)"
-              EndIf
-            EndIf
+            Select (event\gbutton\button)
+              Case #SDL_GAMEPAD_BUTTON_START
+                If (HasRumble)
+                  Debug "Start! Rumble!"
+                  SDL_RumbleGamepad(*gamepad, $8000, $8000, 250)
+                Else
+                  Debug "Start! (No rumble)"
+                EndIf
+              Case #SDL_GAMEPAD_BUTTON_MISC1
+                Debug "Misc 1"
+              Case #SDL_GAMEPAD_BUTTON_MISC2
+                Debug "Misc 2"
+              Case #SDL_GAMEPAD_BUTTON_MISC3
+                Debug "Misc 3"
+              Case #SDL_GAMEPAD_BUTTON_MISC4
+                Debug "Misc 4"
+              Case #SDL_GAMEPAD_BUTTON_MISC5
+                Debug "Misc 5"
+              Case #SDL_GAMEPAD_BUTTON_MISC6
+                Debug "Misc 6"
+              Case #SDL_GAMEPAD_BUTTON_TOUCHPAD
+                Debug "Touchpad"
+              Case #SDL_GAMEPAD_BUTTON_RIGHT_PADDLE1
+                Debug "Right Paddle1"
+              Case #SDL_GAMEPAD_BUTTON_LEFT_PADDLE1
+                Debug "Left Paddle1"
+              Case #SDL_GAMEPAD_BUTTON_RIGHT_PADDLE2
+                Debug "Right Paddle2"
+              Case #SDL_GAMEPAD_BUTTON_LEFT_PADDLE2
+                Debug "Left Paddle2"
+            EndSelect
           
           EndIf
         Wend
