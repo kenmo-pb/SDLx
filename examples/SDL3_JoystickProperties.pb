@@ -38,6 +38,17 @@ If (SDL_Init(#SDL_INIT_JOYSTICK | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
         
         Debug "GetJoystickName() = " + #DQUOTE$ + SDLx_GetJoystickNameString(*joystick) + #DQUOTE$
         
+        Select (SDL_GetJoystickConnectionState(*joystick))
+          Case #SDL_JOYSTICK_CONNECTION_WIRED
+            Debug "ConnectionState Wired"
+          Case #SDL_JOYSTICK_CONNECTION_WIRELESS
+            Debug "ConnectionState Wireless"
+          Case #SDL_JOYSTICK_CONNECTION_UNKNOWN
+            Debug "ConnectionState Unknown"
+          Default
+            Debug "ConnectionState Invalid"
+        EndSelect
+        
         percent.l
         state.l = SDL_GetJoystickPowerInfo(*joystick, @percent)
         Select (state)
@@ -77,6 +88,17 @@ If (SDL_Init(#SDL_INIT_JOYSTICK | #SDL_INIT_GAMEPAD | #SDL_INIT_HAPTIC))
             Debug "OpenGamepad() OK"
             
             Debug "GetGamepadName() = " + #DQUOTE$ + SDLx_GetGamepadNameString(*gamepad) + #DQUOTE$
+            
+            Select (SDL_GetGamepadConnectionState(*gamepad))
+              Case #SDL_JOYSTICK_CONNECTION_WIRED
+                Debug "ConnectionState Wired"
+              Case #SDL_JOYSTICK_CONNECTION_WIRELESS
+                Debug "ConnectionState Wireless"
+              Case #SDL_JOYSTICK_CONNECTION_UNKNOWN
+                Debug "ConnectionState Unknown"
+              Default
+                Debug "ConnectionState Invalid"
+            EndSelect
             
             state.l = SDL_GetGamepadPowerInfo(*gamepad, @percent)
             Select (state)

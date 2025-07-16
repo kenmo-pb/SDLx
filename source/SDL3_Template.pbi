@@ -2047,6 +2047,7 @@ PrototypeC.a Proto_SDL_ShowCursor() ; returns bool
 ;- - Joystick Support
 ;% CATEGORY=JoystickSupport
 PrototypeC   Proto_SDL_CloseJoystick(*joystick.SDL_Joystick)
+PrototypeC.l Proto_SDL_GetJoystickConnectionState(*joystick.SDL_Joystick) ; returns SDL_JoystickConnectionState
 PrototypeC.i Proto_SDL_GetJoystickName(*joystick.SDL_Joystick) ; returns const char *
 PrototypeC.i Proto_SDL_GetJoystickNameForID(instance_id.SDL_JoystickID) ; returns const char *
 PrototypeC.l Proto_SDL_GetJoystickPowerInfo(*joystick.SDL_Joystick, *percent.LONG) ; returns SDL_PowerState
@@ -2064,6 +2065,7 @@ PrototypeC.l Proto_SDL_AddGamepadMappingsFromFile(file.p-utf8) ; returns int
 PrototypeC   Proto_SDL_CloseGamepad(*gamepad.SDL_Gamepad)
 PrototypeC.w Proto_SDL_GetGamepadAxis(*gamepad.SDL_Gamepad, axis.SDL_GamepadAxis) ; returns Sint16
 PrototypeC.a Proto_SDL_GetGamepadButton(*gamepad.SDL_Gamepad, button.SDL_GamepadButton) ; returns bool
+PrototypeC.l Proto_SDL_GetGamepadConnectionState(*gamepad.SDL_Gamepad) ; returns SDL_JoystickConnectionState
 PrototypeC.l Proto_SDL_GetGamepadID(*gamepad.SDL_Gamepad) ; returns SDL_JoystickID
 PrototypeC.i Proto_SDL_GetGamepadJoystick(*gamepad.SDL_Gamepad) ; returns SDL_Joystick *
 PrototypeC.i Proto_SDL_GetGamepadName(*gamepad.SDL_Gamepad) ; returns const char *
