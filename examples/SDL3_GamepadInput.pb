@@ -88,6 +88,12 @@ If (SDL_Init(#SDL_INIT_VIDEO | #SDL_INIT_GAMEPAD))
                 EndIf
             EndSelect
           
+          ElseIf (event\type = #SDL_EVENT_GAMEPAD_REMOVED)
+            If (event\gdevice\which = SDL_GetGamepadID(*gamepad))
+              event\type = #SDL_EVENT_QUIT
+              SDL_PushEvent(@event)
+            EndIf
+            
           ElseIf (event\type = #SDL_EVENT_GAMEPAD_BUTTON_DOWN)
             Select (event\gbutton\button)
               Case #SDL_GAMEPAD_BUTTON_START
