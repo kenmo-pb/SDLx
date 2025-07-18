@@ -1862,6 +1862,10 @@ Structure  SDL_DisplayMode Align #PB_Structure_AlignC
   *internal.SDL_DisplayModeData
 EndStructure
 
+Structure SDL_GUID
+  data_.Uint8[16]
+EndStructure
+
 Structure SDL_Camera Align #PB_Structure_AlignC
   ;
 EndStructure

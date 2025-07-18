@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-07-16 02:37:25 UTC
+; Generated 2025-07-18 04:04:57 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1853,6 +1853,10 @@ Structure  SDL_DisplayMode Align #PB_Structure_AlignC
   refresh_rate_denominator.Sint32
   
   *internal.SDL_DisplayModeData
+EndStructure
+
+Structure SDL_GUID
+  data_.Uint8[16]
 EndStructure
 
 Structure SDL_Camera Align #PB_Structure_AlignC
