@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-07-28 15:48:56 UTC
+; Generated 2025-07-28 15:58:18 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -3631,8 +3631,10 @@ Procedure.i SDLx_CreateWindowCentered(title.s, w.Sint32, h.Sint32, flags.SDL_Win
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, w)
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, h)
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, flags)
-    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_X_NUMBER, #SDL_WINDOWPOS_CENTERED)
-    SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_Y_NUMBER, #SDL_WINDOWPOS_CENTERED)
+    If (#PB_Compiler_OS <> #PB_OS_Linux)
+      SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(displayID))
+      SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(displayID))
+    EndIf
     *window = SDL_CreateWindowWithProperties(props)
     SDL_DestroyProperties(props)
   EndIf
