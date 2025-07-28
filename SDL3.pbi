@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-07-18 04:04:57 UTC
+; Generated 2025-07-28 15:48:56 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -39,11 +39,6 @@ CompilerEndIf
 
 ;-
 ;- Build Switches
-
-CompilerIf (Not Defined(SDLx_UseImport, #PB_Constant))
-  #SDLx_UseImport = #False
-CompilerEndIf
-#SDLx_UseOpenLibrary = Bool(Not #SDLx_UseImport)
 
 CompilerIf (Not Defined(SDLx_DebugErrors, #PB_Constant))
   #SDLx_DebugErrors = #False
@@ -146,11 +141,20 @@ CompilerSelect (#PB_Compiler_OS)
     CompilerEndIf
 CompilerEndSelect
 
+CompilerIf (Not Defined(SDLx_UseImport, #PB_Constant))
+  CompilerIf (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant))
+    #SDLx_UseImport = #True
+  CompilerElse
+    #SDLx_UseImport = #False
+  CompilerEndIf
+CompilerEndIf
+#SDLx_UseOpenLibrary = Bool(Not #SDLx_UseImport)
+
 CompilerIf (#SDLx_UseOpenLibrary And (Not Defined(SDLx_OpenLibraryDefaultName, #PB_Constant)))
   CompilerError "#SDLx_OpenLibraryDefaultName must be defined to open " + #SDLx_LibName + "!"
 CompilerEndIf
 CompilerIf (#SDLx_UseImport And (Not Defined(SDLx_ImportLibraryName, #PB_Constant)))
-  CompilerError "#SDLx_ImportLibraryName must be defined to Import " + #SDLx_LibName + "!"
+  CompilerError "#SDLx_ImportLibraryName must be defined to import " + #SDLx_LibName + "!"
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_RequireAllFunctionLoads, #PB_Constant))
