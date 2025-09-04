@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-07-28 15:58:18 UTC
+; Generated 2025-09-04 02:00:41 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -304,11 +304,17 @@ EndMacro
 Macro SDL_RendererLogicalPresentation
   Sint32 ; enum
 EndMacro
+Macro SDL_ScaleMode
+  Sint32 ; enum
+EndMacro
 Macro SDL_Scancode
   Sint32 ; enum
 EndMacro
 Macro SDL_SurfaceFlags
   Uint32
+EndMacro
+Macro SDL_SystemTheme
+  Sint32 ; enum
 EndMacro
 Macro SDL_TextureAccess
   Uint32 ; enum
@@ -328,7 +334,7 @@ EndMacro
 
 #SDL_MAJOR_VERSION = 3
 #SDL_MINOR_VERSION = 2
-#SDL_MICRO_VERSION = 9
+#SDL_MICRO_VERSION = 22
 
 Macro SDL_VERSIONNUM(major, minor, patch)
   ((major)*1000000 + (minor)*1000 + (patch))
@@ -752,6 +758,12 @@ EndMacro
 #SDL_WINDOWPOS_UNDEFINED = #SDL_WINDOWPOS_UNDEFINED_MASK ; SDL_WINDOWPOS_UNDEFINED_DISPLAY(0)
 #SDL_WINDOWPOS_CENTERED  = #SDL_WINDOWPOS_CENTERED_MASK  ; SDL_WINDOWPOS_CENTERED_DISPLAY(0)
 
+Enumeration ; SDL_SystemTheme
+  #SDL_SYSTEM_THEME_UNKNOWN
+  #SDL_SYSTEM_THEME_LIGHT
+  #SDL_SYSTEM_THEME_DARK
+EndEnumeration
+
 
 ;- - 2D Accelerated Rendering
 
@@ -914,6 +926,14 @@ Enumeration ; SDL_FlipMode
   #SDL_FLIP_NONE
   #SDL_FLIP_HORIZONTAL
   #SDL_FLIP_VERTICAL
+  #SDL_FLIP_HORIZONTAL_AND_VERTICAL ; https://github.com/libsdl-org/SDL/commit/66ab91a314a3108ca3428e8c454064a7fc31d589
+EndEnumeration
+
+Enumeration ; SDL_ScaleMode
+  #SDL_SCALEMODE_INVALID = -1
+  #SDL_SCALEMODE_NEAREST
+  #SDL_SCALEMODE_LINEAR
+  #SDL_SCALEMODE_PIXELART
 EndEnumeration
 
 ;- - Clipboard Handling
@@ -1949,6 +1969,7 @@ PrototypeC   Proto_SDL_ResetLogPriorities()
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
 PrototypeC.i Proto_SDL_CreateWindowWithProperties(props.SDL_PropertiesID) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
+PrototypeC.l Proto_SDL_GetSystemTheme() ; returns SDL_SystemTheme
 PrototypeC.a Proto_SDL_HideWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_MaximizeWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_MinimizeWindow(*window.SDL_Window) ; returns bool
@@ -1967,14 +1988,18 @@ PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDL_PixelFor
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns SDL_Texture *
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
+PrototypeC.a Proto_SDL_LockTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels.POINTER_TO_A_POINTER, *pitch.LONG) ; returns bool
 PrototypeC.a Proto_SDL_RenderClear(*renderer.SDL_Renderer) ; returns bool
 PrototypeC.a Proto_SDL_RenderDebugText(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8) ; returns bool
 PrototypeC.a Proto_SDL_RenderFillRect(*renderer.SDL_Renderer, *rect.SDL_FRect) ; returns bool
 PrototypeC.a Proto_SDL_RenderPresent(*renderer.SDL_Renderer) ; returns bool
 PrototypeC.a Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect) ; returns bool
 PrototypeC.a Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDL_FlipMode) ; returns bool
+PrototypeC.a Proto_SDL_SetDefaultTextureScaleMode(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation) ; returns bool
+PrototypeC.a Proto_SDL_SetTextureScaleMode(*texture.SDL_Texture, scaleMode.SDL_ScaleMode) ; returns bool
+PrototypeC   Proto_SDL_UnlockTexture(*texture.SDL_Texture)
 PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32) ; returns bool
 
 ;- - Pixel Formats and Conversion Routines
@@ -2141,6 +2166,7 @@ Global SDL_ResetLogPriorities.Proto_SDL_ResetLogPriorities
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_CreateWindowWithProperties.Proto_SDL_CreateWindowWithProperties
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
+Global SDL_GetSystemTheme.Proto_SDL_GetSystemTheme
 Global SDL_HideWindow.Proto_SDL_HideWindow
 Global SDL_MaximizeWindow.Proto_SDL_MaximizeWindow
 Global SDL_MinimizeWindow.Proto_SDL_MinimizeWindow
@@ -2157,14 +2183,18 @@ Global SDL_CreateTexture.Proto_SDL_CreateTexture
 Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
 Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
+Global SDL_LockTexture.Proto_SDL_LockTexture
 Global SDL_RenderClear.Proto_SDL_RenderClear
 Global SDL_RenderDebugText.Proto_SDL_RenderDebugText
 Global SDL_RenderFillRect.Proto_SDL_RenderFillRect
 Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderTexture.Proto_SDL_RenderTexture
 Global SDL_RenderTextureRotated.Proto_SDL_RenderTextureRotated
+Global SDL_SetDefaultTextureScaleMode.Proto_SDL_SetDefaultTextureScaleMode
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
+Global SDL_SetTextureScaleMode.Proto_SDL_SetTextureScaleMode
+Global SDL_UnlockTexture.Proto_SDL_UnlockTexture
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_ConvertPixels.Proto_SDL_ConvertPixels
@@ -2303,6 +2333,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_CreateWindow.i(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags)
   SDL_CreateWindowWithProperties.i(props.SDL_PropertiesID)
   SDL_DestroyWindow(*window.SDL_Window)
+  SDL_GetSystemTheme.l()
   SDL_HideWindow.a(*window.SDL_Window)
   SDL_MaximizeWindow.a(*window.SDL_Window)
   SDL_MinimizeWindow.a(*window.SDL_Window)
@@ -2321,14 +2352,18 @@ ImportC #SDLx_ImportLibraryName
   SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
   SDL_DestroyTexture(*texture.SDL_Texture)
+  SDL_LockTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels.POINTER_TO_A_POINTER, *pitch.LONG)
   SDL_RenderClear.a(*renderer.SDL_Renderer)
   SDL_RenderDebugText.a(*renderer.SDL_Renderer, x.f, y.f, str.p-utf8)
   SDL_RenderFillRect.a(*renderer.SDL_Renderer, *rect.SDL_FRect)
   SDL_RenderPresent.a(*renderer.SDL_Renderer)
   SDL_RenderTexture.a(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
   SDL_RenderTextureRotated.a(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDL_FlipMode)
+  SDL_SetDefaultTextureScaleMode.a(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode)
   SDL_SetRenderDrawColor.a(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8)
   SDL_SetRenderLogicalPresentation.a(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation)
+  SDL_SetTextureScaleMode.a(*texture.SDL_Texture, scaleMode.SDL_ScaleMode)
+  SDL_UnlockTexture(*texture.SDL_Texture)
   SDL_UpdateTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32)
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
@@ -2768,6 +2803,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_GetSystemTheme = GetFunction(__SDLxLib, "SDL_GetSystemTheme")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetSystemTheme = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetSystemTheme'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_HideWindow = GetFunction(__SDLxLib, "SDL_HideWindow")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_HideWindow = #Null)
@@ -2882,6 +2924,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_LockTexture = GetFunction(__SDLxLib, "SDL_LockTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_LockTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_LockTexture'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_RenderClear = GetFunction(__SDLxLib, "SDL_RenderClear")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_RenderClear = #Null)
@@ -2924,6 +2973,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_SetDefaultTextureScaleMode = GetFunction(__SDLxLib, "SDL_SetDefaultTextureScaleMode")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetDefaultTextureScaleMode = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetDefaultTextureScaleMode'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_SetRenderDrawColor = GetFunction(__SDLxLib, "SDL_SetRenderDrawColor")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetRenderDrawColor = #Null)
@@ -2935,6 +2991,20 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetRenderLogicalPresentation = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderLogicalPresentation'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetTextureScaleMode = GetFunction(__SDLxLib, "SDL_SetTextureScaleMode")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetTextureScaleMode = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetTextureScaleMode'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_UnlockTexture = GetFunction(__SDLxLib, "SDL_UnlockTexture")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_UnlockTexture = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_UnlockTexture'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
