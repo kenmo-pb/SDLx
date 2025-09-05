@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-04 02:00:41 UTC
+; Generated 2025-09-05 02:09:39 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1978,8 +1978,10 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowTitle(*window.SDL_Window, title.p-utf8) ; returns bool
 PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
 ;- - 2D Accelerated Rendering
@@ -2175,8 +2177,10 @@ Global SDL_RestoreWindow.Proto_SDL_RestoreWindow
 Global SDL_SetWindowAlwaysOnTop.Proto_SDL_SetWindowAlwaysOnTop
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_SetWindowFullscreenMode.Proto_SDL_SetWindowFullscreenMode
+Global SDL_SetWindowMinimumSize.Proto_SDL_SetWindowMinimumSize
 Global SDL_SetWindowPosition.Proto_SDL_SetWindowPosition
 Global SDL_SetWindowSize.Proto_SDL_SetWindowSize
+Global SDL_SetWindowTitle.Proto_SDL_SetWindowTitle
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
 Global SDL_CreateTexture.Proto_SDL_CreateTexture
@@ -2342,8 +2346,10 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetWindowAlwaysOnTop.a(*window.SDL_Window, on_top.Uint8)
   SDL_SetWindowFullscreen.a(*window.SDL_Window, fullscreen.Uint8)
   SDL_SetWindowFullscreenMode.a(*window.SDL_Window, *mode.SDL_DisplayMode)
+  SDL_SetWindowMinimumSize.a(*window.SDL_Window, min_w.Sint32, min_h.Sint32)
   SDL_SetWindowPosition.a(*window.SDL_Window, x.Sint32, y.Sint32)
   SDL_SetWindowSize.a(*window.SDL_Window, w.Sint32, h.Sint32)
+  SDL_SetWindowTitle.a(*window.SDL_Window, title.p-utf8)
   SDL_ShowWindow.a(*window.SDL_Window)
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeRendererSupport)
@@ -2866,6 +2872,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
+          SDL_SetWindowMinimumSize = GetFunction(__SDLxLib, "SDL_SetWindowMinimumSize")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowMinimumSize = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowMinimumSize'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
           SDL_SetWindowPosition = GetFunction(__SDLxLib, "SDL_SetWindowPosition")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetWindowPosition = #Null)
@@ -2877,6 +2890,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetWindowSize = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowSize'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowTitle = GetFunction(__SDLxLib, "SDL_SetWindowTitle")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowTitle = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowTitle'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf

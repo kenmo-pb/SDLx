@@ -1992,8 +1992,10 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowTitle(*window.SDL_Window, title.p-utf8) ; returns bool
 PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
 ;- - 2D Accelerated Rendering
