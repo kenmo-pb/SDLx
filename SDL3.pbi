@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-05 02:09:39 UTC
+; Generated 2025-09-06 00:14:48 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -775,17 +775,22 @@ Enumeration ; SDL_RendererLogicalPresentation
   #SDL_LOGICAL_PRESENTATION_INTEGER_SCALE
 EndEnumeration
 
-#SDL_ALPHA_TRANSPARENT = 0
-#SDL_ALPHA_OPAQUE      = 255
-
-#SDL_ALPHA_TRANSPARENT_FLOAT = 0.0
-#SDL_ALPHA_OPAQUE_FLOAT      = 1.0
-
 Enumeration ; SDL_TextureAccess
   #SDL_TEXTUREACCESS_STATIC
   #SDL_TEXTUREACCESS_STREAMING
   #SDL_TEXTUREACCESS_TARGET
 EndEnumeration
+
+Enumeration
+  #SDL_RENDERER_VSYNC_DISABLED =  0
+  #SDL_RENDERER_VSYNC_ADAPTIVE = -1
+EndEnumeration
+
+#SDL_ALPHA_TRANSPARENT = 0
+#SDL_ALPHA_OPAQUE      = 255
+
+#SDL_ALPHA_TRANSPARENT_FLOAT = 0.0
+#SDL_ALPHA_OPAQUE_FLOAT      = 1.0
 
 #SDL_DEBUG_TEXT_FONT_CHARACTER_SIZE = 8
 
@@ -2000,6 +2005,7 @@ PrototypeC.a Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL
 PrototypeC.a Proto_SDL_SetDefaultTextureScaleMode(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation) ; returns bool
+PrototypeC.a Proto_SDL_SetRenderVSync(*renderer.SDL_Renderer, vsync.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetTextureScaleMode(*texture.SDL_Texture, scaleMode.SDL_ScaleMode) ; returns bool
 PrototypeC   Proto_SDL_UnlockTexture(*texture.SDL_Texture)
 PrototypeC.a Proto_SDL_UpdateTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32) ; returns bool
@@ -2197,6 +2203,7 @@ Global SDL_RenderTextureRotated.Proto_SDL_RenderTextureRotated
 Global SDL_SetDefaultTextureScaleMode.Proto_SDL_SetDefaultTextureScaleMode
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
+Global SDL_SetRenderVSync.Proto_SDL_SetRenderVSync
 Global SDL_SetTextureScaleMode.Proto_SDL_SetTextureScaleMode
 Global SDL_UnlockTexture.Proto_SDL_UnlockTexture
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
@@ -2368,6 +2375,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetDefaultTextureScaleMode.a(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode)
   SDL_SetRenderDrawColor.a(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8)
   SDL_SetRenderLogicalPresentation.a(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation)
+  SDL_SetRenderVSync.a(*renderer.SDL_Renderer, vsync.Sint32)
   SDL_SetTextureScaleMode.a(*texture.SDL_Texture, scaleMode.SDL_ScaleMode)
   SDL_UnlockTexture(*texture.SDL_Texture)
   SDL_UpdateTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels, pitch.Sint32)
@@ -3011,6 +3019,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetRenderLogicalPresentation = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderLogicalPresentation'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetRenderVSync = GetFunction(__SDLxLib, "SDL_SetRenderVSync")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetRenderVSync = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetRenderVSync'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
