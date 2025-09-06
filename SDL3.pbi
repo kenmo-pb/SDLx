@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-06 21:02:03 UTC
+; Generated 2025-09-06 21:09:53 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -245,6 +245,9 @@ Macro SDL_HapticID
   Uint32
 EndMacro
 Macro SDL_HintPriority
+  Sint32 ; enum
+EndMacro
+Macro SDL_HitTestResult
   Sint32 ; enum
 EndMacro
 Macro SDL_InitFlags
@@ -764,6 +767,18 @@ Enumeration ; SDL_SystemTheme
   #SDL_SYSTEM_THEME_DARK
 EndEnumeration
 
+Enumeration ; SDL_HitTestResult
+  #SDL_HITTEST_NORMAL
+  #SDL_HITTEST_DRAGGABLE
+  #SDL_HITTEST_RESIZE_TOPLEFT
+  #SDL_HITTEST_RESIZE_TOP
+  #SDL_HITTEST_RESIZE_TOPRIGHT
+  #SDL_HITTEST_RESIZE_RIGHT
+  #SDL_HITTEST_RESIZE_BOTTOMRIGHT
+  #SDL_HITTEST_RESIZE_BOTTOM
+  #SDL_HITTEST_RESIZE_BOTTOMLEFT
+  #SDL_HITTEST_RESIZE_LEFT
+EndEnumeration
 
 ;- - 2D Accelerated Rendering
 
@@ -1982,6 +1997,8 @@ PrototypeC   Proto_SDL_SetLogPriority(category.Sint32, priority.SDL_LogPriority)
 PrototypeC   Proto_SDL_ResetLogPriorities()
 
 ;- - Display and Window Management
+PrototypeC.l SDL_HitTest(*win.SDL_Window, *area.SDL_Point, *data) ; returns SDL_HitTestResult (enum)
+;;
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
 PrototypeC.i Proto_SDL_CreateWindowWithProperties(props.SDL_PropertiesID) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
@@ -1994,6 +2011,7 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callback.SDL_HitTest, *callback_data) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
@@ -2197,6 +2215,7 @@ Global SDL_RestoreWindow.Proto_SDL_RestoreWindow
 Global SDL_SetWindowAlwaysOnTop.Proto_SDL_SetWindowAlwaysOnTop
 Global SDL_SetWindowFullscreen.Proto_SDL_SetWindowFullscreen
 Global SDL_SetWindowFullscreenMode.Proto_SDL_SetWindowFullscreenMode
+Global SDL_SetWindowHitTest.Proto_SDL_SetWindowHitTest
 Global SDL_SetWindowMinimumSize.Proto_SDL_SetWindowMinimumSize
 Global SDL_SetWindowPosition.Proto_SDL_SetWindowPosition
 Global SDL_SetWindowSize.Proto_SDL_SetWindowSize
@@ -2390,6 +2409,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetWindowAlwaysOnTop.a(*window.SDL_Window, on_top.Uint8)
   SDL_SetWindowFullscreen.a(*window.SDL_Window, fullscreen.Uint8)
   SDL_SetWindowFullscreenMode.a(*window.SDL_Window, *mode.SDL_DisplayMode)
+  SDL_SetWindowHitTest.a(*window.SDL_Window, *callback.SDL_HitTest, *callback_data)
   SDL_SetWindowMinimumSize.a(*window.SDL_Window, min_w.Sint32, min_h.Sint32)
   SDL_SetWindowPosition.a(*window.SDL_Window, x.Sint32, y.Sint32)
   SDL_SetWindowSize.a(*window.SDL_Window, w.Sint32, h.Sint32)
@@ -2956,6 +2976,13 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_SetWindowFullscreenMode = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowFullscreenMode'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_SetWindowHitTest = GetFunction(__SDLxLib, "SDL_SetWindowHitTest")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_SetWindowHitTest = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_SetWindowHitTest'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf

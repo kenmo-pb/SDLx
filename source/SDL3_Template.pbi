@@ -254,6 +254,9 @@ EndMacro
 Macro SDL_HintPriority
   Sint32 ; enum
 EndMacro
+Macro SDL_HitTestResult
+  Sint32 ; enum
+EndMacro
 Macro SDL_InitFlags
   Uint32
 EndMacro
@@ -771,6 +774,18 @@ Enumeration ; SDL_SystemTheme
   #SDL_SYSTEM_THEME_DARK
 EndEnumeration
 
+Enumeration ; SDL_HitTestResult
+  #SDL_HITTEST_NORMAL
+  #SDL_HITTEST_DRAGGABLE
+  #SDL_HITTEST_RESIZE_TOPLEFT
+  #SDL_HITTEST_RESIZE_TOP
+  #SDL_HITTEST_RESIZE_TOPRIGHT
+  #SDL_HITTEST_RESIZE_RIGHT
+  #SDL_HITTEST_RESIZE_BOTTOMRIGHT
+  #SDL_HITTEST_RESIZE_BOTTOM
+  #SDL_HITTEST_RESIZE_BOTTOMLEFT
+  #SDL_HITTEST_RESIZE_LEFT
+EndEnumeration
 
 ;- - 2D Accelerated Rendering
 
@@ -1998,6 +2013,8 @@ PrototypeC   Proto_SDL_ResetLogPriorities()
 
 ;- - Display and Window Management
 ;% CATEGORY=WindowSupport
+PrototypeC.l SDL_HitTest(*win.SDL_Window, *area.SDL_Point, *data) ; returns SDL_HitTestResult (enum)
+;;
 PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_WindowFlags) ; returns SDL_Window *
 PrototypeC.i Proto_SDL_CreateWindowWithProperties(props.SDL_PropertiesID) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
@@ -2010,6 +2027,7 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callback.SDL_HitTest, *callback_data) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
