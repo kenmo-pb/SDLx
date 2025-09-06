@@ -1942,6 +1942,23 @@ PrototypeC.a Proto_SDL_SetAppMetadata(appname.p-utf8, appversion.p-utf8, appiden
 PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; returns bool
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
+;- - Error Handling
+;% CATEGORY=
+PrototypeC.i Proto_SDL_GetError() ; returns const char *
+
+;- - Standard Library Functionality
+;% CATEGORY=
+PrototypeC   Proto_SDL_free(*mem)
+
+;- - Event Handling
+;% CATEGORY=
+PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
+PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
+PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
+PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
+PrototypeC   Proto_SDL_PumpEvents()
+PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
+
 ;- - Configuration Variables
 ;% CATEGORY=HintSupport
 PrototypeC.i Proto_SDL_GetHint(name.p-utf8) ; returns const char *
@@ -1968,10 +1985,6 @@ PrototypeC.a Proto_SDL_SetFloatProperty(props.SDL_PropertiesID, name.p-utf8, val
 PrototypeC.a Proto_SDL_SetNumberProperty(props.SDL_PropertiesID, name.p-utf8, value.Sint64) ; returns bool
 PrototypeC.a Proto_SDL_SetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *value) ; returns bool
 PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
-
-;- - Error Handling
-;% CATEGORY=
-PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
 ;- - Log Handling
 ;% CATEGORY=LogSupport
@@ -2066,15 +2079,6 @@ PrototypeC.l Proto_SDL_GetNumCameraDrivers() ; returns int
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec) ; returns SDL_Camera *
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
-;- - Event Handling
-;% CATEGORY=
-PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
-PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
-PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
-PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
-PrototypeC   Proto_SDL_PumpEvents()
-PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
-
 ;- - Keyboard Support
 ;% CATEGORY=KeyboardSupport
 PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns const bool *
@@ -2143,10 +2147,6 @@ PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_
 ;% CATEGORY=MessageBoxSupport
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
-
-;- - Standard Library Functionality
-;% CATEGORY=
-PrototypeC   Proto_SDL_free(*mem)
 
 
 

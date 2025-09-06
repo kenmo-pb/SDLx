@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-06 00:14:48 UTC
+; Generated 2025-09-06 21:02:03 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -1933,6 +1933,20 @@ PrototypeC.a Proto_SDL_SetAppMetadata(appname.p-utf8, appversion.p-utf8, appiden
 PrototypeC.a Proto_SDL_SetAppMetadataProperty(name.p-utf8, value.p-utf8) ; returns bool
 PrototypeC.l Proto_SDL_WasInit(flags.SDL_InitFlags) ; returns SDL_InitFlags
 
+;- - Error Handling
+PrototypeC.i Proto_SDL_GetError() ; returns const char *
+
+;- - Standard Library Functionality
+PrototypeC   Proto_SDL_free(*mem)
+
+;- - Event Handling
+PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
+PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
+PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
+PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
+PrototypeC   Proto_SDL_PumpEvents()
+PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
+
 ;- - Configuration Variables
 PrototypeC.i Proto_SDL_GetHint(name.p-utf8) ; returns const char *
 PrototypeC.a Proto_SDL_GetHintBoolean(name.p-utf8, default_value.Uint8) ; returns bool
@@ -1957,9 +1971,6 @@ PrototypeC.a Proto_SDL_SetFloatProperty(props.SDL_PropertiesID, name.p-utf8, val
 PrototypeC.a Proto_SDL_SetNumberProperty(props.SDL_PropertiesID, name.p-utf8, value.Sint64) ; returns bool
 PrototypeC.a Proto_SDL_SetPointerProperty(props.SDL_PropertiesID, name.p-utf8, *value) ; returns bool
 PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, value.p-utf8) ; returns bool
-
-;- - Error Handling
-PrototypeC.i Proto_SDL_GetError() ; returns const char *
 
 ;- - Log Handling
 PrototypeC   SDL_LogOutputFunction(*userdata, category.Sint32, priority.SDL_LogPriority, *message)
@@ -2047,14 +2058,6 @@ PrototypeC.l Proto_SDL_GetNumCameraDrivers() ; returns int
 PrototypeC.i Proto_SDL_OpenCamera(instance_id.SDL_CameraID, *spec.SDL_CameraSpec) ; returns SDL_Camera *
 PrototypeC   Proto_SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
 
-;- - Event Handling
-PrototypeC   Proto_SDL_FlushEvent(type.Uint32)
-PrototypeC   Proto_SDL_FlushEvents(minType.Uint32, maxType.Uint32)
-PrototypeC.l Proto_SDL_PeepEvents(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32) ; returns int
-PrototypeC.a Proto_SDL_PollEvent(*event.SDL_Event) ; returns bool
-PrototypeC   Proto_SDL_PumpEvents()
-PrototypeC.a Proto_SDL_PushEvent(*event.SDL_Event) ; returns bool
-
 ;- - Keyboard Support
 PrototypeC.i Proto_SDL_GetKeyboardState(*numkeys.LONG) ; returns const bool *
 
@@ -2117,9 +2120,6 @@ PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_
 PrototypeC.a Proto_SDL_ShowSimpleMessageBox(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_ShowMessageBox(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG) ; returns bool
 
-;- - Standard Library Functionality
-PrototypeC   Proto_SDL_free(*mem)
-
 
 
 
@@ -2146,10 +2146,21 @@ Global SDL_QuitSubSystem.Proto_SDL_QuitSubSystem
 Global SDL_SetAppMetadata.Proto_SDL_SetAppMetadata
 Global SDL_SetAppMetadataProperty.Proto_SDL_SetAppMetadataProperty
 Global SDL_WasInit.Proto_SDL_WasInit
+Global SDL_GetError.Proto_SDL_GetError
+Global SDL_free.Proto_SDL_free
+Global SDL_FlushEvent.Proto_SDL_FlushEvent
+Global SDL_FlushEvents.Proto_SDL_FlushEvents
+Global SDL_PeepEvents.Proto_SDL_PeepEvents
+Global SDL_PollEvent.Proto_SDL_PollEvent
+Global SDL_PumpEvents.Proto_SDL_PumpEvents
+Global SDL_PushEvent.Proto_SDL_PushEvent
+CompilerIf (Not #SDLx_ExcludeHintSupport)
 Global SDL_GetHint.Proto_SDL_GetHint
 Global SDL_GetHintBoolean.Proto_SDL_GetHintBoolean
 Global SDL_SetHint.Proto_SDL_SetHint
 Global SDL_SetHintWithPriority.Proto_SDL_SetHintWithPriority
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludePropertiesSupport)
 Global SDL_CreateProperties.Proto_SDL_CreateProperties
 Global SDL_DestroyProperties.Proto_SDL_DestroyProperties
 Global SDL_EnumerateProperties.Proto_SDL_EnumerateProperties
@@ -2165,12 +2176,15 @@ Global SDL_SetFloatProperty.Proto_SDL_SetFloatProperty
 Global SDL_SetNumberProperty.Proto_SDL_SetNumberProperty
 Global SDL_SetPointerProperty.Proto_SDL_SetPointerProperty
 Global SDL_SetStringProperty.Proto_SDL_SetStringProperty
-Global SDL_GetError.Proto_SDL_GetError
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeLogSupport)
 Global SDL_GetDefaultLogOutputFunction.Proto_SDL_GetDefaultLogOutputFunction
 Global SDL_SetLogOutputFunction.Proto_SDL_SetLogOutputFunction
 Global SDL_SetLogPriorities.Proto_SDL_SetLogPriorities
 Global SDL_SetLogPriority.Proto_SDL_SetLogPriority
 Global SDL_ResetLogPriorities.Proto_SDL_ResetLogPriorities
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeWindowSupport)
 Global SDL_CreateWindow.Proto_SDL_CreateWindow
 Global SDL_CreateWindowWithProperties.Proto_SDL_CreateWindowWithProperties
 Global SDL_DestroyWindow.Proto_SDL_DestroyWindow
@@ -2188,6 +2202,8 @@ Global SDL_SetWindowPosition.Proto_SDL_SetWindowPosition
 Global SDL_SetWindowSize.Proto_SDL_SetWindowSize
 Global SDL_SetWindowTitle.Proto_SDL_SetWindowTitle
 Global SDL_ShowWindow.Proto_SDL_ShowWindow
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeRendererSupport)
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
 Global SDL_CreateTexture.Proto_SDL_CreateTexture
 Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
@@ -2207,6 +2223,8 @@ Global SDL_SetRenderVSync.Proto_SDL_SetRenderVSync
 Global SDL_SetTextureScaleMode.Proto_SDL_SetTextureScaleMode
 Global SDL_UnlockTexture.Proto_SDL_UnlockTexture
 Global SDL_UpdateTexture.Proto_SDL_UpdateTexture
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeSurfaceSupport)
 Global SDL_GetPixelFormatName.Proto_SDL_GetPixelFormatName
 Global SDL_ConvertPixels.Proto_SDL_ConvertPixels
 Global SDL_ConvertSurface.Proto_SDL_ConvertSurface
@@ -2217,7 +2235,11 @@ Global SDL_LoadBMP.Proto_SDL_LoadBMP
 Global SDL_LockSurface.Proto_SDL_LockSurface
 Global SDL_SaveBMP.Proto_SDL_SaveBMP
 Global SDL_UnlockSurface.Proto_SDL_UnlockSurface
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeClipboardSupport)
 Global SDL_SetClipboardText.Proto_SDL_SetClipboardText
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeCameraSupport)
 Global SDL_AcquireCameraFrame.Proto_SDL_AcquireCameraFrame
 Global SDL_CloseCamera.Proto_SDL_CloseCamera
 Global SDL_GetCameraDriver.Proto_SDL_GetCameraDriver
@@ -2232,16 +2254,16 @@ Global SDL_GetCurrentCameraDriver.Proto_SDL_GetCurrentCameraDriver
 Global SDL_GetNumCameraDrivers.Proto_SDL_GetNumCameraDrivers
 Global SDL_OpenCamera.Proto_SDL_OpenCamera
 Global SDL_ReleaseCameraFrame.Proto_SDL_ReleaseCameraFrame
-Global SDL_FlushEvent.Proto_SDL_FlushEvent
-Global SDL_FlushEvents.Proto_SDL_FlushEvents
-Global SDL_PeepEvents.Proto_SDL_PeepEvents
-Global SDL_PollEvent.Proto_SDL_PollEvent
-Global SDL_PumpEvents.Proto_SDL_PumpEvents
-Global SDL_PushEvent.Proto_SDL_PushEvent
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeKeyboardSupport)
 Global SDL_GetKeyboardState.Proto_SDL_GetKeyboardState
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeMouseSupport)
 Global SDL_GetMouseState.Proto_SDL_GetMouseState
 Global SDL_HideCursor.Proto_SDL_HideCursor
 Global SDL_ShowCursor.Proto_SDL_ShowCursor
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeJoystickSupport)
 Global SDL_CloseJoystick.Proto_SDL_CloseJoystick
 Global SDL_GetJoystickConnectionState.Proto_SDL_GetJoystickConnectionState
 Global SDL_GetJoystickName.Proto_SDL_GetJoystickName
@@ -2253,6 +2275,8 @@ Global SDL_HasJoystick.Proto_SDL_HasJoystick
 Global SDL_OpenJoystick.Proto_SDL_OpenJoystick
 Global SDL_RumbleJoystick.Proto_SDL_RumbleJoystick
 Global SDL_UpdateJoysticks.Proto_SDL_UpdateJoysticks
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeGamepadSupport)
 Global SDL_AddGamepadMapping.Proto_SDL_AddGamepadMapping
 Global SDL_AddGamepadMappingsFromFile.Proto_SDL_AddGamepadMappingsFromFile
 Global SDL_CloseGamepad.Proto_SDL_CloseGamepad
@@ -2275,6 +2299,8 @@ Global SDL_OpenGamepad.Proto_SDL_OpenGamepad
 Global SDL_RumbleGamepad.Proto_SDL_RumbleGamepad
 Global SDL_SetGamepadPlayerIndex.Proto_SDL_SetGamepadPlayerIndex
 Global SDL_UpdateGamepads.Proto_SDL_UpdateGamepads
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeHapticSupport)
 Global SDL_CloseHaptic.Proto_SDL_CloseHaptic
 Global SDL_GetHaptics.Proto_SDL_GetHaptics
 Global SDL_InitHapticRumble.Proto_SDL_InitHapticRumble
@@ -2283,10 +2309,14 @@ Global SDL_OpenHaptic.Proto_SDL_OpenHaptic
 Global SDL_OpenHapticFromJoystick.Proto_SDL_OpenHapticFromJoystick
 Global SDL_PlayHapticRumble.Proto_SDL_PlayHapticRumble
 Global SDL_StopHapticRumble.Proto_SDL_StopHapticRumble
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
 Global SDL_GetPowerInfo.Proto_SDL_GetPowerInfo
+CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeMessageBoxSupport)
 Global SDL_ShowSimpleMessageBox.Proto_SDL_ShowSimpleMessageBox
 Global SDL_ShowMessageBox.Proto_SDL_ShowMessageBox
-Global SDL_free.Proto_SDL_free
+CompilerEndIf
 
 
 
@@ -2309,6 +2339,14 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetAppMetadata.a(appname.p-utf8, appversion.p-utf8, appidentifier.p-utf8)
   SDL_SetAppMetadataProperty.a(name.p-utf8, value.p-utf8)
   SDL_WasInit.l(flags.SDL_InitFlags)
+  SDL_GetError.i()
+  SDL_free(*mem)
+  SDL_FlushEvent(type.Uint32)
+  SDL_FlushEvents(minType.Uint32, maxType.Uint32)
+  SDL_PeepEvents.l(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32)
+  SDL_PollEvent.a(*event.SDL_Event)
+  SDL_PumpEvents()
+  SDL_PushEvent.a(*event.SDL_Event)
   CompilerIf (Not #SDLx_ExcludeHintSupport)
   SDL_GetHint.i(name.p-utf8)
   SDL_GetHintBoolean.a(name.p-utf8, default_value.Uint8)
@@ -2332,7 +2370,6 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetPointerProperty.a(props.SDL_PropertiesID, name.p-utf8, *value)
   SDL_SetStringProperty.a(props.SDL_PropertiesID, name.p-utf8, value.p-utf8)
   CompilerEndIf
-  SDL_GetError.i()
   CompilerIf (Not #SDLx_ExcludeLogSupport)
   SDL_GetDefaultLogOutputFunction.i()
   SDL_SetLogOutputFunction(*callback.SDL_LogOutputFunction, *userdata)
@@ -2411,12 +2448,6 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenCamera.i(instance_id.SDL_CameraID, *spec.SDL_CameraSpec)
   SDL_ReleaseCameraFrame(*camera.SDL_Camera, *frame.SDL_Surface)
   CompilerEndIf
-  SDL_FlushEvent(type.Uint32)
-  SDL_FlushEvents(minType.Uint32, maxType.Uint32)
-  SDL_PeepEvents.l(*events.SDL_Event, numevents.Sint32, action.SDL_EventAction, minType.Uint32, maxType.Uint32)
-  SDL_PollEvent.a(*event.SDL_Event)
-  SDL_PumpEvents()
-  SDL_PushEvent.a(*event.SDL_Event)
   CompilerIf (Not #SDLx_ExcludeKeyboardSupport)
   SDL_GetKeyboardState.i(*numkeys.LONG)
   CompilerEndIf
@@ -2479,7 +2510,6 @@ ImportC #SDLx_ImportLibraryName
   SDL_ShowSimpleMessageBox.a(flags.SDL_MessageBoxFlags, title.p-utf8, message.p-utf8, *window.SDL_Window)
   SDL_ShowMessageBox.a(*messageboxdata.SDL_MessageBoxData, *buttonid.LONG)
   CompilerEndIf
-  SDL_free(*mem)
 
 EndImport
 
@@ -2611,6 +2641,62 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
             If (SDL_WasInit = #Null)
               __SDLx_Debug("Failed to load SDL library function: 'SDL_WasInit'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_GetError = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetError'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_free = GetFunction(__SDLxLib, "SDL_free")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_free = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_free'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_FlushEvent = GetFunction(__SDLxLib, "SDL_FlushEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_FlushEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_FlushEvents = GetFunction(__SDLxLib, "SDL_FlushEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_FlushEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PeepEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PeepEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PollEvent = GetFunction(__SDLxLib, "SDL_PollEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PollEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PollEvent'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PumpEvents = GetFunction(__SDLxLib, "SDL_PumpEvents")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PumpEvents = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PumpEvents'")
+              LoadFailed = #SDLx_RequireAllFunctionLoads
+            EndIf
+          CompilerEndIf
+          SDL_PushEvent = GetFunction(__SDLxLib, "SDL_PushEvent")
+          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+            If (SDL_PushEvent = #Null)
+              __SDLx_Debug("Failed to load SDL library function: 'SDL_PushEvent'")
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
@@ -2750,13 +2836,6 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
-          CompilerEndIf
-          SDL_GetError = GetFunction(__SDLxLib, "SDL_GetError")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_GetError = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_GetError'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
           CompilerEndIf
           CompilerIf (Not #SDLx_ExcludeLogSupport)
           SDL_GetDefaultLogOutputFunction = GetFunction(__SDLxLib, "SDL_GetDefaultLogOutputFunction")
@@ -3232,48 +3311,6 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
             EndIf
           CompilerEndIf
           CompilerEndIf
-          SDL_FlushEvent = GetFunction(__SDLxLib, "SDL_FlushEvent")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_FlushEvent = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvent'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
-          SDL_FlushEvents = GetFunction(__SDLxLib, "SDL_FlushEvents")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_FlushEvents = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_FlushEvents'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
-          SDL_PeepEvents = GetFunction(__SDLxLib, "SDL_PeepEvents")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_PeepEvents = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_PeepEvents'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
-          SDL_PollEvent = GetFunction(__SDLxLib, "SDL_PollEvent")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_PollEvent = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_PollEvent'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
-          SDL_PumpEvents = GetFunction(__SDLxLib, "SDL_PumpEvents")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_PumpEvents = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_PumpEvents'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
-          SDL_PushEvent = GetFunction(__SDLxLib, "SDL_PushEvent")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_PushEvent = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_PushEvent'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
-          CompilerEndIf
           CompilerIf (Not #SDLx_ExcludeKeyboardSupport)
           SDL_GetKeyboardState = GetFunction(__SDLxLib, "SDL_GetKeyboardState")
           CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
@@ -3623,13 +3660,6 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
               LoadFailed = #SDLx_RequireAllFunctionLoads
             EndIf
           CompilerEndIf
-          CompilerEndIf
-          SDL_free = GetFunction(__SDLxLib, "SDL_free")
-          CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
-            If (SDL_free = #Null)
-              __SDLx_Debug("Failed to load SDL library function: 'SDL_free'")
-              LoadFailed = #SDLx_RequireAllFunctionLoads
-            EndIf
           CompilerEndIf
           
           

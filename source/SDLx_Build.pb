@@ -89,15 +89,28 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
               Case "DECLARE_DYNAMIC_PROTOTYPES"
                 Debug "  Found " + Str(ListSize(SDLFunction())) + " SDL functions..."
                 Debug "  Found " + Str(NumStructs) + " SDL structures..."
+                PrevCategory = ""
                 LineOut = ""
                 ForEach SDLFunction()
+                  If (SDLFunction()\Category <> PrevCategory)
+                    If (PrevCategory)
+                      LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                    EndIf
+                    If (SDLFunction()\Category)
+                      LineOut + Indentation + "CompilerIf (Not #SDLx_Exclude" + SDLFunction()\Category + ")" + #OutputFileEOL$
+                    EndIf
+                  EndIf
                   Select (SDLFunction()\Name)
                     Case "SDL_Init", "SDL_Quit"
                       ; special cases - handled elsewhere - do not declare prototypes here
                     Default
                       LineOut + "Global " + SDLFunction()\Name + "." + #PrototypeNamePrefix + SDLFunction()\Name + #OutputFileEOL$
                   EndSelect
+                  PrevCategory = SDLFunction()\Category
                 Next
+                If (PrevCategory)
+                  LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                EndIf
               
               Case "STATIC_IMPORTS"
                 PrevCategory = ""
