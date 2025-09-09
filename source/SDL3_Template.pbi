@@ -2019,6 +2019,9 @@ PrototypeC.i Proto_SDL_CreateWindow(title.p-utf8, w.Sint32, h.Sint32, flags.SDL_
 PrototypeC.i Proto_SDL_CreateWindowWithProperties(props.SDL_PropertiesID) ; returns SDL_Window *
 PrototypeC   Proto_SDL_DestroyWindow(*window.SDL_Window)
 PrototypeC.l Proto_SDL_GetSystemTheme() ; returns SDL_SystemTheme
+PrototypeC.l Proto_SDL_GetWindowFlags(*window.SDL_Window) ; returns SDL_WindowFlags
+PrototypeC.a Proto_SDL_GetWindowPosition(*window.SDL_Window, *x.LONG, *y.LONG) ; returns bool
+PrototypeC.a Proto_SDL_GetWindowSize(*window.SDL_Window, *w.LONG, *h.LONG) ; returns bool
 PrototypeC.a Proto_SDL_HideWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_MaximizeWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_MinimizeWindow(*window.SDL_Window) ; returns bool
