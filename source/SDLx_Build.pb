@@ -4,6 +4,7 @@
 ; | 2024-09-23 : Creation (PureBasic 6.12)
 ; | 2024-10-05 : Added statically linked lib function imports
 ; | 2025-02-19 : Added SDL function categories which can be selectively excluded by user
+; | 2025-09-24 : Preliminary support for SDL3_net
 
 ;-
 
@@ -14,6 +15,7 @@
 #IndentSpaces = 2
 
 #MinSDLVersionToRebuild = 3
+#MaxSDLVersionToRebuild = 3 ; "4" is SDL3_net
 
 Structure SDLFunctionStruct
   Name.s
@@ -39,16 +41,23 @@ CompilerEndIf
 
 
 
-For MajorVersion = #MinSDLVersionToRebuild To 3
+For MajorVersion = #MinSDLVersionToRebuild To #MaxSDLVersionToRebuild
   ClearList(SDLFunction())
   DeleteLevel.i = 0
   
-  SDLName.s = "SDL" + Str(MajorVersion)
+  Select MajorVersion
+    Case 4 ; SDL3_net
+      SDLName.s = "SDL3_net"
+    Default
+      SDLName.s = "SDL" + Str(MajorVersion)
+  EndSelect
   TemplateFileName.s = SDLName + "_Template.pbi"
   OutputFileName.s = SDLName + ".pbi"
   OutputFileFull.s = ".." + #PS$
   If (MajorVersion = 2)
     OutputFileFull + "SDL2" + #PS$
+  ElseIf (MajorVersion = 4)
+    ;OutputFileFull + "SDL3_net" + #PS$
   EndIf
   OutputFileFull + OutputFileName
   
@@ -101,7 +110,7 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
                     EndIf
                   EndIf
                   Select (SDLFunction()\Name)
-                    Case "SDL_Init", "SDL_Quit"
+                    Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit"
                       ; special cases - handled elsewhere - do not declare prototypes here
                     Default
                       LineOut + "Global " + SDLFunction()\Name + "." + #PrototypeNamePrefix + SDLFunction()\Name + #OutputFileEOL$
@@ -149,17 +158,22 @@ For MajorVersion = #MinSDLVersionToRebuild To 3
                     EndIf
                   EndIf
                   Select (SDLFunction()\Name)
-                    Case "SDL_Init", "SDL_Quit"
+                    Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit"
                       ; special cases - handled elsewhere - do not declare prototypes here
                     Default
-                      LineOut + Indentation + SDLFunction()\Name + " = GetFunction(__SDLxLib, " + #DQUOTE$ + SDLFunction()\Name + #DQUOTE$ + ")" + #OutputFileEOL$
-                      If (#True)
-                        LineOut + Indentation + "CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)" + #OutputFileEOL$
-                        LineOut + Indentation + Space(1*#IndentSpaces) + "If (" + SDLFunction()\Name + " = #Null)" + #OutputFileEOL$
-                        LineOut + Indentation + Space(2*#IndentSpaces) + "__SDLx_Debug(" + #DQUOTE$ + "Failed to load SDL library function: '" + SDLFunction()\Name + "'" + #DQUOTE$ + ")" + #OutputFileEOL$
-                        LineOut + Indentation + Space(2*#IndentSpaces) + "LoadFailed = #SDLx_RequireAllFunctionLoads" + #OutputFileEOL$
-                        LineOut + Indentation + Space(1*#IndentSpaces) + "EndIf" + #OutputFileEOL$
-                        LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                      If (MajorVersion = 4)
+                        LineOut + Indentation + "_SDLx_net_LoadFunction(" + SDLFunction()\Name + ")" + #OutputFileEOL$
+                      Else
+                        ;LineOut + Indentation + "_SDLx_LoadFunction(" + SDLFunction()\Name + ")" + #OutputFileEOL$
+                        LineOut + Indentation + SDLFunction()\Name + " = GetFunction(__SDLxLib, " + #DQUOTE$ + SDLFunction()\Name + #DQUOTE$ + ")" + #OutputFileEOL$
+                        If (#True)
+                          LineOut + Indentation + "CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)" + #OutputFileEOL$
+                          LineOut + Indentation + Space(1*#IndentSpaces) + "If (" + SDLFunction()\Name + " = #Null)" + #OutputFileEOL$
+                          LineOut + Indentation + Space(2*#IndentSpaces) + "__SDLx_Debug(" + #DQUOTE$ + "Failed to load SDL library function: '" + SDLFunction()\Name + "'" + #DQUOTE$ + ")" + #OutputFileEOL$
+                          LineOut + Indentation + Space(2*#IndentSpaces) + "LoadFailed = #SDLx_RequireAllFunctionLoads" + #OutputFileEOL$
+                          LineOut + Indentation + Space(1*#IndentSpaces) + "EndIf" + #OutputFileEOL$
+                          LineOut + Indentation + "CompilerEndIf" + #OutputFileEOL$
+                        EndIf
                       EndIf
                   EndSelect
                   PrevCategory = SDLFunction()\Category
