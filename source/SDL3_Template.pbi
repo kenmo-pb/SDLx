@@ -2195,6 +2195,20 @@ Global SDL_QuitSubsystem.Proto_SDL_QuitSubsystem
 Global SDL_GetVersion.Proto_SDL_GetVersion
 ;% DELETEEND
 
+Macro _SDLx_DQ
+  "
+EndMacro
+
+Macro _SDLx_LoadFunction(_Name)
+  _Name = GetFunction(__SDLxLib, _SDLx_DQ#_Name#_SDLx_DQ)
+  CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)
+    If (_Name = #Null)
+      __SDLx_Debug("Could not find SDL3 library function: " + _SDLx_DQ#_Name#_SDLx_DQ)
+      LoadFailed = #SDLx_RequireAllFunctionLoads
+    EndIf
+  CompilerEndIf
+EndMacro
+
 CompilerEndIf
 
 ;-
@@ -2282,6 +2296,7 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
       If (__SDLx_Init)
         __SDLx_Quit = GetFunction(__SDLxLib, "SDL_Quit")
         If (__SDLx_Quit)
+          ;- - Load Library Functions
           Protected LoadFailed.i = #False
           
 ;% INDENT=5

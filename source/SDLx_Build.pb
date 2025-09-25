@@ -161,10 +161,11 @@ For MajorVersion = #MinSDLVersionToRebuild To #MaxSDLVersionToRebuild
                     Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit"
                       ; special cases - handled elsewhere - do not declare prototypes here
                     Default
-                      If (MajorVersion = 4)
+                      If (MajorVersion = 4) ; SDL3_net
                         LineOut + Indentation + "_SDLx_net_LoadFunction(" + SDLFunction()\Name + ")" + #OutputFileEOL$
+                      ElseIf (#True)
+                        LineOut + Indentation + "_SDLx_LoadFunction(" + SDLFunction()\Name + ")" + #OutputFileEOL$
                       Else
-                        ;LineOut + Indentation + "_SDLx_LoadFunction(" + SDLFunction()\Name + ")" + #OutputFileEOL$
                         LineOut + Indentation + SDLFunction()\Name + " = GetFunction(__SDLxLib, " + #DQUOTE$ + SDLFunction()\Name + #DQUOTE$ + ")" + #OutputFileEOL$
                         If (#True)
                           LineOut + Indentation + "CompilerIf ((#SDLx_AssertAllFunctionLoads And #__SDLx_DebugErrors) Or #SDLx_RequireAllFunctionLoads)" + #OutputFileEOL$
