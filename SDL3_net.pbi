@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_net_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-24 22:17:08 UTC
+; Generated 2025-09-25 22:41:15 UTC
 
 ; SDL_net Wiki:   https://wiki.libsdl.org/SDL3_net/FrontPage
 ; Complete API:   https://wiki.libsdl.org/SDL3_net/CategorySDLNet
@@ -27,14 +27,16 @@ CompilerEndIf
 ;-
 ;- SDL3 Include
 
-XIncludeFile "SDL3.pbi"
+CompilerIf (Not Defined(__SDLx_Included, #PB_Constant))
+  XIncludeFile "SDL3.pbi"
+CompilerEndIf
 
 
 ;-
 ;- Build Switches
 
 CompilerIf (Not Defined(SDLx_net_DebugErrors, #PB_Constant))
-  #SDLx_net_DebugErrors = #False
+  #SDLx_net_DebugErrors = #SDLx_DebugErrors
 CompilerEndIf
 
 CompilerIf (#PB_Compiler_Debugger)
@@ -103,10 +105,10 @@ CompilerIf (#SDLx_net_UseImport And (Not Defined(SDLx_net_ImportLibraryName, #PB
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_net_RequireAllFunctionLoads, #PB_Constant))
-  #SDLx_net_RequireAllFunctionLoads = #False
+  #SDLx_net_RequireAllFunctionLoads = #SDLx_RequireAllFunctionLoads
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_net_AssertAllFunctionLoads, #PB_Constant))
-  #SDLx_net_AssertAllFunctionLoads = #PB_Compiler_Debugger
+  #SDLx_net_AssertAllFunctionLoads = #SDLx_AssertAllFunctionLoads
 CompilerEndIf
 
 CompilerIf (Not Defined(SDLx_net_IncludeHelperProcedures, #PB_Constant))
@@ -172,10 +174,6 @@ EndMacro
 #SDL_NET_MINOR_VERSION = 0
 #SDL_NET_MICRO_VERSION = 0
 
-UndefineMacro SDL_VERSIONNUM
-Macro SDL_VERSIONNUM(major, minor, patch)
-  ((major)*1000000 + (minor)*1000 + (patch))
-EndMacro
 Macro SDL_NET_VERSION()
   SDL_VERSIONNUM(#SDL_NET_MAJOR_VERSION, #SDL_NET_MINOR_VERSION, #SDL_NET_MICRO_VERSION)
 EndMacro
@@ -315,7 +313,7 @@ Macro _SDLx_net_LoadFunction(_Name)
   _Name = GetFunction(__SDLx_net_Lib, _SDLx_net_DQ#_Name#_SDLx_net_DQ)
   CompilerIf ((#SDLx_net_AssertAllFunctionLoads And #__SDLx_net_DebugErrors) Or #SDLx_net_RequireAllFunctionLoads)
     If (_Name = #Null)
-      __SDLx_net_Debug("Failed to load SDL3_net library function: '" + _SDLx_net_DQ#_Name#_SDLx_net_DQ + "'")
+      __SDLx_net_Debug("Could not find SDL3_net library function: " + _SDLx_net_DQ#_Name#_SDLx_net_DQ)
       LoadFailed = #SDLx_net_RequireAllFunctionLoads
     EndIf
   CompilerEndIf
