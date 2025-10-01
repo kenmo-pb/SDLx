@@ -61,6 +61,12 @@ CompilerElse
   EndMacro
 CompilerEndIf
 
+CompilerIf ((#PB_Compiler_Version >= 630) And (#PB_Compiler_Backend = #PB_Backend_C))
+  #__SDLx_InlineCSupport = #True
+CompilerElse
+  #__SDLx_InlineCSupport = #False
+CompilerEndIf
+
 ;- - Excluded SDL Categories
 
 CompilerIf (Not Defined(SDLx_ExcludeCameraSupport, #PB_Constant))
@@ -2224,6 +2230,21 @@ ImportC #SDLx_ImportLibraryName
 EndImport
 
 CompilerEndIf
+
+
+
+
+
+
+;-
+;- Inline C Extensions
+
+CompilerIf (#__SDLx_InlineCSupport)
+;HeaderSection
+
+;EndHeaderSection
+CompilerEndIf
+
 
 
 

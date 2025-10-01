@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-25 22:41:15 UTC
+; Generated 2025-10-01 04:13:47 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -57,6 +57,12 @@ CompilerElse
   Macro __SDLx_Debug(_Message)
     ;
   EndMacro
+CompilerEndIf
+
+CompilerIf ((#PB_Compiler_Version >= 630) And (#PB_Compiler_Backend = #PB_Backend_C))
+  #__SDLx_InlineCSupport = #True
+CompilerElse
+  #__SDLx_InlineCSupport = #False
 CompilerEndIf
 
 ;- - Excluded SDL Categories
@@ -2557,6 +2563,21 @@ ImportC #SDLx_ImportLibraryName
 EndImport
 
 CompilerEndIf
+
+
+
+
+
+
+;-
+;- Inline C Extensions
+
+CompilerIf (#__SDLx_InlineCSupport)
+;HeaderSection
+
+;EndHeaderSection
+CompilerEndIf
+
 
 
 
