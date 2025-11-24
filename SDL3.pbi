@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-10-01 04:13:47 UTC
+; Generated 2025-11-24 00:09:47 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -96,6 +96,9 @@ CompilerIf (Not Defined(SDLx_ExcludeMessageBoxSupport, #PB_Constant))
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
   #SDLx_ExcludeMouseSupport = #False
+CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeTimerSupport, #PB_Constant))
+  #SDLx_ExcludeTimerSupport = #False
 CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
   #SDLx_ExcludePowerInfoSupport = #False
@@ -1979,7 +1982,7 @@ PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, 
 ;;
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
 PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
-PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
+PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callbackC.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
 PrototypeC.a Proto_SDL_GetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8) ; returns bool
 PrototypeC.f Proto_SDL_GetFloatProperty(props.SDL_PropertiesID, name.p-utf8, default_value.f) ; returns float
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
@@ -1997,7 +2000,7 @@ PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, va
 PrototypeC   SDL_LogOutputFunction(*userdata, category.Sint32, priority.SDL_LogPriority, *message)
 ;;
 PrototypeC.i Proto_SDL_GetDefaultLogOutputFunction() ; returns SDL_LogOutputFunction *
-PrototypeC   Proto_SDL_SetLogOutputFunction(*callback.SDL_LogOutputFunction, *userdata)
+PrototypeC   Proto_SDL_SetLogOutputFunction(*callbackC.SDL_LogOutputFunction, *userdata)
 PrototypeC   Proto_SDL_SetLogPriorities(priority.SDL_LogPriority)
 PrototypeC   Proto_SDL_SetLogPriority(category.Sint32, priority.SDL_LogPriority)
 PrototypeC   Proto_SDL_ResetLogPriorities()
@@ -2020,7 +2023,7 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
-PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callback.SDL_HitTest, *callback_data) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callbackC.SDL_HitTest, *callback_data) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
@@ -2139,6 +2142,10 @@ PrototypeC.i Proto_SDL_OpenHaptic(instance_id.SDL_HapticID) ; returns SDL_Haptic
 PrototypeC.i Proto_SDL_OpenHapticFromJoystick(*joystick.SDL_Joystick) ; returns SDL_Haptic *
 PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.Uint32) ; returns bool
 PrototypeC.a Proto_SDL_StopHapticRumble(*haptic.SDL_Haptic) ; returns bool
+
+;- - Timer Support
+PrototypeC.q Proto_SDL_GetPerformanceCounter()
+PrototypeC.q Proto_SDL_GetPerformanceFrequency()
 
 ;- - Power Management Status
 PrototypeC.l Proto_SDL_GetPowerInfo(*seconds.LONG, *percent.LONG) ; returns SDL_PowerState
@@ -2341,6 +2348,10 @@ Global SDL_OpenHapticFromJoystick.Proto_SDL_OpenHapticFromJoystick
 Global SDL_PlayHapticRumble.Proto_SDL_PlayHapticRumble
 Global SDL_StopHapticRumble.Proto_SDL_StopHapticRumble
 CompilerEndIf
+CompilerIf (Not #SDLx_ExcludeTimerSupport)
+Global SDL_GetPerformanceCounter.Proto_SDL_GetPerformanceCounter
+Global SDL_GetPerformanceFrequency.Proto_SDL_GetPerformanceFrequency
+CompilerEndIf
 CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
 Global SDL_GetPowerInfo.Proto_SDL_GetPowerInfo
 CompilerEndIf
@@ -2401,7 +2412,7 @@ ImportC #SDLx_ImportLibraryName
   CompilerIf (Not #SDLx_ExcludePropertiesSupport)
   SDL_CreateProperties.l()
   SDL_DestroyProperties(props.SDL_PropertiesID)
-  SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata)
+  SDL_EnumerateProperties.a(props.SDL_PropertiesID, *callbackC.SDL_EnumeratePropertiesCallback, *userdata)
   SDL_GetBooleanProperty.a(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8)
   SDL_GetFloatProperty.f(props.SDL_PropertiesID, name.p-utf8, default_value.f)
   SDL_GetGlobalProperties.l()
@@ -2417,7 +2428,7 @@ ImportC #SDLx_ImportLibraryName
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeLogSupport)
   SDL_GetDefaultLogOutputFunction.i()
-  SDL_SetLogOutputFunction(*callback.SDL_LogOutputFunction, *userdata)
+  SDL_SetLogOutputFunction(*callbackC.SDL_LogOutputFunction, *userdata)
   SDL_SetLogPriorities(priority.SDL_LogPriority)
   SDL_SetLogPriority(category.Sint32, priority.SDL_LogPriority)
   SDL_ResetLogPriorities()
@@ -2438,7 +2449,7 @@ ImportC #SDLx_ImportLibraryName
   SDL_SetWindowAlwaysOnTop.a(*window.SDL_Window, on_top.Uint8)
   SDL_SetWindowFullscreen.a(*window.SDL_Window, fullscreen.Uint8)
   SDL_SetWindowFullscreenMode.a(*window.SDL_Window, *mode.SDL_DisplayMode)
-  SDL_SetWindowHitTest.a(*window.SDL_Window, *callback.SDL_HitTest, *callback_data)
+  SDL_SetWindowHitTest.a(*window.SDL_Window, *callbackC.SDL_HitTest, *callback_data)
   SDL_SetWindowMinimumSize.a(*window.SDL_Window, min_w.Sint32, min_h.Sint32)
   SDL_SetWindowPosition.a(*window.SDL_Window, x.Sint32, y.Sint32)
   SDL_SetWindowSize.a(*window.SDL_Window, w.Sint32, h.Sint32)
@@ -2551,6 +2562,10 @@ ImportC #SDLx_ImportLibraryName
   SDL_OpenHapticFromJoystick.i(*joystick.SDL_Joystick)
   SDL_PlayHapticRumble.a(*haptic.SDL_Haptic, strength.f, length.Uint32)
   SDL_StopHapticRumble.a(*haptic.SDL_Haptic)
+  CompilerEndIf
+  CompilerIf (Not #SDLx_ExcludeTimerSupport)
+  SDL_GetPerformanceCounter.q()
+  SDL_GetPerformanceFrequency.q()
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
   SDL_GetPowerInfo.l(*seconds.LONG, *percent.LONG)
@@ -2828,6 +2843,10 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           _SDLx_LoadFunction(SDL_OpenHapticFromJoystick)
           _SDLx_LoadFunction(SDL_PlayHapticRumble)
           _SDLx_LoadFunction(SDL_StopHapticRumble)
+          CompilerEndIf
+          CompilerIf (Not #SDLx_ExcludeTimerSupport)
+          _SDLx_LoadFunction(SDL_GetPerformanceCounter)
+          _SDLx_LoadFunction(SDL_GetPerformanceFrequency)
           CompilerEndIf
           CompilerIf (Not #SDLx_ExcludePowerInfoSupport)
           _SDLx_LoadFunction(SDL_GetPowerInfo)

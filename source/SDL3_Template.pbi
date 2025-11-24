@@ -99,6 +99,9 @@ CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludeMouseSupport, #PB_Constant))
   #SDLx_ExcludeMouseSupport = #False
 CompilerEndIf
+CompilerIf (Not Defined(SDLx_ExcludeTimerSupport, #PB_Constant))
+  #SDLx_ExcludeTimerSupport = #False
+CompilerEndIf
 CompilerIf (Not Defined(SDLx_ExcludePowerInfoSupport, #PB_Constant))
   #SDLx_ExcludePowerInfoSupport = #False
 CompilerEndIf
@@ -1993,7 +1996,7 @@ PrototypeC   SDL_EnumeratePropertiesCallback(*userdata, props.SDL_PropertiesID, 
 ;;
 PrototypeC.l Proto_SDL_CreateProperties() ; returns SDL_PropertiesID
 PrototypeC   Proto_SDL_DestroyProperties(props.SDL_PropertiesID)
-PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callback.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
+PrototypeC.a Proto_SDL_EnumerateProperties(props.SDL_PropertiesID, *callbackC.SDL_EnumeratePropertiesCallback, *userdata) ; returns bool
 PrototypeC.a Proto_SDL_GetBooleanProperty(props.SDL_PropertiesID, name.p-utf8, default_value.Uint8) ; returns bool
 PrototypeC.f Proto_SDL_GetFloatProperty(props.SDL_PropertiesID, name.p-utf8, default_value.f) ; returns float
 PrototypeC.l Proto_SDL_GetGlobalProperties() ; returns SDL_PropertiesID
@@ -2012,7 +2015,7 @@ PrototypeC.a Proto_SDL_SetStringProperty(props.SDL_PropertiesID, name.p-utf8, va
 PrototypeC   SDL_LogOutputFunction(*userdata, category.Sint32, priority.SDL_LogPriority, *message)
 ;;
 PrototypeC.i Proto_SDL_GetDefaultLogOutputFunction() ; returns SDL_LogOutputFunction *
-PrototypeC   Proto_SDL_SetLogOutputFunction(*callback.SDL_LogOutputFunction, *userdata)
+PrototypeC   Proto_SDL_SetLogOutputFunction(*callbackC.SDL_LogOutputFunction, *userdata)
 PrototypeC   Proto_SDL_SetLogPriorities(priority.SDL_LogPriority)
 PrototypeC   Proto_SDL_SetLogPriority(category.Sint32, priority.SDL_LogPriority)
 PrototypeC   Proto_SDL_ResetLogPriorities()
@@ -2036,7 +2039,7 @@ PrototypeC.a Proto_SDL_RestoreWindow(*window.SDL_Window) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowAlwaysOnTop(*window.SDL_Window, on_top.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreen(*window.SDL_Window, fullscreen.Uint8) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowFullscreenMode(*window.SDL_Window, *mode.SDL_DisplayMode) ; returns bool
-PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callback.SDL_HitTest, *callback_data) ; returns bool
+PrototypeC.a Proto_SDL_SetWindowHitTest(*window.SDL_Window, *callbackC.SDL_HitTest, *callback_data) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowMinimumSize(*window.SDL_Window, min_w.Sint32, min_h.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowPosition(*window.SDL_Window, x.Sint32, y.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetWindowSize(*window.SDL_Window, w.Sint32, h.Sint32) ; returns bool
@@ -2165,6 +2168,11 @@ PrototypeC.i Proto_SDL_OpenHaptic(instance_id.SDL_HapticID) ; returns SDL_Haptic
 PrototypeC.i Proto_SDL_OpenHapticFromJoystick(*joystick.SDL_Joystick) ; returns SDL_Haptic *
 PrototypeC.a Proto_SDL_PlayHapticRumble(*haptic.SDL_Haptic, strength.f, length.Uint32) ; returns bool
 PrototypeC.a Proto_SDL_StopHapticRumble(*haptic.SDL_Haptic) ; returns bool
+
+;- - Timer Support
+;% CATEGORY=TimerSupport
+PrototypeC.q Proto_SDL_GetPerformanceCounter()
+PrototypeC.q Proto_SDL_GetPerformanceFrequency()
 
 ;- - Power Management Status
 ;% CATEGORY=PowerInfoSupport
