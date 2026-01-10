@@ -2434,7 +2434,7 @@ Procedure.i SDLx_CreateWindowCentered(title.s, w.Sint32, h.Sint32, flags.SDL_Win
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_WIDTH_NUMBER, w)
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_HEIGHT_NUMBER, h)
     SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_FLAGS_NUMBER, flags)
-    If (#PB_Compiler_OS <> #PB_OS_Linux)
+    If (#True);(#PB_Compiler_OS <> #PB_OS_Linux)
       SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_X_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(displayID))
       SDL_SetNumberProperty(props, #SDL_PROP_WINDOW_CREATE_Y_NUMBER, SDL_WINDOWPOS_CENTERED_DISPLAY(displayID))
     EndIf
