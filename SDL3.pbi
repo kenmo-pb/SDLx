@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-01-10 21:13:37 UTC
+; Generated 2026-01-13 17:37:39 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -955,14 +955,14 @@ Enumeration ; SDL_FlipMode
   #SDL_FLIP_NONE
   #SDL_FLIP_HORIZONTAL
   #SDL_FLIP_VERTICAL
-  #SDL_FLIP_HORIZONTAL_AND_VERTICAL ; https://github.com/libsdl-org/SDL/commit/66ab91a314a3108ca3428e8c454064a7fc31d589
+  #SDL_FLIP_HORIZONTAL_AND_VERTICAL ; since SDL 3.4.0
 EndEnumeration
 
 Enumeration ; SDL_ScaleMode
   #SDL_SCALEMODE_INVALID = -1
   #SDL_SCALEMODE_NEAREST
   #SDL_SCALEMODE_LINEAR
-  #SDL_SCALEMODE_PIXELART
+  #SDL_SCALEMODE_PIXELART ; since SDL 3.4.0
 EndEnumeration
 
 ;- - Clipboard Handling
