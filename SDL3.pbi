@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-01-21 17:09:51 UTC
+; Generated 2026-01-21 17:24:29 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -3147,6 +3147,18 @@ Procedure.s SDLx_GetVersionString()
     Result = Str(SDL_VERSIONNUM_MAJOR(ver)) + "." + Str(SDL_VERSIONNUM_MINOR(ver)) + "." + Str(SDL_VERSIONNUM_MICRO(ver))
   EndIf
   ProcedureReturn (Result)
+EndProcedure
+
+Procedure.s SDLx_LibraryPath()
+  CompilerIf (#SDLx_UseImport)
+    ProcedureReturn (#SDLx_StaticLibraryName)
+  CompilerElse
+    If (__SDLx_DynamicLibPath)
+      ProcedureReturn (__SDLx_DynamicLibPath)
+    Else
+      ProcedureReturn (#SDLx_OpenLibraryDefaultName)
+    EndIf
+  CompilerEndIf
 EndProcedure
 
 Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)

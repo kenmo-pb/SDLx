@@ -24,6 +24,7 @@ If (SDL_Init(0))
     Debug "Loaded and initialized OK!"
   EndIf
   Debug "Linked SDL version " + SDLx_GetVersionString()
+  Debug SDLx_LibraryPath()
   Debug "Revision: "  + SDLx_GetRevisionString()
   
   SDL_Quit()

@@ -2623,6 +2623,18 @@ Procedure.s SDLx_GetVersionString()
   ProcedureReturn (Result)
 EndProcedure
 
+Procedure.s SDLx_LibraryPath()
+  CompilerIf (#SDLx_UseImport)
+    ProcedureReturn (#SDLx_StaticLibraryName)
+  CompilerElse
+    If (__SDLx_DynamicLibPath)
+      ProcedureReturn (__SDLx_DynamicLibPath)
+    Else
+      ProcedureReturn (#SDLx_OpenLibraryDefaultName)
+    EndIf
+  CompilerEndIf
+EndProcedure
+
 Procedure SDLx_SetPostLoadPreInitCallback(*Procedure)
   CompilerIf (#SDLx_UseImport)
     Static HasRun.i = #False
