@@ -2369,6 +2369,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   ProcedureReturn (Success)
 EndProcedure
 
+UndefineMacro _SDLx_LoadFunction
+
 CompilerEndIf
 
 ;-

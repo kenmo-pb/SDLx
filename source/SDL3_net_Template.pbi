@@ -297,7 +297,7 @@ Macro _SDLx_net_DQ
   "
 EndMacro
 
-Macro _SDLx_net_LoadFunction(_Name)
+Macro _SDLx_LoadFunction(_Name)
   _Name = GetFunction(__SDLx_net_Lib, _SDLx_net_DQ#_Name#_SDLx_net_DQ)
   CompilerIf ((#SDLx_net_AssertAllFunctionLoads And #__SDLx_net_DebugErrors) Or #SDLx_net_RequireAllFunctionLoads)
     If (_Name = #Null)
@@ -409,6 +409,8 @@ Procedure.a NET_Init()
   
   ProcedureReturn (Success)
 EndProcedure
+
+UndefineMacro _SDLx_LoadFunction
 
 CompilerEndIf
 

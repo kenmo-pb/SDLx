@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_net_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2025-09-25 22:41:15 UTC
+; Generated 2026-01-21 21:15:18 UTC
 
 ; SDL_net Wiki:   https://wiki.libsdl.org/SDL3_net/FrontPage
 ; Complete API:   https://wiki.libsdl.org/SDL3_net/CategorySDLNet
@@ -309,7 +309,7 @@ Macro _SDLx_net_DQ
   "
 EndMacro
 
-Macro _SDLx_net_LoadFunction(_Name)
+Macro _SDLx_LoadFunction(_Name)
   _Name = GetFunction(__SDLx_net_Lib, _SDLx_net_DQ#_Name#_SDLx_net_DQ)
   CompilerIf ((#SDLx_net_AssertAllFunctionLoads And #__SDLx_net_DebugErrors) Or #SDLx_net_RequireAllFunctionLoads)
     If (_Name = #Null)
@@ -415,37 +415,37 @@ Procedure.a NET_Init()
         If (__SDLx_NET_Quit)
           Protected LoadFailed.i = #False
           
-          _SDLx_net_LoadFunction(NET_Version)
-          _SDLx_net_LoadFunction(NET_AcceptClient)
-          _SDLx_net_LoadFunction(NET_CompareAddresses)
-          _SDLx_net_LoadFunction(NET_CreateClient)
-          _SDLx_net_LoadFunction(NET_CreateDatagramSocket)
-          _SDLx_net_LoadFunction(NET_CreateServer)
-          _SDLx_net_LoadFunction(NET_DestroyDatagram)
-          _SDLx_net_LoadFunction(NET_DestroyDatagramSocket)
-          _SDLx_net_LoadFunction(NET_DestroyServer)
-          _SDLx_net_LoadFunction(NET_DestroyStreamSocket)
-          _SDLx_net_LoadFunction(NET_FreeLocalAddresses)
-          _SDLx_net_LoadFunction(NET_GetAddressStatus)
-          _SDLx_net_LoadFunction(NET_GetAddressString)
-          _SDLx_net_LoadFunction(NET_GetConnectionStatus)
-          _SDLx_net_LoadFunction(NET_GetLocalAddresses)
-          _SDLx_net_LoadFunction(NET_GetStreamSocketAddress)
-          _SDLx_net_LoadFunction(NET_GetStreamSocketPendingWrites)
-          _SDLx_net_LoadFunction(NET_ReadFromStreamSocket)
-          _SDLx_net_LoadFunction(NET_ReceiveDatagram)
-          _SDLx_net_LoadFunction(NET_RefAddress)
-          _SDLx_net_LoadFunction(NET_ResolveHostname)
-          _SDLx_net_LoadFunction(NET_SendDatagram)
-          _SDLx_net_LoadFunction(NET_SimulateAddressResolutionLoss)
-          _SDLx_net_LoadFunction(NET_SimulateDatagramPacketLoss)
-          _SDLx_net_LoadFunction(NET_SimulateStreamPacketLoss)
-          _SDLx_net_LoadFunction(NET_UnrefAddress)
-          _SDLx_net_LoadFunction(NET_WaitUntilConnected)
-          _SDLx_net_LoadFunction(NET_WaitUntilInputAvailable)
-          _SDLx_net_LoadFunction(NET_WaitUntilResolved)
-          _SDLx_net_LoadFunction(NET_WaitUntilStreamSocketDrained)
-          _SDLx_net_LoadFunction(NET_WriteToStreamSocket)
+          _SDLx_LoadFunction(NET_Version)
+          _SDLx_LoadFunction(NET_AcceptClient)
+          _SDLx_LoadFunction(NET_CompareAddresses)
+          _SDLx_LoadFunction(NET_CreateClient)
+          _SDLx_LoadFunction(NET_CreateDatagramSocket)
+          _SDLx_LoadFunction(NET_CreateServer)
+          _SDLx_LoadFunction(NET_DestroyDatagram)
+          _SDLx_LoadFunction(NET_DestroyDatagramSocket)
+          _SDLx_LoadFunction(NET_DestroyServer)
+          _SDLx_LoadFunction(NET_DestroyStreamSocket)
+          _SDLx_LoadFunction(NET_FreeLocalAddresses)
+          _SDLx_LoadFunction(NET_GetAddressStatus)
+          _SDLx_LoadFunction(NET_GetAddressString)
+          _SDLx_LoadFunction(NET_GetConnectionStatus)
+          _SDLx_LoadFunction(NET_GetLocalAddresses)
+          _SDLx_LoadFunction(NET_GetStreamSocketAddress)
+          _SDLx_LoadFunction(NET_GetStreamSocketPendingWrites)
+          _SDLx_LoadFunction(NET_ReadFromStreamSocket)
+          _SDLx_LoadFunction(NET_ReceiveDatagram)
+          _SDLx_LoadFunction(NET_RefAddress)
+          _SDLx_LoadFunction(NET_ResolveHostname)
+          _SDLx_LoadFunction(NET_SendDatagram)
+          _SDLx_LoadFunction(NET_SimulateAddressResolutionLoss)
+          _SDLx_LoadFunction(NET_SimulateDatagramPacketLoss)
+          _SDLx_LoadFunction(NET_SimulateStreamPacketLoss)
+          _SDLx_LoadFunction(NET_UnrefAddress)
+          _SDLx_LoadFunction(NET_WaitUntilConnected)
+          _SDLx_LoadFunction(NET_WaitUntilInputAvailable)
+          _SDLx_LoadFunction(NET_WaitUntilResolved)
+          _SDLx_LoadFunction(NET_WaitUntilStreamSocketDrained)
+          _SDLx_LoadFunction(NET_WriteToStreamSocket)
           
           
           If (Not LoadFailed)
@@ -482,6 +482,8 @@ Procedure.a NET_Init()
   
   ProcedureReturn (Success)
 EndProcedure
+
+UndefineMacro _SDLx_LoadFunction
 
 CompilerEndIf
 

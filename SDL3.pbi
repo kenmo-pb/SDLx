@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-01-21 17:24:29 UTC
+; Generated 2026-01-21 21:15:18 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -2894,6 +2894,8 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
   
   ProcedureReturn (Success)
 EndProcedure
+
+UndefineMacro _SDLx_LoadFunction
 
 CompilerEndIf
 
