@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-01-13 17:37:39 UTC
+; Generated 2026-01-21 17:09:51 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -345,8 +345,8 @@ EndMacro
 ;- - Querying SDL Version
 
 #SDL_MAJOR_VERSION = 3
-#SDL_MINOR_VERSION = 2
-#SDL_MICRO_VERSION = 22
+#SDL_MINOR_VERSION = 4
+#SDL_MICRO_VERSION = 0
 
 Macro SDL_VERSIONNUM(major, minor, patch)
   ((major)*1000000 + (minor)*1000 + (patch))
