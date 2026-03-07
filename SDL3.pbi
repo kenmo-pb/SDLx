@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-01-21 21:15:18 UTC
+; Generated 2026-03-07 15:34:40 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -220,6 +220,9 @@ EndMacro
 ;-
 ;- SDL3 Type Aliases
 
+Macro SDL_BlendMode
+  Uint32
+EndMacro
 Macro SDL_CameraID
   Sint32
 EndMacro
@@ -797,6 +800,17 @@ Enumeration ; SDL_RendererLogicalPresentation
   #SDL_LOGICAL_PRESENTATION_LETTERBOX
   #SDL_LOGICAL_PRESENTATION_OVERSCAN
   #SDL_LOGICAL_PRESENTATION_INTEGER_SCALE
+EndEnumeration
+
+Enumeration ; SDL_BlendMode
+  #SDL_BLENDMODE_NONE                = $00000000
+  #SDL_BLENDMODE_BLEND               = $00000001
+  #SDL_BLENDMODE_BLEND_PREMULTIPLIED = $00000010
+  #SDL_BLENDMODE_ADD                 = $00000002
+  #SDL_BLENDMODE_ADD_PREMULTIPLIED   = $00000020
+  #SDL_BLENDMODE_MOD                 = $00000004
+  #SDL_BLENDMODE_MUL                 = $00000008
+  #SDL_BLENDMODE_INVALID             = $7FFFFFFF
 EndEnumeration
 
 Enumeration ; SDL_TextureAccess
@@ -2032,8 +2046,10 @@ PrototypeC.a Proto_SDL_ShowWindow(*window.SDL_Window) ; returns bool
 
 ;- - 2D Accelerated Rendering
 PrototypeC.i Proto_SDL_CreateRenderer(*window.SDL_Window, name.p-utf8) ; returns SDL_Renderer *
+PrototypeC.i Proto_SDL_CreateSoftwareRenderer(*surface.SDL_Surface) ; returns SDL_Renderer *
 PrototypeC.i Proto_SDL_CreateTexture(*renderer.SDL_Renderer, format.SDL_PixelFormat, access.SDL_TextureAccess, w.Sint32, h.Sint32) ; returns SDL_Texture *
 PrototypeC.i Proto_SDL_CreateTextureFromSurface(*renderer.SDL_Renderer, *surface.SDL_Surface) ; returns SDL_Texture *
+PrototypeC.a Proto_SDL_CreateWindowAndRenderer(title.p-utf8, width.Sint32, height.Sint32, window_flags.SDL_WindowFlags, *window.POINTER_TO_A_POINTER, *renderer.POINTER_TO_A_POINTER) ; returns bool
 PrototypeC   Proto_SDL_DestroyRenderer(*renderer.SDL_Renderer)
 PrototypeC   Proto_SDL_DestroyTexture(*texture.SDL_Texture)
 PrototypeC.a Proto_SDL_LockTexture(*texture.SDL_Texture, *rect.SDL_Rect, *pixels.POINTER_TO_A_POINTER, *pitch.LONG) ; returns bool
@@ -2044,7 +2060,9 @@ PrototypeC.a Proto_SDL_RenderPresent(*renderer.SDL_Renderer) ; returns bool
 PrototypeC.a Proto_SDL_RenderTexture(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect) ; returns bool
 PrototypeC.a Proto_SDL_RenderTextureRotated(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDL_FlipMode) ; returns bool
 PrototypeC.a Proto_SDL_SetDefaultTextureScaleMode(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode) ; returns bool
+PrototypeC.a Proto_SDL_SetRenderDrawBlendMode(*renderer.SDL_Renderer, blendMode.SDL_BlendMode) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderDrawColor(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8) ; returns bool
+PrototypeC.a Proto_SDL_SetRenderDrawColorFloat(*renderer.SDL_Renderer, r.f, g.f, b.f, a.f) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderLogicalPresentation(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation) ; returns bool
 PrototypeC.a Proto_SDL_SetRenderVSync(*renderer.SDL_Renderer, vsync.Sint32) ; returns bool
 PrototypeC.a Proto_SDL_SetTextureScaleMode(*texture.SDL_Texture, scaleMode.SDL_ScaleMode) ; returns bool
@@ -2243,8 +2261,10 @@ Global SDL_ShowWindow.Proto_SDL_ShowWindow
 CompilerEndIf
 CompilerIf (Not #SDLx_ExcludeRendererSupport)
 Global SDL_CreateRenderer.Proto_SDL_CreateRenderer
+Global SDL_CreateSoftwareRenderer.Proto_SDL_CreateSoftwareRenderer
 Global SDL_CreateTexture.Proto_SDL_CreateTexture
 Global SDL_CreateTextureFromSurface.Proto_SDL_CreateTextureFromSurface
+Global SDL_CreateWindowAndRenderer.Proto_SDL_CreateWindowAndRenderer
 Global SDL_DestroyRenderer.Proto_SDL_DestroyRenderer
 Global SDL_DestroyTexture.Proto_SDL_DestroyTexture
 Global SDL_LockTexture.Proto_SDL_LockTexture
@@ -2255,7 +2275,9 @@ Global SDL_RenderPresent.Proto_SDL_RenderPresent
 Global SDL_RenderTexture.Proto_SDL_RenderTexture
 Global SDL_RenderTextureRotated.Proto_SDL_RenderTextureRotated
 Global SDL_SetDefaultTextureScaleMode.Proto_SDL_SetDefaultTextureScaleMode
+Global SDL_SetRenderDrawBlendMode.Proto_SDL_SetRenderDrawBlendMode
 Global SDL_SetRenderDrawColor.Proto_SDL_SetRenderDrawColor
+Global SDL_SetRenderDrawColorFloat.Proto_SDL_SetRenderDrawColorFloat
 Global SDL_SetRenderLogicalPresentation.Proto_SDL_SetRenderLogicalPresentation
 Global SDL_SetRenderVSync.Proto_SDL_SetRenderVSync
 Global SDL_SetTextureScaleMode.Proto_SDL_SetTextureScaleMode
@@ -2458,8 +2480,10 @@ ImportC #SDLx_ImportLibraryName
   CompilerEndIf
   CompilerIf (Not #SDLx_ExcludeRendererSupport)
   SDL_CreateRenderer.i(*window.SDL_Window, name.p-utf8)
+  SDL_CreateSoftwareRenderer.i(*surface.SDL_Surface)
   SDL_CreateTexture.i(*renderer.SDL_Renderer, format.SDL_PixelFormat, access.SDL_TextureAccess, w.Sint32, h.Sint32)
   SDL_CreateTextureFromSurface.i(*renderer.SDL_Renderer, *surface.SDL_Surface)
+  SDL_CreateWindowAndRenderer.a(title.p-utf8, width.Sint32, height.Sint32, window_flags.SDL_WindowFlags, *window.POINTER_TO_A_POINTER, *renderer.POINTER_TO_A_POINTER)
   SDL_DestroyRenderer(*renderer.SDL_Renderer)
   SDL_DestroyTexture(*texture.SDL_Texture)
   SDL_LockTexture.a(*texture.SDL_Texture, *rect.SDL_Rect, *pixels.POINTER_TO_A_POINTER, *pitch.LONG)
@@ -2470,7 +2494,9 @@ ImportC #SDLx_ImportLibraryName
   SDL_RenderTexture.a(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect)
   SDL_RenderTextureRotated.a(*renderer.SDL_Renderer, *texture.SDL_Texture, *srcrect.SDL_FRect, *dstrect.SDL_FRect, angle.d, *center.SDL_FPoint, flip.SDL_FlipMode)
   SDL_SetDefaultTextureScaleMode.a(*renderer.SDL_Renderer, scale_mode.SDL_ScaleMode)
+  SDL_SetRenderDrawBlendMode.a(*renderer.SDL_Renderer, blendMode.SDL_BlendMode)
   SDL_SetRenderDrawColor.a(*renderer.SDL_Renderer, r.Uint8, g.Uint8, b.Uint8, a.Uint8)
+  SDL_SetRenderDrawColorFloat.a(*renderer.SDL_Renderer, r.f, g.f, b.f, a.f)
   SDL_SetRenderLogicalPresentation.a(*renderer.SDL_Renderer, w.Sint32, h.Sint32, mode.SDL_RendererLogicalPresentation)
   SDL_SetRenderVSync.a(*renderer.SDL_Renderer, vsync.Sint32)
   SDL_SetTextureScaleMode.a(*texture.SDL_Texture, scaleMode.SDL_ScaleMode)
@@ -2739,8 +2765,10 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           CompilerEndIf
           CompilerIf (Not #SDLx_ExcludeRendererSupport)
           _SDLx_LoadFunction(SDL_CreateRenderer)
+          _SDLx_LoadFunction(SDL_CreateSoftwareRenderer)
           _SDLx_LoadFunction(SDL_CreateTexture)
           _SDLx_LoadFunction(SDL_CreateTextureFromSurface)
+          _SDLx_LoadFunction(SDL_CreateWindowAndRenderer)
           _SDLx_LoadFunction(SDL_DestroyRenderer)
           _SDLx_LoadFunction(SDL_DestroyTexture)
           _SDLx_LoadFunction(SDL_LockTexture)
@@ -2751,7 +2779,9 @@ Procedure.a SDL_Init(flags.SDL_InitFlags)
           _SDLx_LoadFunction(SDL_RenderTexture)
           _SDLx_LoadFunction(SDL_RenderTextureRotated)
           _SDLx_LoadFunction(SDL_SetDefaultTextureScaleMode)
+          _SDLx_LoadFunction(SDL_SetRenderDrawBlendMode)
           _SDLx_LoadFunction(SDL_SetRenderDrawColor)
+          _SDLx_LoadFunction(SDL_SetRenderDrawColorFloat)
           _SDLx_LoadFunction(SDL_SetRenderLogicalPresentation)
           _SDLx_LoadFunction(SDL_SetRenderVSync)
           _SDLx_LoadFunction(SDL_SetTextureScaleMode)
