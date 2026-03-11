@@ -6,7 +6,7 @@
 ; Warning: This file should not be directly modified!
 ; It was automatically generated from 'SDL3_Template.pbi' by 'SDLx_Build.pb'.
 ;
-; Generated 2026-03-07 15:34:40 UTC
+; Generated 2026-03-11 02:17:54 UTC
 
 ; SDL3 Wiki:       https://wiki.libsdl.org/SDL3
 ; API by Category: https://wiki.libsdl.org/SDL3/APIByCategory
@@ -220,6 +220,12 @@ EndMacro
 ;-
 ;- SDL3 Type Aliases
 
+Macro SDL_AudioDeviceID
+  Uint32
+EndMacro
+Macro SDL_AudioFormat
+  Sint32 ; enum
+EndMacro
 Macro SDL_BlendMode
   Uint32
 EndMacro
@@ -1564,6 +1570,30 @@ EndEnumeration
 
 ;- - Force Feedback Support
 
+;- - Audio
+
+Enumeration ; SDL_AudioFormat
+  #SDL_AUDIO_UNKNOWN = $0000
+  #SDL_AUDIO_U8      = $0008
+  #SDL_AUDIO_S8      = $8008
+  #SDL_AUDIO_S16LE   = $8010
+  #SDL_AUDIO_S16BE   = $9010
+  #SDL_AUDIO_S32LE   = $8020
+  #SDL_AUDIO_S32BE   = $9020
+  #SDL_AUDIO_F32LE   = $8120
+  #SDL_AUDIO_F32BE   = $9120
+  
+  CompilerIf (#True) ; PureBasic always Little Endian
+    #SDL_AUDIO_S16 = #SDL_AUDIO_S16LE
+    #SDL_AUDIO_S32 = #SDL_AUDIO_S32LE
+    #SDL_AUDIO_F32 = #SDL_AUDIO_F32LE
+  CompilerElse ; PureBasic never Big Endian
+    #SDL_AUDIO_S16 = #SDL_AUDIO_S16BE
+    #SDL_AUDIO_S32 = #SDL_AUDIO_S32BE
+    #SDL_AUDIO_F32 = #SDL_AUDIO_F32BE
+  CompilerEndIf
+EndEnumeration
+
 ;- - Power Management Status
 
 Enumeration ; SDL_PowerState
@@ -1922,6 +1952,12 @@ Structure  SDL_DisplayMode Align #PB_Structure_AlignC
   *internal.SDL_DisplayModeData
 EndStructure
 
+Structure  SDL_AudioSpec Align #PB_Structure_AlignC
+  format.SDL_AudioFormat
+  channels.Sint32
+  freq.Sint32
+EndStructure
+
 Structure SDL_GUID
   data_.Uint8[16]
 EndStructure
@@ -1935,6 +1971,10 @@ Structure SDL_Gamepad Align #PB_Structure_AlignC
 EndStructure
 
 Structure SDL_Haptic Align #PB_Structure_AlignC
+  ;
+EndStructure
+
+Structure SDL_IOStream Align #PB_Structure_AlignC
   ;
 EndStructure
 
