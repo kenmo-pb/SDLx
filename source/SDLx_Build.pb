@@ -5,6 +5,7 @@
 ; | 2024-10-05 : Added statically linked lib function imports
 ; | 2025-02-19 : Added SDL function categories which can be selectively excluded by user
 ; | 2025-09-24 : Preliminary support for SDL3_net
+; | 2026-03-10 : Support for SDL3_mixer
 
 ;-
 
@@ -114,7 +115,7 @@ If ExamineDirectory(0, #PB_Compiler_FilePath, "*.pbi")
                         EndIf
                       EndIf
                       Select (SDLFunction()\Name)
-                        Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit"
+                        Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit", "MIX_Init", "MIX_Quit"
                           ; special cases - handled elsewhere - do not declare prototypes here
                         Default
                           LineOut + "Global " + SDLFunction()\Name + "." + #PrototypeNamePrefix + SDLFunction()\Name + #OutputFileEOL$
@@ -162,7 +163,7 @@ If ExamineDirectory(0, #PB_Compiler_FilePath, "*.pbi")
                         EndIf
                       EndIf
                       Select (SDLFunction()\Name)
-                        Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit"
+                        Case "SDL_Init", "SDL_Quit", "NET_Init", "NET_Quit", "MIX_Init", "MIX_Quit"
                           ; special cases - handled elsewhere - do not declare prototypes here
                         Default
                           If (MajorVersion = 4) ; SDL3_net
